@@ -997,8 +997,7 @@ function applyStoreProducts(documentFromStitch, route, products, productPage = 1
             if (label === 'Sau') button.append(documentFromStitch.createTextNode('Sau'))
             button.append(icon)
             if (label === 'Trước') button.append(documentFromStitch.createTextNode('Trước'))
-          } else if (isFarmBoxGroupAction) {
-            actionBody = { action: 'replace' }
+         
           } else {
             button.textContent = label
           }
