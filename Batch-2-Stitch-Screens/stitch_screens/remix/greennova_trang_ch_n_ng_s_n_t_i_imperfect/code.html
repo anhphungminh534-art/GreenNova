@@ -1,0 +1,537 @@
+<!DOCTYPE html><html lang="vi"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>GreenNova - Nông sản địa phương, trọn vẹn giá trị</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=Montserrat:wght@600;700;800;900&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "outline": "#6f7a6f",
+            "surface-bright": "#f0fdf0",
+            "on-tertiary-fixed-variant": "#6f3800",
+            "surface-dim": "#d1ddd1",
+            "inverse-surface": "#28332b",
+            "primary-fixed": "#a0f6b1",
+            "on-tertiary": "#ffffff",
+            "secondary-fixed-dim": "#b0cfa9",
+            "surface": "#f0fdf0",
+            "on-primary-fixed-variant": "#005225",
+            "on-secondary-container": "#4e6a4b",
+            "on-error": "#ffffff",
+            "primary": "#005828",
+            "background": "#f0fdf0",
+            "error-container": "#ffdad6",
+            "on-background": "#131e16",
+            "primary-fixed-dim": "#85d996",
+            "surface-container-high": "#dfecdf",
+            "secondary-fixed": "#ccebc4",
+            "on-primary-container": "#9ff4af",
+            "on-tertiary-container": "#ffdac1",
+            "tertiary-fixed": "#ffdcc4",
+            "on-primary-fixed": "#00210b",
+            "surface-container-low": "#eaf7ea",
+            "tertiary-container": "#9a5000",
+            "on-surface-variant": "#3f4940",
+            "outline-variant": "#bfc9bd",
+            "on-surface": "#131e16",
+            "surface-container-highest": "#d9e6d9",
+            "surface-container": "#e4f1e5",
+            "surface-container-lowest": "#ffffff",
+            "tertiary": "#773c00",
+            "error": "#ba1a1a",
+            "surface-variant": "#d9e6d9",
+            "on-error-container": "#93000a",
+            "primary-container": "#1b723b",
+            "tertiary-fixed-dim": "#ffb780",
+            "on-primary": "#ffffff",
+            "inverse-primary": "#85d996",
+            "on-secondary-fixed-variant": "#334d30",
+            "on-secondary-fixed": "#072108",
+            "surface-tint": "#136d36",
+            "secondary-container": "#c9e8c2",
+            "secondary": "#4a6547",
+            "on-secondary": "#ffffff",
+            "inverse-on-surface": "#e7f4e7",
+            "on-tertiary-fixed": "#2f1400"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "margin-tablet": "2rem",
+            "margin": "1rem",
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "space-xl": "2.5rem",
+            "space-md": "1rem",
+            "margin-desktop": "3rem",
+            "space-lg": "1.5rem",
+            "gutter": "1.25rem",
+            "gutter-desktop": "1.75rem"
+          },
+          "fontFamily": {
+            "headline-lg-mobile": ["Montserrat", "sans-serif"],
+            "display": ["Montserrat", "sans-serif"],
+            "headline-sm": ["Montserrat", "sans-serif"],
+            "headline-md": ["Montserrat", "sans-serif"],
+            "display-mobile": ["Montserrat", "sans-serif"],
+            "price-md": ["Montserrat", "sans-serif"],
+            "body-lg": ["Be Vietnam Pro", "sans-serif"],
+            "headline-lg": ["Montserrat", "sans-serif"],
+            "body-sm": ["Be Vietnam Pro", "sans-serif"],
+            "price-lg": ["Montserrat", "sans-serif"],
+            "label-lg": ["Be Vietnam Pro", "sans-serif"],
+            "label-md": ["Be Vietnam Pro", "sans-serif"],
+            "body-md": ["Be Vietnam Pro", "sans-serif"],
+            "heading": ["Montserrat", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-surface font-body-md text-on-surface antialiased"><header class="fixed top-0 left-0 right-0 z-50 bg-surface-container-lowest/95 backdrop-blur-xl shadow-[0_1px_8px_rgba(31,42,34,0.04)]"><div class="h-20 max-w-[1200px] mx-auto px-margin md:px-margin-tablet lg:px-space-md flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-lg"><a class="flex items-center gap-space-xs text-primary-container shrink-0" data-path="trang-chu" href="#"><span class="material-symbols-outlined text-[28px]">eco</span><span class="font-headline-md text-headline-md tracking-tight font-bold text-primary-container">GreenNova</span></a><nav class="hidden lg:flex items-center gap-space-lg" data-active-classes="text-primary-container font-label-lg font-bold"><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="trang-chu" href="#">Trang chủ</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="nong-san" href="#">Nông sản</a><div class="flex items-center gap-1.5"><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="imperfect-produce" href="#">Imperfect</a><span class="px-2 py-0.5 rounded-full bg-tertiary-fixed text-tertiary font-label-md text-label-md font-bold">-45%</span></div><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="farm-box" href="#">Farm Box</a></nav></div><div class="flex items-center gap-space-md shrink-0"><div class="hidden md:flex items-center h-11 bg-surface-container-low rounded-xl px-3.5 w-64 justify-between text-outline"><div class="flex items-center gap-2"><span class="material-symbols-outlined text-[20px]">search</span><span class="font-body-sm text-body-sm text-outline">Tìm nông sản sạch...</span></div><kbd class="px-1.5 py-0.5 rounded bg-surface-container-lowest text-on-surface-variant font-label-md text-[11px] shadow-[0_1px_4px_rgba(0,0,0,0.06)]">⌘K</kbd></div><div class="flex items-center gap-space-sm"><button aria-label="Giỏ hàng" class="relative flex items-center justify-center w-11 h-11 rounded-xl text-on-surface hover:bg-surface-container hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-[24px]">shopping_bag</span><span class="absolute top-1.5 right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-primary-container text-on-primary font-label-md text-[10px] leading-[18px] text-center font-bold">3</span></button><div class="flex items-center pl-1"><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-2 ring-surface-container-high" src="https://lh3.googleusercontent.com/aida/AEtjO1UZVxTW2J-jlbydt5-itja440KQa1BibUPkgsegOq3tcD8ApjF5I9JsVPV10zEvpwsWwvyGRbRypYoWc3vcuBHNbCQ5y8dc_Yyi0BSeomHxWk_yW0Mc6runuGwbUC1U-tDPv3wCNFn_HVECXJHp3ULX8EieRe4bts-3HRnxYdY5pWsFZ6iHhvxPYHY5HCIzqVIJHi1P_irMacsyrFqLG57_o9dANMinL7OVm0olDgiIA5i1gKr8lFzdVA04"></div></div></div></div></header><main class="w-full pt-20 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- 1. HERO SECTION -->
+<section class="w-full relative overflow-hidden">
+<div class="max-w-[1200px] mx-auto px-margin md:px-margin-tablet lg:px-space-md py-12">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+<!-- Left Hero Column -->
+<div class="lg:col-span-7 flex flex-col items-start">
+<div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-container-low text-primary text-label-md font-label-md shadow-sm">
+<span class="material-symbols-outlined text-[18px]">nest_eco_leaf</span>
+<span>Nông sản địa phương 100% sạch &amp; an toàn</span>
+</div>
+<h1 class="font-display text-display text-on-surface tracking-tight mt-5">
+            Nông sản địa phương, <br class="hidden sm:inline">trọn vẹn giá trị.
+          </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-4 max-w-xl">
+            Từ nông sản tiêu chuẩn đến những sản phẩm chưa hoàn hảo về hình thức — cùng đưa chúng đến bàn ăn thay vì để chúng bị lãng phí.
+          </p>
+<div class="flex flex-wrap items-center gap-3.5 mt-8 w-full sm:w-auto">
+<a class="h-[44px] px-6 rounded-xl bg-primary-container text-on-primary font-headline-sm text-label-lg font-semibold inline-flex items-center justify-center gap-2 hover:bg-primary transition-all active:scale-[0.98] shadow-sm" href="#">
+<span>Khám phá nông sản</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+<a class="h-[44px] px-6 rounded-xl bg-transparent text-primary-container font-headline-sm text-label-lg font-semibold inline-flex items-center justify-center gap-2 hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">inventory_2</span>
+<span>Xem Farm Box tuần này</span>
+</a>
+</div>
+<!-- Trust Badges Underneath -->
+<div class="grid grid-cols-3 gap-3 pt-8 mt-8 w-full max-w-lg bg-surface-container-low/60 rounded-xl p-3.5">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[22px] text-primary">alarm</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-bold text-on-surface">Thu hoạch 04:30</span>
+<span class="font-body-sm text-[11px] text-outline">Trong sáng sớm nay</span>
+</div>
+</div>
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[22px] text-primary">ac_unit</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-bold text-on-surface">Chuỗi lạnh 2h</span>
+<span class="font-body-sm text-[11px] text-outline">Bảo quản tự nhiên</span>
+</div>
+</div>
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[22px] text-tertiary">savings</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-bold text-tertiary">Tiết kiệm 45%</span>
+<span class="font-body-sm text-[11px] text-outline">Dòng Imperfect</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Hero Column -->
+<div class="lg:col-span-5 relative">
+<div class="relative w-full aspect-square rounded-2xl overflow-hidden shadow-xl bg-surface-container-high">
+<img alt="Giỏ cà chua chín mọng và cải xoăn tươi" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AEtjO1UZVxTW2J-jlbydt5-itja440KQa1BibUPkgsegOq3tcD8ApjF5I9JsVPV10zEvpwsWwvyGRbRypYoWc3vcuBHNbCQ5y8dc_Yyi0BSeomHxWk_yW0Mc6runuGwbUC1U-tDPv3wCNFn_HVECXJHp3ULX8EieRe4bts-3HRnxYdY5pWsFZ6iHhvxPYHY5HCIzqVIJHi1P_irMacsyrFqLG57_o9dANMinL7OVm0olDgiIA5i1gKr8lFzdVA04">
+<!-- Gradient Overlay for Soft Lighting -->
+<div class="absolute inset-0 bg-gradient-to-t from-on-surface/40 via-transparent to-transparent pointer-events-none"></div>
+<!-- Floating Farm Badge -->
+<div class="absolute bottom-4 left-4 right-4 bg-surface-container-lowest/95 backdrop-blur-md p-3.5 rounded-xl shadow-md flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-lg bg-primary-container/15 text-primary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]">agriculture</span>
+</div>
+<div>
+<h4 class="font-label-lg text-label-lg font-bold text-on-surface leading-tight">Green Farm Đà Lạt</h4>
+<p class="font-body-sm text-body-sm text-outline">100% Thu hoạch hôm nay • VietGAP</p>
+</div>
+</div>
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-primary-fixed text-on-primary-fixed-variant font-label-md text-[11px] font-bold">
+                Tươi mới
+              </span>
+</div>
+</div>
+<!-- Ambient Decorative Leaf Blur -->
+<div class="absolute -top-6 -right-6 w-32 h-32 bg-primary-fixed-dim/30 rounded-full blur-2xl -z-10 pointer-events-none"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- 2. 'TUẦN NÀY CÓ GÌ?' SECTION -->
+<section class="w-full py-10 bg-surface">
+<div class="max-w-[1200px] mx-auto px-margin md:px-margin-tablet lg:px-space-md">
+<!-- Section Header -->
+<div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-2">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Tuần này có gì?</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Nông sản tươi ngon vừa về kho sáng nay từ các nông hộ liên kết</p>
+</div>
+<a class="inline-flex items-center gap-1.5 font-label-lg text-label-lg font-bold text-primary-container hover:text-primary transition-colors shrink-0" href="#">
+<span>Xem tất cả nông sản</span>
+<span class="material-symbols-outlined text-[20px]">arrow_right_alt</span>
+</a>
+</div>
+<!-- 4 Product Cards Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+<!-- Card 1: Cà chua -->
+<div class="bg-surface-container-lowest rounded-xl p-3.5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between group">
+<div>
+<div class="relative w-full aspect-square rounded-lg overflow-hidden bg-surface-container-low mb-3">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Close up photography of vibrant red, glossy heirloom vine tomatoes resting fresh on rustic wood, morning natural light, high-end farmers market fresh produce aesthetic, dew drops, organic texture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBH-lTQ9mDDFvvgTjXEI5O-h2C-GabwIQfe4me569pZ0tAngCHiDMDCp0D0ULLmxyl1eoXfM4qbWHrmHwlFAM3t4-GBqOxZNLHYcMSXb7VHO0O1ix6M1-OuyxzVskm3RE9FH8c6DwSoKxNLCV_QY6ceKtIdBPK_v0_iBRf-JJD17WIkOhLJx6aLiGgHq7ZFTJk27lD-zT2eVIBIZTLoEa-Po-NLGR70p2SjcznOVKYEmOnI8Mhuk3v9Cg">
+<span class="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-primary-container font-label-md text-[11px] font-bold shadow-sm">
+                Thu hoạch sáng nay 05:00
+              </span>
+</div>
+<div class="space-y-1">
+<span class="font-body-sm text-body-sm text-outline block">Green Farm Đà Lạt</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Cà chua chùm Đà Lạt</h3>
+<div class="flex items-baseline gap-1 pt-1">
+<span class="font-price-lg text-price-lg text-primary-container">32.000đ</span>
+<span class="font-body-sm text-body-sm text-outline">/ kg</span>
+</div>
+</div>
+</div>
+<button class="mt-4 h-[44px] w-full rounded-xl bg-primary-container hover:bg-primary text-on-primary font-label-lg text-label-lg font-medium flex items-center justify-center gap-2 transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined text-[20px]">add_shopping_cart</span>
+<span>Thêm vào giỏ</span>
+</button>
+</div>
+<!-- Card 2: Cà rốt -->
+<div class="bg-surface-container-lowest rounded-xl p-3.5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between group">
+<div>
+<div class="relative w-full aspect-square rounded-lg overflow-hidden bg-surface-container-low mb-3">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Freshly harvested bright orange sweet carrots with lush green leafy tops in bright morning sun on clean rustic wooden surface, organic produce photography, VietGAP quality" src="https://lh3.googleusercontent.com/aida-public/AB6AXuApRF284wNap-D733G-d5vojpA7-G5K_r1nDyyjwRHRNp-DZRwsCfWPNXCEcP7OhJLEiU55cXEdVCnLZpiIt3BxUUPxgszSyf9qjLKCysqxC1lcaeK86JvRZ6_i0e1mHSMGxxWCgX__bC1nYpVcwQz9WPLHXOJ6Xa1wrjQGDDKaghNT2BCNB7u4OavBuPr97mNRfPwwb53plgJi1b5DhEXnUC_PiTvswDf1va-FTHtaC6lDgZ5KDC1HDg">
+<span class="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-primary-container font-label-md text-[11px] font-bold shadow-sm">
+                Thu hoạch sáng nay 04:30
+              </span>
+</div>
+<div class="space-y-1">
+<span class="font-body-sm text-body-sm text-outline block">Green Farm Đà Lạt</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Cà rốt hữu cơ ngọt</h3>
+<div class="flex items-baseline gap-1 pt-1">
+<span class="font-price-lg text-price-lg text-primary-container">35.000đ</span>
+<span class="font-body-sm text-body-sm text-outline">/ kg</span>
+</div>
+</div>
+</div>
+<button class="mt-4 h-[44px] w-full rounded-xl bg-primary-container hover:bg-primary text-on-primary font-label-lg text-label-lg font-medium flex items-center justify-center gap-2 transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined text-[20px]">add_shopping_cart</span>
+<span>Thêm vào giỏ</span>
+</button>
+</div>
+<!-- Card 3: Cải xanh -->
+<div class="bg-surface-container-lowest rounded-xl p-3.5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between group">
+<div>
+<div class="relative w-full aspect-square rounded-lg overflow-hidden bg-surface-container-low mb-3">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Fresh crisp green mustard greens bunch with fine water droplets, vibrant emerald color, authentic Da Lat farm harvest, light organic background, high definition photography" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2zdnY9bPy9P1nG9L2XYjY5A9rfIdUes0iUoIosZOt5o_esoro3it9Kz6IUO3gp1oqduStYgcCI1DbYz_kNgcwPzM-6UH7tYtXbMSnyeGLtMhCIBF3hrtA4jMpKgwjvlyYhJHiA_0VH5FfNwT2L9gkQCKHIaSg-HyWZTi-OYvhYsAM6TWknNt-IO2aoCuJ5uClSertFl7PJZAOCPZWsEykO8rGHTkBmXxl3cr0CY6bXu68VNbqmy0yRg">
+<span class="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-primary-container font-label-md text-[11px] font-bold shadow-sm">
+                VietGAP • Hôm qua 16:00
+              </span>
+</div>
+<div class="space-y-1">
+<span class="font-body-sm text-body-sm text-outline block">Green Farm Đà Lạt</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Cải xanh mỡ giòn</h3>
+<div class="flex items-baseline gap-1 pt-1">
+<span class="font-price-lg text-price-lg text-primary-container">28.000đ</span>
+<span class="font-body-sm text-body-sm text-outline">/ kg</span>
+</div>
+</div>
+</div>
+<button class="mt-4 h-[44px] w-full rounded-xl bg-primary-container hover:bg-primary text-on-primary font-label-lg text-label-lg font-medium flex items-center justify-center gap-2 transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined text-[20px]">add_shopping_cart</span>
+<span>Thêm vào giỏ</span>
+</button>
+</div>
+<!-- Card 4: Dưa leo -->
+<div class="bg-surface-container-lowest rounded-xl p-3.5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between group">
+<div>
+<div class="relative w-full aspect-square rounded-lg overflow-hidden bg-surface-container-low mb-3">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Crispy baby cucumbers fresh from greenhouse, still having delicate yellow flowers, natural daylight, wholesome Vietnamese agricultural setting, studio quality" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDruQZQtOBQ31SWPkEvjh9___57YGIShYoVCnBq8o2fJC8VLTIMjaLTWxCUKlQgh9j6EAtfTrCiiYO1V3aQSIbdZTIPjr-hfFGFA35JOGDd1I9SV3L5cctXmspe65ank9Ah3LQCoaqmZ8kIrg7b65vkvGoiEhXw1uvYiVdH8bcAmxauJ0x0tn_cev5UB72748CCERYzXlW8VL90Sf2X1DDA3mNmXikEtiHDtHR-BjuPaGchbClnTGqFw">
+<span class="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-primary-container font-label-md text-[11px] font-bold shadow-sm">
+                Thu hoạch sáng nay 05:30
+              </span>
+</div>
+<div class="space-y-1">
+<span class="font-body-sm text-body-sm text-outline block">Green Farm Đà Lạt</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Dưa leo baby giòn ngọt</h3>
+<div class="flex items-baseline gap-1 pt-1">
+<span class="font-price-lg text-price-lg text-primary-container">25.000đ</span>
+<span class="font-body-sm text-body-sm text-outline">/ kg</span>
+</div>
+</div>
+</div>
+<button class="mt-4 h-[44px] w-full rounded-xl bg-primary-container hover:bg-primary text-on-primary font-label-lg text-label-lg font-medium flex items-center justify-center gap-2 transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined text-[20px]">add_shopping_cart</span>
+<span>Thêm vào giỏ</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- 3. IMPERFECT SECTION -->
+<section class="w-full py-6">
+<div class="max-w-[1200px] mx-auto px-margin md:px-margin-tablet lg:px-space-md">
+<div class="relative rounded-2xl bg-tertiary-fixed/30 p-8 md:p-12 overflow-hidden shadow-sm">
+<!-- Background Ambient Accents -->
+<div class="absolute -right-16 -top-16 w-80 h-80 rounded-full bg-tertiary-fixed-dim/25 blur-3xl pointer-events-none"></div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+<!-- Text and CTA -->
+<div class="lg:col-span-7 space-y-4">
+<div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-tertiary-fixed text-tertiary font-label-md text-label-md font-bold">
+<span class="material-symbols-outlined text-[18px]">recycling</span>
+<span>Tiết kiệm tới -45% • Móp méo ngon lành</span>
+</div>
+<h2 class="font-display text-display text-on-surface tracking-tight leading-tight">
+              Không hoàn hảo về hình thức. <br class="hidden sm:inline">Không lãng phí giá trị.
+            </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">
+              Một số nông sản có hình dạng hoặc kích thước không đồng đều nhưng vẫn có giá trị sử dụng. Chúng tôi gom chúng thành các combo cố định với giá tiết kiệm hơn.
+            </p>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3">
+<div class="flex items-center gap-2 text-on-surface font-label-md text-label-md font-medium">
+<span class="material-symbols-outlined text-primary text-[20px]">verified</span>
+<span>100% Chuẩn VietGAP</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface font-label-md text-label-md font-medium">
+<span class="material-symbols-outlined text-tertiary text-[20px]">nutrition</span>
+<span>Vị ngọt tự nhiên</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface font-label-md text-label-md font-medium">
+<span class="material-symbols-outlined text-primary-container text-[20px]">eco</span>
+<span>Giải cứu 12.4 tấn</span>
+</div>
+</div>
+<div class="pt-4">
+<a class="h-[44px] px-8 rounded-xl bg-tertiary text-on-primary font-headline-sm text-label-lg font-semibold inline-flex items-center gap-2 hover:bg-tertiary-container transition-all active:scale-[0.98] shadow-sm" href="#">
+<span>Khám phá Imperfect</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Produce Showcase Side with Tag -->
+<div class="lg:col-span-5 relative">
+<div class="relative w-full aspect-4/3 rounded-xl overflow-hidden bg-surface-container-high shadow-md">
+<img class="w-full h-full object-cover" data-alt="Charming quirky imperfect vegetables grouped together: crooked double carrots, heirloom twisted bell peppers, naturally irregular tomatoes on warm burlap sack, bright rustic morning sunlight, wholesome organic look" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYlMJB7YHeHnWoaWtT7pb0zU2Bt1CBke2A6LViqqfIGp0i7KLT7R87eK5fWRpjH_DOTaWDQEIysRKRzS21qiJ4JfIh6jo3Tk4W8l2zOlwhHs15ClhTOS20KLpYJ8y25xZ55vA4qT5S9XeKdznuVhMC0PR18Uwxj6nVGVoUjH0BimWt3IlQp7j1WjMuk0rz_vu0FxDjgN96_4mtgtR0VygFuB9nannB_RKg8zFXQ8pUtijQulwSH-riMg">
+<!-- Floating Terracotta Orange Badge -->
+<div class="absolute top-4 right-4 bg-tertiary text-on-primary font-price-lg text-price-lg px-3.5 py-2 rounded-xl shadow-lg flex flex-col items-center">
+<span class="text-xs uppercase tracking-wider font-semibold">Giảm Đến</span>
+<span class="font-bold text-2xl leading-none mt-0.5">-45%</span>
+</div>
+<div class="absolute bottom-3 left-3 bg-surface-container-lowest/90 backdrop-blur-sm px-3 py-1.5 rounded-lg text-on-surface font-label-md text-label-md font-bold">
+                Củ quả móp méo nhưng ngọt vị
+              </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 4. 'FARM BOX TUẦN NÀY' SECTION -->
+<section class="w-full py-10 bg-surface">
+<div class="max-w-[1200px] mx-auto px-margin md:px-margin-tablet lg:px-space-md">
+<!-- Section Header -->
+<div class="pb-2">
+<h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Farm Box tuần này</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Hộp rau củ tươi luân phiên theo mùa, giao định kỳ thứ 3 &amp; thứ 6</p>
+</div>
+<!-- 2 Large Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
+<!-- Card 1: Farm Box Standard -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+<div class="space-y-4">
+<div class="relative w-full aspect-16/10 rounded-lg overflow-hidden bg-surface-container-low">
+<img class="w-full h-full object-cover" data-alt="Eco-friendly kraft cardboard subscription produce box overflowing with neatly organized fresh standard farm greens: bok choy, tender lettuce, baby carrots, zucchini, gourmet mushrooms, clean studio kitchen setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfk5i9rY5fV_VZYoXSVZMs1wQ8gqvK97t3McZl5WgX12ZVf634j_jJ1IGvXqQvBCJGLONmmeqinwmS5z-Ergt5dXTvsgU-q-tLaorMEVNCdanaQyn7ZxvIn3wnhaTp0o7Nm301odleTNFO9BrzbbkiqJkiHf_uRZubbNm5N_lgxqRNfc4walYiOXn2nALdcl5i39IegSePcrA1Gve9lnlyNcfWA0sAu5vloP6bye37AftCtqy2GA7YBg">
+<div class="absolute top-3 left-3 flex items-center gap-2">
+<span class="px-2.5 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-md text-[11px] font-bold shadow-sm">
+                  Farm Box
+                </span>
+<span class="px-2.5 py-1 rounded-full bg-surface-container-lowest/95 text-primary-container font-label-md text-[11px] font-bold shadow-sm">
+                  Tiêu chuẩn hoàn hảo
+                </span>
+</div>
+</div>
+<div>
+<div class="flex items-center justify-between">
+<h3 class="font-headline-md text-headline-md text-on-surface font-bold">Farm Box Standard</h3>
+<span class="font-price-lg text-price-lg text-primary-container">199.000đ <span class="font-body-sm text-body-sm font-normal text-outline">/ hộp</span></span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2">
+<strong>5–7 loại rau củ theo mùa:</strong> Cải thìa, xà lách mỡ, cà rốt baby, bí ngòi xanh, nấm bào ngư tươi sạch tiêu chuẩn cao cấp.
+              </p>
+<div class="flex items-center gap-2 mt-3 text-outline font-label-md text-label-md">
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>
+<span>Tuần nhận: 20/10 – 26/10</span>
+</div>
+</div>
+</div>
+<div class="pt-6">
+<button class="h-[44px] w-full rounded-xl bg-primary-container hover:bg-primary text-on-primary font-label-lg text-label-lg font-medium flex items-center justify-center gap-2 transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined text-[20px]">shopping_bag</span>
+<span>Xem Farm Box</span>
+</button>
+</div>
+</div>
+<!-- Card 2: Farm Box Imperfect -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+<div class="space-y-4">
+<div class="relative w-full aspect-16/10 rounded-lg overflow-hidden bg-surface-container-low">
+<img alt="Hộp nông sản Đồng Quê Farm Fresh Weekly Combo đầy ắp rau củ quả tươi" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AEtjO1WhuBPIz9SptkKzLHQ3hUqtB5wgCo9ldDhWf5pY7koHFziJ0sSyeGf5fLfFJceYEI7BDeV2b-rwVFfEk76y9Qg4gB2AdmCBLOqyyVard5VHZ_PLY0k2oWwiUyX0RCun271miraKoyD3X-VzfQJZaPj6pKvuok5OZi38SPd0HprcZqRep6RRLwzo-SogtbqaXC-fF1UY3KUDhLKg0zrvNNS5G2hMis3IYciZ4wj-eAfjjywEbNvrvo1ETku5">
+<div class="absolute top-3 left-3 flex items-center gap-2">
+<span class="px-2.5 py-1 rounded-full bg-tertiary-fixed text-tertiary font-label-md text-[11px] font-bold shadow-sm">
+                  Imperfect
+                </span>
+<span class="px-2.5 py-1 rounded-full bg-surface-container-lowest/95 text-tertiary font-label-md text-[11px] font-bold shadow-sm">
+                  Nhiều hơn 25% rau củ
+                </span>
+</div>
+</div>
+<div>
+<div class="flex items-center justify-between">
+<h3 class="font-headline-md text-headline-md text-on-surface font-bold">Farm Box Imperfect</h3>
+<span class="font-price-lg text-price-lg text-tertiary">149.000đ <span class="font-body-sm text-body-sm font-normal text-outline">/ hộp</span></span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2">
+<strong>Nông sản không hoàn hảo được tuyển chọn:</strong> Củ móp méo vị ngọt lịm, trái cây dị dạng tự nhiên, giảm phát thải và chống lãng phí.
+              </p>
+<div class="flex items-center gap-2 mt-3 text-outline font-label-md text-label-md">
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>
+<span>Tuần nhận: 20/10 – 26/10</span>
+</div>
+</div>
+</div>
+<div class="pt-6">
+<button class="h-[44px] w-full rounded-xl bg-tertiary hover:bg-tertiary-container text-on-primary font-label-lg text-label-lg font-medium flex items-center justify-center gap-2 transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined text-[20px]">shopping_bag</span>
+<span>Xem Farm Box</span>
+</button>
+</div>
+</div>
+</div>
+<p class="font-body-sm text-body-sm italic text-center text-outline mt-6">
+        * Nội dung hộp có thể thay đổi nhẹ theo nguồn cung thu hoạch hàng ngày tại vườn.
+      </p>
+</div>
+</section>
+<!-- 5. 'TỪ NÔNG TRẠI ĐẾN BÀN ĂN' SECTION -->
+<section class="w-full py-12 bg-surface-container-low/50">
+<div class="max-w-[1200px] mx-auto px-margin md:px-margin-tablet lg:px-space-md">
+<!-- Section Header -->
+<div class="text-center max-w-xl mx-auto">
+<h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Từ nông trại đến bàn ăn</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1.5">Quy trình khép kín đảm bảo độ tươi giòn và minh bạch 100%</p>
+</div>
+<!-- 4 Steps Flow -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8 relative">
+<!-- Step 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm text-center flex flex-col items-center justify-center relative">
+<div class="w-12 h-12 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-bold text-headline-sm mb-3">
+            01
+          </div>
+<div class="w-8 h-8 rounded-lg bg-surface-container text-primary-container flex items-center justify-center mb-2">
+<span class="material-symbols-outlined text-[20px]">potted_plant</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm font-semibold text-on-surface">Nông trại</h3>
+<p class="font-body-sm text-body-sm text-outline mt-1">Green Farm – Đà Lạt</p>
+</div>
+<!-- Step 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm text-center flex flex-col items-center justify-center relative">
+<div class="w-12 h-12 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-bold text-headline-sm mb-3">
+            02
+          </div>
+<div class="w-8 h-8 rounded-lg bg-surface-container text-primary-container flex items-center justify-center mb-2">
+<span class="material-symbols-outlined text-[20px]">wb_sunny</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm font-semibold text-on-surface">Thu hoạch</h3>
+<p class="font-body-sm text-body-sm text-outline mt-1">Theo mùa và nhu cầu</p>
+</div>
+<!-- Step 3 -->
+<div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm text-center flex flex-col items-center justify-center relative">
+<div class="w-12 h-12 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-bold text-headline-sm mb-3">
+            03
+          </div>
+<div class="w-8 h-8 rounded-lg bg-surface-container text-primary-container flex items-center justify-center mb-2">
+<span class="material-symbols-outlined text-[20px]">rule</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm font-semibold text-on-surface">Phân loại</h3>
+<p class="font-body-sm text-body-sm text-outline mt-1">Tiêu chuẩn / Imperfect</p>
+</div>
+<!-- Step 4 -->
+<div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm text-center flex flex-col items-center justify-center relative">
+<div class="w-12 h-12 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-bold text-headline-sm mb-3">
+            04
+          </div>
+<div class="w-8 h-8 rounded-lg bg-surface-container text-primary-container flex items-center justify-center mb-2">
+<span class="material-symbols-outlined text-[20px]">local_shipping</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm font-semibold text-on-surface">Đóng gói &amp; giao hàng</h3>
+<p class="font-body-sm text-body-sm text-outline mt-1">Đến tay khách hàng</p>
+</div>
+</div>
+</div>
+</section>
+<!-- 6. 'NÔNG SẢN THEO MÙA – THÁNG 10' SECTION -->
+<section class="w-full py-12 bg-surface">
+<div class="max-w-[1200px] mx-auto px-margin md:px-margin-tablet lg:px-space-md">
+<div class="bg-surface-container-lowest rounded-2xl p-6 md:p-8 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+<div>
+<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container text-primary-container font-label-md text-label-md font-semibold mb-2">
+<span class="material-symbols-outlined text-[16px]">calendar_month</span>
+<span>Mùa nào thức nấy</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Nông sản theo mùa – Tháng 10</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Thưởng thức hương vị đúng vụ mùa đạt độ ngon và dinh dưỡng cao nhất</p>
+</div>
+<!-- Season Produce Chips + Button -->
+<div class="flex flex-wrap items-center gap-3">
+<div class="rounded-full px-5 py-2.5 bg-surface-container-low hover:bg-surface-container font-headline-sm text-label-lg font-semibold text-on-surface flex items-center gap-2 cursor-pointer transition-colors shadow-sm">
+<span>🥬</span>
+<span>Cải xanh</span>
+</div>
+<div class="rounded-full px-5 py-2.5 bg-surface-container-low hover:bg-surface-container font-headline-sm text-label-lg font-semibold text-on-surface flex items-center gap-2 cursor-pointer transition-colors shadow-sm">
+<span>🍅</span>
+<span>Cà chua</span>
+</div>
+<div class="rounded-full px-5 py-2.5 bg-surface-container-low hover:bg-surface-container font-headline-sm text-label-lg font-semibold text-on-surface flex items-center gap-2 cursor-pointer transition-colors shadow-sm">
+<span>🥕</span>
+<span>Cà rốt</span>
+</div>
+<div class="rounded-full px-5 py-2.5 bg-surface-container-low hover:bg-surface-container font-headline-sm text-label-lg font-semibold text-on-surface flex items-center gap-2 cursor-pointer transition-colors shadow-sm">
+<span>🥒</span>
+<span>Dưa leo</span>
+</div>
+<a class="h-[44px] px-6 rounded-xl bg-primary-container hover:bg-primary text-on-primary font-headline-sm text-label-lg font-semibold inline-flex items-center gap-2 transition-all active:scale-[0.98] shadow-sm ml-0 lg:ml-2" href="#">
+<span>Xem nông sản</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</section>
+</div></main><footer class="w-full bg-primary text-on-primary mt-space-xl"><div class="max-w-[1200px] mx-auto px-margin md:px-margin-tablet lg:px-space-md pt-space-xl pb-space-lg"><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-space-lg pb-space-lg"><div class="lg:col-span-2 space-y-space-md pr-space-md"><div class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-[28px] text-primary-fixed">eco</span><span class="font-headline-md text-headline-md text-on-primary font-bold">GreenNova</span></div><p class="font-body-md text-body-md text-primary-fixed-dim leading-relaxed max-w-sm">Nền tảng tiêu thụ nông sản địa phương và giảm lãng phí thực phẩm.</p><div class="flex items-center gap-space-sm pt-space-xs"><a aria-label="Website" class="w-9 h-9 rounded-lg bg-surface-container-lowest text-primary flex items-center justify-center hover:bg-surface-variant hover:text-on-surface transition-colors" href="#"><span class="material-symbols-outlined text-[20px]">public</span></a><a aria-label="Hotline" class="w-9 h-9 rounded-lg bg-surface-container-lowest text-primary flex items-center justify-center hover:bg-surface-variant hover:text-on-surface transition-colors" href="#"><span class="material-symbols-outlined text-[20px]">call</span></a><a aria-label="Email" class="w-9 h-9 rounded-lg bg-surface-container-lowest text-primary flex items-center justify-center hover:bg-surface-variant hover:text-on-surface transition-colors" href="#"><span class="material-symbols-outlined text-[20px]">mail</span></a></div></div><div class="space-y-space-sm"><h4 class="font-headline-sm text-headline-sm text-on-primary font-semibold">Về GreenNova</h4><ul class="space-y-2"><li class="font-body-sm text-body-sm text-primary-fixed-dim hover:text-on-primary transition-colors"><a data-path="cau-chuyen-nong-trai" href="#">Câu chuyện nông trại</a></li><li class="font-body-sm text-body-sm text-primary-fixed-dim hover:text-on-primary transition-colors"><a data-path="doi-tac-nong-ho" href="#">Đối tác nông hộ</a></li><li class="font-body-sm text-body-sm text-primary-fixed-dim hover:text-on-primary transition-colors"><a data-path="tac-dong-ben-vung" href="#">Tác động bền vững</a></li><li class="font-body-sm text-body-sm text-primary-fixed-dim hover:text-on-primary transition-colors"><a data-path="tuyen-dung" href="#">Tuyển dụng</a></li></ul></div><div class="space-y-space-sm"><h4 class="font-headline-sm text-headline-sm text-on-primary font-semibold">Chính Sách &amp; Hỗ Trợ</h4><ul class="space-y-2"><li class="font-body-sm text-body-sm text-primary-fixed-dim hover:text-on-primary transition-colors"><a data-path="giao-hang-va-dong-goi" href="#">Giao hàng &amp; Đóng gói</a></li><li class="font-body-sm text-body-sm text-primary-fixed-dim hover:text-on-primary transition-colors"><a data-path="chinh-sach-doi-tra" href="#">Chính sách đổi trả 24h</a></li><li class="font-body-sm text-body-sm text-primary-fixed-dim hover:text-on-primary transition-colors"><a data-path="hoi-dap-faq" href="#">Hỏi đáp (FAQ)</a></li><li class="font-body-sm text-body-sm text-primary-fixed-dim hover:text-on-primary transition-colors"><a data-path="lien-he" href="#">Liên hệ trực tiếp</a></li></ul></div><div class="space-y-space-sm"><h4 class="font-headline-sm text-headline-sm text-on-primary font-semibold">Cam Kết Chuẩn Sạch</h4><ul class="space-y-2"><li class="font-body-sm text-body-sm text-primary-fixed-dim hover:text-on-primary transition-colors"><a data-path="tieu-chuan-vietgap" href="#">Tiêu chuẩn VietGAP</a></li><li class="font-body-sm text-body-sm text-primary-fixed-dim hover:text-on-primary transition-colors"><a data-path="nguon-goc-minh-bach" href="#">Minh bạch xuất xứ</a></li><li class="font-body-sm text-body-sm text-primary-fixed-dim hover:text-on-primary transition-colors"><a data-path="chien-dich-cuu-nong-san" href="#">Chiến dịch cứu nông sản</a></li><li class="font-body-sm text-body-sm text-primary-fixed-dim hover:text-on-primary transition-colors"><a data-path="kiem-dinh-du-luong" href="#">Kiểm định dư lượng</a></li></ul></div></div><div class="pt-space-md border-t border-primary-container flex flex-col sm:flex-row items-center justify-between gap-space-sm font-body-sm text-body-sm text-primary-fixed-dim"><div>© 2024 GreenNova Vietnam. Bản quyền thuộc về nông sản tử tế.</div><div class="flex items-center gap-space-md"><span>TP. Hồ Chí Minh &amp; Hà Nội</span><span>Hỗ trợ: 1900 6868</span></div></div></div></footer></body></html>

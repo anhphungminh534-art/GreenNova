@@ -1,0 +1,608 @@
+<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_dashboard" name="shell-type"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=Montserrat:wght@600;700&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"surface-container":"#e4f1e5","error-container":"#ffdad6","surface-container-high":"#dfecdf","on-tertiary":"#ffffff","on-surface":"#131e16","on-secondary-fixed":"#072108","tertiary-container":"#9a5000","surface-container-highest":"#d9e6d9","tertiary-fixed":"#ffdcc4","surface-tint":"#136d36","tertiary-fixed-dim":"#ffb780","secondary-fixed-dim":"#b0cfa9","surface-variant":"#d9e6d9","on-error-container":"#93000a","inverse-on-surface":"#e7f4e7","primary-fixed-dim":"#85d996","on-primary-fixed":"#00210b","surface-dim":"#d1ddd1","secondary":"#4a6547","outline-variant":"#bfc9bd","outline":"#6f7a6f","primary":"#005828","primary-container":"#1b723b","secondary-fixed":"#ccebc4","on-secondary":"#ffffff","surface-container-lowest":"#ffffff","primary-fixed":"#a0f6b1","on-primary-fixed-variant":"#005225","on-primary":"#ffffff","on-surface-variant":"#3f4940","secondary-container":"#c9e8c2","on-primary-container":"#9ff4af","on-error":"#ffffff","surface":"#f0fdf0","error":"#ba1a1a","inverse-surface":"#28332b","inverse-primary":"#85d996","surface-bright":"#f0fdf0","on-secondary-fixed-variant":"#334d30","on-tertiary-fixed-variant":"#6f3800","on-tertiary-container":"#ffdac1","on-background":"#131e16","on-tertiary-fixed":"#2f1400","background":"#f0fdf0","on-secondary-container":"#4e6a4b","tertiary":"#773c00","surface-container-low":"#eaf7ea"},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},spacing:{"gutter-lg":"2rem","margin-lg":"3rem","gutter-md":"1.5rem",margin:"1rem","space-lg":"1.5rem","space-xl":"2.5rem",gutter:"1rem","margin-md":"2rem","space-md":"1rem","space-sm":"0.5rem","space-xs":"0.25rem"},fontFamily:{"price-lg":["Montserrat"],"body-md":["Be Vietnam Pro"],"price-md":["Montserrat"],"label-sm":["Be Vietnam Pro"],"headline-lg":["Montserrat"],"headline-sm":["Montserrat"],"display-lg-mobile":["Montserrat"],"body-sm":["Be Vietnam Pro"],"headline-md":["Montserrat"],"label-lg":["Be Vietnam Pro"],"display-lg":["Montserrat"],"body-lg":["Be Vietnam Pro"],"title-md":["Be Vietnam Pro"],"label-md":["Be Vietnam Pro"]},fontSize:{"price-lg":["20px",{lineHeight:"26px",fontWeight:"700"}],"body-md":["14px",{lineHeight:"22px",fontWeight:"400"}],"price-md":["16px",{lineHeight:"22px",fontWeight:"700"}],"label-sm":["10px",{lineHeight:"14px",letterSpacing:"0.04em",fontWeight:"700"}],"headline-lg":["28px",{lineHeight:"36px",letterSpacing:"-0.01em",fontWeight:"700"}],"headline-sm":["18px",{lineHeight:"26px",fontWeight:"600"}],"display-lg-mobile":["30px",{lineHeight:"38px",letterSpacing:"-0.01em",fontWeight:"700"}],"body-sm":["12px",{lineHeight:"18px",fontWeight:"400"}],"headline-md":["22px",{lineHeight:"30px",fontWeight:"600"}],"label-lg":["14px",{lineHeight:"20px",fontWeight:"600"}],"display-lg":["40px",{lineHeight:"48px",letterSpacing:"-0.02em",fontWeight:"700"}],"body-lg":["16px",{lineHeight:"26px",fontWeight:"400"}],"title-md":["16px",{lineHeight:"24px",fontWeight:"600"}],"label-md":["12px",{lineHeight:"16px",fontWeight:"600"}]}}}}</script></head><body class="bg-surface font-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-[240px] bg-primary-container text-on-primary z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.06)]"><div class="flex flex-col"><div class="h-16 px-space-md flex items-center gap-space-sm bg-primary/20"><div class="w-9 h-9 rounded-lg bg-surface-container-lowest flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-primary text-[22px]">eco</span></div><div class="flex flex-col"><span class="font-headline-sm text-[15px] font-bold tracking-tight text-on-primary leading-tight">GreenNova</span><span class="font-label-sm text-[10px] text-on-primary-container tracking-wider uppercase font-semibold">Admin Portal</span></div></div><div class="px-space-md py-space-sm"></div><nav class="flex flex-col gap-1 px-space-sm" data-active-classes="bg-primary text-on-primary font-semibold shadow-inner"><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg text-inverse-on-surface hover:bg-primary/40 hover:text-on-primary transition-all" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">grid_view</span><span class="font-label-lg text-sm flex-1">Dashboard</span></a><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg text-inverse-on-surface hover:bg-primary/40 hover:text-on-primary transition-all" data-path="quan-ly-nong-san" href="#"><span class="material-symbols-outlined text-[20px]">nutrition</span><span class="font-label-lg text-sm flex-1">Quản lý nông sản</span></a><a aria-current="page" class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg transition-all bg-primary text-on-primary font-semibold shadow-inner" data-path="quan-ly-imperfect" href="#"><span class="material-symbols-outlined text-[20px]">recycling</span><span class="font-label-lg text-sm flex-1">Quản lý Imperfect</span></a><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg text-inverse-on-surface hover:bg-primary/40 hover:text-on-primary transition-all" data-path="cau-hinh-farm-box" href="#"><span class="material-symbols-outlined text-[20px]">inventory_2</span><span class="font-label-lg text-sm flex-1">Cấu hình Farm Box</span></a><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg text-inverse-on-surface hover:bg-primary/40 hover:text-on-primary transition-all" data-path="quan-ly-don-hang" href="#"><span class="material-symbols-outlined text-[20px]">local_shipping</span><span class="font-label-lg text-sm flex-1">Quản lý đơn hàng</span></a><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg text-inverse-on-surface hover:bg-primary/40 hover:text-on-primary transition-all" data-path="bao-cao-va-cai-dat" href="#"><span class="material-symbols-outlined text-[20px]">tune</span><span class="font-label-lg text-sm flex-1">Báo cáo &amp; Cài đặt</span></a></nav></div><div class="p-space-md bg-primary/20"><div class="flex items-center gap-space-sm"><div class="w-9 h-9 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-sm shrink-0">PB</div><div class="flex flex-col min-w-0 flex-1"><span class="font-label-md text-on-primary truncate">Phạm Quốc Bảo</span><span class="font-body-sm text-primary-fixed-dim truncate">Quản Trị Viên</span></div><span class="material-symbols-outlined text-inverse-on-surface text-[18px]">expand_more</span></div></div></aside><div class="pl-[240px]"><header class="fixed top-0 left-[240px] right-0 h-16 bg-surface/90 backdrop-blur-md z-40 flex items-center justify-between px-space-lg shadow-[0_1px_8px_rgba(0,0,0,0.03)]"><div class="flex items-center gap-space-md flex-1 max-w-xl"><div class="relative w-full"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span><input class="w-full h-11 pl-10 pr-4 rounded-xl bg-surface-container-lowest font-body-md text-on-surface placeholder:text-outline text-sm outline-none focus:ring-2 focus:ring-primary/20" placeholder="Tìm kiếm mã đơn, sản phẩm, combo..." type="text"></div></div><div class="flex items-center gap-space-md"><button aria-label="Thông báo" class="relative w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-on-surface-variant text-[22px]">notifications</span><span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-error ring-2 ring-surface"></span></button><div class="h-6 w-px bg-outline-variant/60"></div><div class="flex items-center gap-space-sm pl-space-xs"><div class="flex flex-col text-right"><span class="font-label-md text-on-surface">Phạm Quốc Bảo</span><span class="font-body-sm text-on-surface-variant">Quản Trị Viên</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 bg-surface min-h-screen px-space-lg py-space-lg"><div class="flex flex-col w-full pb-16">
+<!-- BREADCRUMB & METADATA -->
+<div class="flex items-center justify-between pb-4">
+<nav aria-label="Breadcrumb" class="flex items-center gap-2 font-label-md text-on-surface-variant">
+<a class="hover:text-primary transition-colors flex items-center gap-1" href="#">
+<span class="material-symbols-outlined text-[16px]">home</span>
+<span class="">Trang chủ</span>
+</a>
+<span class="text-outline-variant font-normal">/</span>
+<span class="hover:text-primary cursor-pointer transition-colors">Quản trị hệ thống</span>
+<span class="text-outline-variant font-normal">/</span>
+<span class="font-title-md text-primary font-semibold">Quản lý Imperfect (QT03)</span>
+</nav>
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm uppercase tracking-wider">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+        Cập nhật trực tiếp kho Dalat Hub: 10:42 Hôm nay
+      </span>
+</div>
+</div>
+<!-- HEADER SECTION -->
+<header class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm mb-space-lg relative overflow-hidden">
+<div class="absolute -right-16 -top-16 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-lg relative z-10">
+<div class="max-w-3xl">
+<div class="flex flex-wrap items-center gap-space-sm mb-space-xs">
+<h1 class="font-headline-lg text-on-surface text-[26px] leading-[34px] font-bold">
+            Quản Lý Combo Giải Cứu (Nông Sản Imperfect)
+          </h1>
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary text-on-primary font-label-sm tracking-wide shadow-sm">
+<span class="material-symbols-outlined text-[14px]">eco</span>
+            GIẢI CỨU NÔNG SẢN &amp; CHỐNG LÃNG PHÍ
+          </span>
+</div>
+<p class="font-body-md text-on-surface-variant max-w-2xl leading-relaxed">
+          Phối trộn linh hoạt từ 10 nguyên liệu củ quả ngoại hình không chuẩn (cong queo, lệch size) từ nông trại để cắt giảm lãng phí thực phẩm và mang đến giá tốt cho khách hàng.
+        </p>
+</div>
+<div class="flex items-center gap-space-sm shrink-0">
+<button class="h-[44px] px-space-md rounded-xl bg-surface-container-lowest text-on-surface font-title-md text-sm flex items-center gap-2 shadow-sm hover:bg-surface-container transition-all" onclick="alert('Đang làm mới đồng bộ 10 mã củ quả từ trạm sơ chế...')" type="button">
+<span class="material-symbols-outlined text-[18px] text-primary">sync</span>
+<span class="">Cập nhật tồn kho nguyên liệu</span>
+</button>
+<button class="h-[44px] px-space-lg rounded-xl bg-primary text-on-primary font-title-md text-sm flex items-center gap-2 shadow-md hover:bg-primary-container transition-all" type="button">
+<span class="material-symbols-outlined text-[20px]">add</span>
+<span class="">+ Tạo Combo Mới</span>
+</button>
+</div>
+</div>
+</header>
+<!-- OVERVIEW KPI SUMMARY CARDS -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md mb-space-lg">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-md text-on-surface-variant">Tổng Combo Mở Bán</span>
+<div class="w-9 h-9 rounded-xl bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">inventory_2</span>
+</div>
+</div>
+<div>
+<div class="flex items-baseline gap-2">
+<span data-imperfect-summary-open class="font-headline-lg text-primary text-3xl font-bold">0</span>
+<span class="font-title-md text-on-surface">combo</span>
+</div>
+<p class="font-body-sm text-secondary flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+          100% đã kiểm định chất lượng ruột
+        </p>
+</div>
+<div class="h-1 w-full bg-primary/20 rounded-full mt-3 overflow-hidden">
+<div class="h-full bg-primary rounded-full w-4/4"></div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-md text-on-surface-variant">Khối Lượng Giải Cứu Tuần Này</span>
+<div class="w-9 h-9 rounded-xl bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined text-[20px]">scale</span>
+</div>
+</div>
+<div>
+<div class="flex items-baseline gap-2">
+<span data-imperfect-summary-kg class="font-headline-lg text-on-surface text-3xl font-bold">0</span>
+<span class="font-title-md text-on-surface font-semibold">kg</span>
+<span data-imperfect-summary-trend class="inline-flex items-center text-primary font-label-sm font-bold ml-auto px-1.5 py-0.5 rounded bg-primary-fixed-dim/30">
+<span class="material-symbols-outlined text-[12px] leading-none">trending_up</span>
+            +18%
+          </span>
+</div>
+<p data-imperfect-summary-kg-note class="font-body-sm text-on-surface-variant mt-1">Khối lượng từ các đơn combo trong tuần</p>
+</div>
+<div class="h-1 w-full bg-surface-container rounded-full mt-3 overflow-hidden">
+<div class="h-full bg-primary rounded-full w-[84%]"></div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-md text-on-surface-variant">Tiết Kiệm Bình Quân Cho Khách</span>
+<div class="w-9 h-9 rounded-xl bg-tertiary-fixed flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[20px]">savings</span>
+</div>
+</div>
+<div>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-lg text-tertiary text-3xl font-bold">25%</span>
+<span class="font-title-md text-on-surface-variant">/ đơn vị</span>
+</div>
+<p class="font-body-sm text-tertiary font-medium mt-1">
+          Tiết kiệm từ 16.000đ – 24.000đ/combo
+        </p>
+</div>
+<div class="h-1 w-full bg-surface-container rounded-full mt-3 overflow-hidden">
+<div class="h-full bg-tertiary rounded-full w-1/4"></div>
+</div>
+</div>
+<!-- Card 4: Critical Alert -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-md text-error font-semibold">Cảnh Báo Tồn Nguyên Liệu</span>
+<div class="w-9 h-9 rounded-xl bg-error-container flex items-center justify-center text-on-error-container">
+<span class="material-symbols-outlined text-[20px]">warning</span>
+</div>
+</div>
+<div>
+<div class="flex items-baseline gap-2">
+<span data-imperfect-summary-warning-count class="font-headline-lg text-error text-3xl font-bold">0</span>
+<span class="font-title-md text-error">mã sắp cạn</span>
+</div>
+<p data-imperfect-summary-warning-note class="font-body-sm text-on-surface-variant mt-1 leading-snug">
+          Củ cải trắng Imperfect còn <strong class="text-error font-semibold">6kg</strong> (Combo Củ Quả Tiết Kiệm sắp hết)
+        </p>
+</div>
+<div class="h-1 w-full bg-error-container rounded-full mt-3 overflow-hidden">
+<div class="h-full bg-error rounded-full w-[15%]"></div>
+</div>
+</div>
+</section>
+<!-- MAIN WORKSPACE: 2-COLUMN LAYOUT WITH DRAWER INTEGRATED -->
+<div class="grid grid-cols-1 gap-space-lg items-start">
+<!-- LEFT TABLE SECTION (8 COLUMNS ON XL) -->
+<div class="col-span-full w-full bg-surface-container-lowest rounded-xl shadow-sm p-space-lg flex flex-col gap-space-md">
+<!-- Table Filter and Header Bar -->
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-space-sm pb-space-sm">
+<div>
+<h2 class="font-headline-sm text-on-surface font-bold flex items-center gap-2">
+<span class="">Danh Sách Combo Imperfect Tuần Này</span>
+<span data-imperfect-week-combo-count class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm font-semibold">0 Gói</span>
+</h2>
+<p class="font-body-sm text-on-surface-variant mt-0.5">Phân bổ theo định lượng và danh mục củ quả thu gom tuần 42</p>
+</div>
+<div class="flex items-center gap-2">
+<div class="flex items-center bg-surface-container rounded-lg p-1 text-on-surface-variant text-xs font-label-md">
+<button data-imperfect-week-combo-filter="all" class="px-2.5 py-1 rounded bg-surface-container-lowest font-semibold text-primary shadow-xs">Tất cả (0)</button>
+<button class="px-2.5 py-1 rounded hover:text-on-surface">Củ quả (2)</button>
+<button class="px-2.5 py-1 rounded hover:text-on-surface">Rau lá (2)</button>
+</div>
+<button data-imperfect-week-combo-picker class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors" title="Chọn combo cho tuần này" aria-label="Chọn combo cho tuần này" type="button">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+</button>
+</div>
+</div>
+<!-- SEED TABLE -->
+<div class="overflow-x-auto">
+<table class="w-full text-left align-middle border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant font-label-md text-xs uppercase tracking-wider">
+<th class="py-3 px-3 rounded-l-lg">Tên Combo &amp; Thành Phần</th>
+<th class="py-3 px-2 text-center">Trọng Lượng</th>
+<th class="py-3 px-3">Giá Imperfect</th>
+<th class="py-3 px-2 text-center">Tiết Kiệm</th>
+<th class="py-3 px-2 text-center">Khả Dụng</th>
+<th class="py-3 px-2 text-center">Trạng Thái</th>
+<th class="py-3 px-3 text-right rounded-r-lg">Thao Tác</th>
+</tr>
+</thead>
+<tbody data-imperfect-week-combos class="divide-y divide-surface-container">
+<!-- ROW 1 (ACTIVE IN DRAWER) -->
+<tr class="bg-primary/5 transition-colors">
+<td class="py-3.5 px-3">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-lg bg-surface-container overflow-hidden shrink-0 shadow-xs relative">
+<img class="w-full h-full object-cover" data-alt="A top-down studio shot of rustic imperfect carrots, organic knobby potatoes, and curved daikon radishes fresh with soil specks on natural linen background in warm ambient light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzhLCzQmOKfMLqSI3RWsOVRMhix2y_yNRjlDCACGxnbqDh_9U1euYS2K-mudWaLGmNXhe_I9ozG_Sr3SzvbAhRsI16IWdlMeYS7mv6wFFd7EEoPInbX0fB711kxe2XQ1q1ill8wKod6-k8eF8_VBMwRWuGjaOq1gFHl6VK5TKVbw4aNyTaPrgpCIOk8TBOeQmMOSvgHUutzuVTXJ8PhDdKZ_juuqFbgv3Y3NiYI2DiNGkaRc50L-le7A">
+<span class="absolute bottom-0 right-0 bg-tertiary-container text-on-tertiary font-label-sm text-[9px] px-1 rounded-tl">3kg</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-on-surface font-bold truncate">Combo Củ Quả Tiết Kiệm</span>
+<div class="flex items-center gap-1 mt-1 flex-wrap">
+<span class="font-label-sm text-[10px] px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant">Cà rốt</span>
+<span class="font-label-sm text-[10px] px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant">Khoai tây</span>
+<span class="font-label-sm text-[10px] px-1.5 py-0.5 rounded bg-error-container text-on-error-container font-semibold">Củ cải trắng (6kg)</span>
+</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-2 text-center font-title-md text-on-surface font-semibold text-sm">3.0 kg</td>
+<td class="py-3.5 px-3"><div class="flex flex-col"><span class="font-price-md text-primary font-bold text-base leading-tight">145.000đ</span><span class="font-body-sm line-through text-outline text-xs">185.000đ</span></div></td>
+<td class="py-3.5 px-2 text-center"><span class="inline-flex items-center px-2 py-0.5 rounded-full bg-tertiary-fixed text-tertiary font-label-sm font-bold">-22%</span><span class="block font-label-sm text-[10px] text-tertiary mt-0.5">-40k</span></td>
+<td class="py-3.5 px-2 text-center">
+<span class="font-headline-sm text-error font-bold text-sm">2</span>
+<span class="block font-label-sm text-[10px] text-on-surface-variant">combo</span>
+</td>
+<td class="py-3.5 px-2 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#FFF3E0] text-[#E65100] font-label-sm font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-[#E65100]"></span>
+                  Sắp hết
+                </span>
+</td>
+<td class="py-3.5 px-3 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-3 py-1.5 rounded-lg bg-primary text-on-primary font-label-md text-xs font-semibold shadow-xs flex items-center gap-1 hover:bg-primary-container transition-all">
+<span class="material-symbols-outlined text-[14px]">edit</span>
+<span class="">Đang cấu hình</span>
+</button>
+<button class="w-7 h-7 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" title="Xem trước khách hàng">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ROW 2 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3.5 px-3">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-lg bg-surface-container overflow-hidden shrink-0 shadow-xs relative">
+<img class="w-full h-full object-cover" data-alt="Assortment of fresh soup vegetables including sweet corn with slight tip blemishes, tender chayote squash, and slightly curved carrots in bright daylight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcV9fgwfwnGzLEhzS21SzmUKugnbA1rMQj_D4zTsTt4F0uU5UBpKRh91TVjayH9kLDBxZWML6oKDJ3qmjRL51DF-cfNID0algHoPq2vF799JqBBpdqFuyi973S3jkruBQhzs89L8J5HHOlnZkyhs3gsObKgghdlnhBMva-DYlFCClWor4QQxsdcAhevIZrk1s21jeYkoFUOV70ST1SwYmLy_Ds3QRbqryyA-Ahwz3S5lNJakVqKY1SMg">
+<span class="absolute bottom-0 right-0 bg-primary-container text-on-primary font-label-sm text-[9px] px-1 rounded-tl">2.5kg</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-on-surface font-bold truncate">Combo Canh Ngọt Gia Đình</span>
+<div class="flex items-center gap-1 mt-1 flex-wrap">
+<span class="font-label-sm text-[10px] px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant">Bắp ngọt</span>
+<span class="font-label-sm text-[10px] px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant">Su su</span>
+<span class="font-label-sm text-[10px] px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant">Bí đỏ hạt đậu</span>
+</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-2 text-center font-title-md text-on-surface font-semibold text-sm">2.5 kg</td>
+<td class="py-3.5 px-3">
+<div class="flex flex-col">
+<span class="font-price-md text-primary font-bold text-base leading-tight">59.000đ</span>
+<span class="font-body-sm line-through text-outline text-xs">75.000đ</span>
+</div>
+</td>
+<td class="py-3.5 px-2 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm font-bold">
+                  -21%
+                </span>
+<span class="block font-label-sm text-[10px] text-secondary mt-0.5">-16k</span>
+</td>
+<td class="py-3.5 px-2 text-center">
+<span class="font-headline-sm text-on-surface font-bold text-sm">15</span>
+<span class="block font-label-sm text-[10px] text-on-surface-variant">combo</span>
+</td>
+<td class="py-3.5 px-2 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#E8F5E9] text-[#2E7D32] font-label-sm font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-[#2E7D32]"></span>
+                  Đang bán
+                </span>
+</td>
+<td class="py-3.5 px-3 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-high text-on-surface font-label-md text-xs font-semibold hover:bg-primary hover:text-on-primary transition-all">
+                    Sửa
+                  </button>
+<button class="w-7 h-7 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ROW 3 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3.5 px-3">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-lg bg-surface-container overflow-hidden shrink-0 shadow-xs relative">
+<img class="w-full h-full object-cover" data-alt="Vibrant citrus fruits and juicing apples, slightly sun-spotted oranges and small sweet guavas arranged together on clean studio background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5zYL3gt3z0f7nKyhYUfe_U7zbNFsrpPpCIb8YtvB2Dwb6RlAMi2fLY1bV-U7ybWeKN00OcJF-Ubxj5rrPlo8yhS_cT993TmgH6rrwBFc0RTuXfi6Xlu8kQCQYoZZnao6nRRKro840HSgQtZ1hAzJgGGzA5NIaz0dC5aXVt-rsp4gb-cbRfqOtBM2ej-6x7FRJoA13UgzzKR0WImNeGdr3UQi5Eac7jxHK3vuY_3ejSqesS83Yh4ZTQg">
+<span class="absolute bottom-0 right-0 bg-primary-container text-on-primary font-label-sm text-[9px] px-1 rounded-tl">2.5kg</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-on-surface font-bold truncate">Combo Nước Ép &amp; Trái Cây</span>
+<div class="flex items-center gap-1 mt-1 flex-wrap">
+<span class="font-label-sm text-[10px] px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant">Cam sành sần</span>
+<span class="font-label-sm text-[10px] px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant">Ổi ruột hồng</span>
+<span class="font-label-sm text-[10px] px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant">Táo xanh mini</span>
+</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-2 text-center font-title-md text-on-surface font-semibold text-sm">2.5 kg</td>
+<td class="py-3.5 px-3">
+<div class="flex flex-col">
+<span class="font-price-md text-primary font-bold text-base leading-tight">49.000đ</span>
+<span class="font-body-sm line-through text-outline text-xs">67.000đ</span>
+</div>
+</td>
+<td class="py-3.5 px-2 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-tertiary-fixed text-tertiary font-label-sm font-bold">
+                  -27%
+                </span>
+<span class="block font-label-sm text-[10px] text-tertiary mt-0.5">-18k</span>
+</td>
+<td class="py-3.5 px-2 text-center">
+<span class="font-headline-sm text-on-surface font-bold text-sm">20</span>
+<span class="block font-label-sm text-[10px] text-on-surface-variant">combo</span>
+</td>
+<td class="py-3.5 px-2 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#E8F5E9] text-[#2E7D32] font-label-sm font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-[#2E7D32]"></span>
+                  Đang bán
+                </span>
+</td>
+<td class="py-3.5 px-3 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-high text-on-surface font-label-md text-xs font-semibold hover:bg-primary hover:text-on-primary transition-all">
+                    Sửa
+                  </button>
+<button class="w-7 h-7 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ROW 4 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3.5 px-3">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-lg bg-surface-container overflow-hidden shrink-0 shadow-xs relative">
+<img class="w-full h-full object-cover" data-alt="Fresh salad vegetables with small cucumbers, curved green zucchini and heirloom odd shaped tomatoes on clean cutting board" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIAzMUvNigppovcJeSXc12VZ9FTIpLIwIV5i_XExA_QlwIYKZeqmZ09TfWAv7ikzo1PSWDD7-mjiNF0P1qM59ukEMSCOVQ4o0CVexZiBf7_8Hz15dqX_LfC-XNlCjZqJYrONbAn7rCrHkkDxypN3TrYU3Wi8G9YHmoudwZ62SMIOBjZNV05reknhJImdA6ui2UXW0LwOWCYFOAVql7C_YUoJNGDhsni7tF4hykC-bmQ4xadtdamP_xsQ">
+<span class="absolute bottom-0 right-0 bg-primary-container text-on-primary font-label-sm text-[9px] px-1 rounded-tl">2.0kg</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-on-surface font-bold truncate">Combo Salad &amp; Giải Nhiệt</span>
+<div class="flex items-center gap-1 mt-1 flex-wrap">
+<span class="font-label-sm text-[10px] px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant">Dưa leo đèo</span>
+<span class="font-label-sm text-[10px] px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant">Cà chua bi lệch size</span>
+<span class="font-label-sm text-[10px] px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant">Xà lách thủy canh</span>
+</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-2 text-center font-title-md text-on-surface font-semibold text-sm">2.0 kg</td>
+<td class="py-3.5 px-3">
+<div class="flex flex-col">
+<span class="font-price-md text-primary font-bold text-base leading-tight">49.000đ</span>
+<span class="font-body-sm line-through text-outline text-xs">66.000đ</span>
+</div>
+</td>
+<td class="py-3.5 px-2 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm font-bold">
+                  -26%
+                </span>
+<span class="block font-label-sm text-[10px] text-secondary mt-0.5">-17k</span>
+</td>
+<td class="py-3.5 px-2 text-center">
+<span class="font-headline-sm text-on-surface font-bold text-sm">18</span>
+<span class="block font-label-sm text-[10px] text-on-surface-variant">combo</span>
+</td>
+<td class="py-3.5 px-2 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#E8F5E9] text-[#2E7D32] font-label-sm font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-[#2E7D32]"></span>
+                  Đang bán
+                </span>
+</td>
+<td class="py-3.5 px-3 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-high text-on-surface font-label-md text-xs font-semibold hover:bg-primary hover:text-on-primary transition-all">
+                    Sửa
+                  </button>
+<button class="w-7 h-7 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- INVENTORY MINI POOL (10 RAW MATERIALS) -->
+<div class="mt-space-md p-space-md bg-surface-container-low rounded-xl">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">warehouse</span>
+<span class="font-title-md text-sm font-bold text-on-surface">Kho Nguyên Liệu Imperfect Chờ Phối Trộn (<span data-imperfect-ingredient-count>0</span> Loại Củ Quả)</span>
+</div>
+<div class="flex items-center gap-3"><span class="font-label-sm text-primary font-semibold">Tự động trừ kho theo tỷ lệ công thức</span><button type="button" data-imperfect-ingredient-picker class="inline-flex items-center gap-1 rounded-lg bg-primary px-3 py-2 text-xs font-bold text-on-primary hover:bg-primary-container"><span class="material-symbols-outlined text-base">filter_list</span>Chọn nguyên liệu</button></div>
+</div>
+<div data-imperfect-ingredient-pool class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs">
+<div class="bg-surface-container-lowest p-2 rounded-lg flex flex-col justify-between">
+<span class="font-label-md text-on-surface truncate">Cà rốt Đà Lạt</span>
+<span class="font-price-md text-primary font-bold mt-1">45.0 kg</span>
+</div>
+<div class="bg-surface-container-lowest p-2 rounded-lg flex flex-col justify-between">
+<span class="font-label-md text-on-surface truncate">Khoai tây vàng</span>
+<span class="font-price-md text-primary font-bold mt-1">30.0 kg</span>
+</div>
+<div class="bg-surface-container-lowest p-2 rounded-lg flex flex-col justify-between bg-error-container/30">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-error font-bold truncate">Củ cải trắng</span>
+<span class="w-2 h-2 rounded-full bg-error animate-ping"></span>
+</div>
+<span class="font-price-md text-error font-bold mt-1">6.0 kg</span>
+</div>
+<div class="bg-surface-container-lowest p-2 rounded-lg flex flex-col justify-between">
+<span class="font-label-md text-on-surface truncate">Bí đỏ Nhật</span>
+<span class="font-price-md text-primary font-bold mt-1">52.5 kg</span>
+</div>
+<div class="bg-surface-container-lowest p-2 rounded-lg flex flex-col justify-between">
+<span class="font-label-md text-on-surface truncate">Su su Gia Lai</span>
+<span class="font-price-md text-primary font-bold mt-1">38.0 kg</span>
+</div>
+<div class="bg-surface-container-lowest p-2 rounded-lg flex flex-col justify-between">
+<span class="font-label-md text-on-surface truncate">Bắp ngọt Lạc Dương</span>
+<span class="font-price-md text-primary font-bold mt-1">62.0 kg</span>
+</div>
+<div class="bg-surface-container-lowest p-2 rounded-lg flex flex-col justify-between">
+<span class="font-label-md text-on-surface truncate">Cam sành bóc vỏ</span>
+<span class="font-price-md text-primary font-bold mt-1">74.0 kg</span>
+</div>
+<div class="bg-surface-container-lowest p-2 rounded-lg flex flex-col justify-between">
+<span class="font-label-md text-on-surface truncate">Dưa leo vườn đèo</span>
+<span class="font-price-md text-primary font-bold mt-1">29.0 kg</span>
+</div>
+<div class="bg-surface-container-lowest p-2 rounded-lg flex flex-col justify-between">
+<span class="font-label-md text-on-surface truncate">Ổi găng mini</span>
+<span class="font-price-md text-primary font-bold mt-1">41.5 kg</span>
+</div>
+<div class="bg-surface-container-lowest p-2 rounded-lg flex flex-col justify-between">
+<span class="font-label-md text-on-surface truncate">Cà chua bi múi</span>
+<span class="font-price-md text-primary font-bold mt-1">33.0 kg</span>
+</div>
+</div>
+</div>
+</div>
+<!-- RIGHT CONFIGURATION DRAWER / PANEL (5 COLUMNS ON XL) -->
+<div class="hidden" aria-hidden="true">
+<!-- Drawer Header -->
+<div class="flex items-center justify-between pb-space-sm border-b border-surface-container">
+<div>
+<div class="flex items-center gap-2">
+<h3 class="font-headline-sm text-on-surface font-bold text-lg">Cấu hình Combo Củ Quả Tiết Kiệm</h3>
+<span class="px-2 py-0.5 rounded-full bg-primary text-on-primary font-label-sm font-bold">Đang chỉnh sửa</span>
+</div>
+<p class="font-body-sm text-on-surface-variant">Mã combo: <strong class="text-on-surface">CB-IMP-01</strong> • Loại: Củ quả tươi Đà Lạt</p>
+</div>
+<button class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors" title="Đóng bảng cấu hình">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<!-- Section 1: Basic Information -->
+<div class="flex flex-col gap-3">
+<span class="font-title-md text-xs uppercase tracking-wider text-primary font-bold">1. Thông tin cơ bản &amp; Giá bán</span>
+<div>
+<label class="block font-label-md text-on-surface mb-1">Tên Combo Hiển Thị Trên Website</label>
+<input class="w-full h-11 px-3.5 rounded-xl bg-surface text-on-surface font-body-md text-sm outline-none focus:ring-2 focus:ring-primary/20" type="text" value="Combo Củ Quả Tiết Kiệm (3kg)">
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div>
+<label class="block font-label-md text-on-surface mb-1">Định Lượng Mục Tiêu</label>
+<div class="relative">
+<input class="w-full h-11 px-3.5 pr-10 rounded-xl bg-surface text-on-surface font-body-md font-semibold text-sm outline-none focus:ring-2 focus:ring-primary/20" type="text" value="3.0">
+<span class="absolute right-3.5 top-1/2 -translate-y-1/2 font-title-md text-xs text-on-surface-variant">kg</span>
+</div>
+</div>
+<div>
+<label class="block font-label-md text-on-surface mb-1">Giá Bán Niêm Yết</label>
+<div class="relative">
+<input class="w-full h-11 px-3.5 pr-10 rounded-xl bg-surface text-primary font-price-md text-base outline-none focus:ring-2 focus:ring-primary/20" type="text" value="145.000">
+<span class="absolute right-3.5 top-1/2 -translate-y-1/2 font-title-md text-xs text-on-surface-variant">đ</span>
+</div>
+</div>
+</div>
+<!-- Automatic Benchmark Card -->
+<div class="p-3 rounded-xl bg-surface-container flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-on-surface-variant">Giá gốc standard (tính tự động):</span>
+<span class="font-title-md text-on-surface line-through font-semibold">185.000 VNĐ</span>
+</div>
+<div class="text-right">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-tertiary-fixed text-tertiary font-label-sm font-bold">Tiết kiệm 22% (-40.000đ)</span>
+</div>
+</div>
+</div>
+<!-- Section 2: Ingredients Selector (From 10 Imperfect Stock Pool) -->
+<div class="flex flex-col gap-3 pt-2">
+<div class="flex items-center justify-between">
+<span class="font-title-md text-xs uppercase tracking-wider text-primary font-bold">2. Thành phần củ quả tuyển chọn</span>
+<span class="font-label-sm text-secondary font-medium">Chọn từ 10 mã tồn kho</span>
+</div>
+<!-- Ingredients List -->
+<div class="space-y-2.5">
+<!-- Item 1 -->
+<div class="p-2.5 rounded-xl bg-surface flex items-center justify-between gap-3 shadow-xs">
+<div class="flex items-center gap-2.5 min-w-0">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[18px]">agriculture</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-sm text-on-surface font-semibold truncate">Cà rốt Đà Lạt (Imperfect)</span>
+<span class="font-body-sm text-[11px] text-on-surface-variant">Tồn kho thô: <strong class="text-primary font-semibold">45.0 kg</strong></span>
+</div>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<div class="flex items-center bg-surface-container rounded-lg p-1 h-8">
+<button class="w-6 h-6 rounded flex items-center justify-center text-on-surface hover:bg-surface-container-high">-</button>
+<span class="w-8 text-center font-title-md text-xs font-bold text-on-surface">1.0</span>
+<button class="w-6 h-6 rounded flex items-center justify-center text-on-surface hover:bg-surface-container-high">+</button>
+</div>
+<span class="font-label-md text-xs text-on-surface-variant">kg</span>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="p-2.5 rounded-xl bg-surface flex items-center justify-between gap-3 shadow-xs">
+<div class="flex items-center gap-2.5 min-w-0">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[18px]">nutrition</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-sm text-on-surface font-semibold truncate">Khoai tây Đà Lạt (Imperfect)</span>
+<span class="font-body-sm text-[11px] text-on-surface-variant">Tồn kho thô: <strong class="text-primary font-semibold">30.0 kg</strong></span>
+</div>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<div class="flex items-center bg-surface-container rounded-lg p-1 h-8">
+<button class="w-6 h-6 rounded flex items-center justify-center text-on-surface hover:bg-surface-container-high">-</button>
+<span class="w-8 text-center font-title-md text-xs font-bold text-on-surface">1.0</span>
+<button class="w-6 h-6 rounded flex items-center justify-center text-on-surface hover:bg-surface-container-high">+</button>
+</div>
+<span class="font-label-md text-xs text-on-surface-variant">kg</span>
+</div>
+</div>
+<!-- Item 3: Warning Item -->
+<div class="p-2.5 rounded-xl bg-error-container/20 flex items-center justify-between gap-3 shadow-xs">
+<div class="flex items-center gap-2.5 min-w-0">
+<div class="w-8 h-8 rounded-lg bg-error-container text-on-error-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">warning</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-sm text-on-surface font-semibold truncate">Củ cải trắng (Imperfect)</span>
+<span class="font-body-sm text-[11px] text-error font-medium">Tồn kho thô: <strong>6.0 kg</strong> (Cảnh báo sắp cạn!)</span>
+</div>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<div class="flex items-center bg-surface-container rounded-lg p-1 h-8">
+<button class="w-6 h-6 rounded flex items-center justify-center text-on-surface hover:bg-surface-container-high">-</button>
+<span class="w-8 text-center font-title-md text-xs font-bold text-on-surface">1.0</span>
+<button class="w-6 h-6 rounded flex items-center justify-center text-on-surface hover:bg-surface-container-high">+</button>
+</div>
+<span class="font-label-md text-xs text-on-surface-variant">kg</span>
+</div>
+</div>
+</div>
+<button class="w-full py-2 px-3 rounded-xl bg-surface-container-high hover:bg-surface-container-highest text-primary font-label-md text-xs font-bold flex items-center justify-center gap-1.5 transition-all" type="button">
+<span class="material-symbols-outlined text-[16px]">add_circle</span>
+<span class="">+ Thêm nguyên liệu củ quả từ kho imperfect</span>
+</button>
+<!-- Configuration Weight Progress Bar -->
+<div class="bg-surface-container-low p-3 rounded-xl">
+<div class="flex items-center justify-between mb-1.5 font-label-md text-xs">
+<span class="text-on-surface-variant">Tổng khối lượng cấu hình:</span>
+<span class="font-title-md text-primary font-bold">3.0 / 3.0 kg (100% khớp)</span>
+</div>
+<div class="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full w-full transition-all duration-300"></div>
+</div>
+</div>
+</div>
+<!-- Section 3: Transparency Message for Customers -->
+<div class="flex flex-col gap-2 pt-2">
+<div class="flex items-center justify-between">
+<span class="font-title-md text-xs uppercase tracking-wider text-primary font-bold">3. Thông điệp minh bạch &amp; Lý do Imperfect</span>
+<span class="font-label-sm text-on-surface-variant">Hiện trên Card sản phẩm</span>
+</div>
+<textarea class="w-full p-3 rounded-xl bg-surface text-on-surface font-body-sm text-sm outline-none focus:ring-2 focus:ring-primary/20 resize-none" rows="2">Củ quả lệch kích cỡ tự nhiên sau thu hoạch, chất lượng và độ ngọt nguyên vẹn.</textarea>
+</div>
+<!-- Section 4: Display & Auto-Off Option -->
+<div class="pt-2">
+<label class="flex items-start gap-2.5 cursor-pointer select-none p-2.5 rounded-xl hover:bg-surface transition-colors">
+<input checked="" class="mt-0.5 w-4 h-4 rounded text-primary accent-primary focus:ring-primary" type="checkbox">
+<div class="flex flex-col">
+<span class="font-title-md text-xs font-semibold text-on-surface">Tự động ngắt bán khi cạn nguyên liệu</span>
+<span class="font-body-sm text-[12px] text-on-surface-variant leading-snug">
+              Tự động ẩn combo trên website khi một trong các nguyên liệu đạt ngưỡng tồn ≤ 2kg để tránh đơn thiếu món.
+            </span>
+</div>
+</label>
+</div>
+<!-- Drawer Bottom Action Buttons -->
+<div class="flex flex-col gap-2 pt-2 border-t border-surface-container mt-auto">
+<button class="w-full h-[44px] rounded-xl bg-primary hover:bg-primary-container text-on-primary font-title-md text-sm font-bold flex items-center justify-center gap-2 shadow-md transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">save</span>
+<span class="">Lưu cấu hình combo</span>
+</button>
+<button class="w-full h-[40px] rounded-xl bg-surface text-on-surface hover:bg-surface-container font-title-md text-xs flex items-center justify-center transition-colors" type="button">
+          Hủy bỏ / Đóng cấu hình
+        </button>
+</div>
+</div>
+</div>
+</div></main></div>
+
+
+
+</body></html>

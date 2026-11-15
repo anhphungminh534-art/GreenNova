@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=Montserrat:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-tertiary-fixed": "#2f1400", "primary": "#005828", "primary-container": "#1b723b", "secondary-fixed": "#ccebc4", "on-error-container": "#93000a", "inverse-surface": "#28332b", "on-tertiary-container": "#ffdac1", "on-surface": "#131e16", "outline-variant": "#bfc9bd", "on-secondary-fixed": "#072108", "surface-variant": "#d9e6d9", "on-primary": "#ffffff", "surface-container-high": "#dfecdf", "primary-fixed-dim": "#85d996", "inverse-on-surface": "#e7f4e7", "background": "#f0fdf0", "on-tertiary-fixed-variant": "#6f3800", "on-surface-variant": "#3f4940", "on-background": "#131e16", "inverse-primary": "#85d996", "on-primary-fixed": "#00210b", "surface-container-highest": "#d9e6d9", "primary-fixed": "#a0f6b1", "on-secondary-container": "#4e6a4b", "secondary-container": "#c9e8c2", "on-secondary": "#ffffff", "surface-container": "#e4f1e5", "surface-bright": "#f0fdf0", "outline": "#6f7a6f", "secondary-fixed-dim": "#b0cfa9", "surface-tint": "#136d36", "tertiary": "#773c00", "error": "#ba1a1a", "surface-dim": "#d1ddd1", "on-error": "#ffffff", "surface": "#f0fdf0", "on-primary-fixed-variant": "#005225", "on-tertiary": "#ffffff", "error-container": "#ffdad6", "surface-container-low": "#eaf7ea", "on-secondary-fixed-variant": "#334d30", "tertiary-fixed": "#ffdcc4", "tertiary-container": "#9a5000", "surface-container-lowest": "#ffffff", "secondary": "#4a6547", "tertiary-fixed-dim": "#ffb780", "on-primary-container": "#9ff4af" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin-sm": "1rem", "space-md": "1rem", "space-xl": "2rem", "gutter-sm": "1rem", "space-lg": "1.5rem", "space-sm": "0.5rem", "gutter": "1.5rem", "space-xs": "0.25rem", "margin": "2rem" }, "fontFamily": { "headline-xl": [ "Montserrat" ], "headline-lg-mobile": [ "Montserrat" ], "label-md": [ "Be Vietnam Pro" ], "headline-xl-mobile": [ "Montserrat" ], "headline-sm": [ "Montserrat" ], "body-sm": [ "Be Vietnam Pro" ], "headline-lg": [ "Montserrat" ], "label-lg": [ "Be Vietnam Pro" ], "label-sm": [ "Be Vietnam Pro" ], "body-lg": [ "Be Vietnam Pro" ], "body-md": [ "Be Vietnam Pro" ], "headline-md": [ "Montserrat" ] }, "fontSize": { "headline-xl": [ "40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "headline-lg-mobile": [ "24px", { "lineHeight": "32px", "letterSpacing": "0em", "fontWeight": "600" } ], "label-md": [ "12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" } ], "headline-xl-mobile": [ "30px", { "lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "700" } ], "headline-sm": [ "18px", { "lineHeight": "24px", "fontWeight": "600" } ], "body-sm": [ "13px", { "lineHeight": "20px", "fontWeight": "400" } ], "headline-lg": [ "32px", { "lineHeight": "40px", "letterSpacing": "-0.015em", "fontWeight": "600" } ], "label-lg": [ "14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" } ], "label-sm": [ "11px", { "lineHeight": "14px", "letterSpacing": "0.02em", "fontWeight": "500" } ], "body-lg": [ "18px", { "lineHeight": "28px", "fontWeight": "400" } ], "body-md": [ "15px", { "lineHeight": "24px", "fontWeight": "400" } ], "headline-md": [ "22px", { "lineHeight": "28px", "fontWeight": "600" } ] } } } };</script></head><body class="bg-[#F8F9F3] font-body-md text-on-surface antialiased"><header class="fixed top-0 left-0 right-0 z-50 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-20 max-w-[1200px] mx-auto px-gutter flex items-center justify-between gap-space-lg"><div class="flex items-center gap-space-xl"><a class="flex items-center gap-space-xs" data-path="trang-chu" href="#"><span class="material-symbols-outlined text-primary text-[32px]">eco</span><span class="font-headline-sm text-headline-sm tracking-tight text-primary font-bold">GreenNova</span></a><nav class="hidden lg:flex items-center gap-space-lg" data-active-classes="text-primary-container font-semibold relative after:content-[''] after:absolute after:-bottom-2 after:left-0 after:w-full after:h-[2px] after:bg-primary-container"><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors py-1" data-path="trang-chu" href="#">Trang chủ</a><a aria-current="page" class="transition-colors py-1 text-primary-container font-semibold relative after:content-[''] after:absolute after:-bottom-2 after:left-0 after:w-full after:h-[2px] after:bg-primary-container" data-path="nong-san" href="#">Nông sản</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors flex items-center gap-1.5 py-1" data-path="imperfect" href="#"><span>Imperfect</span><span class="bg-[#FFF5EB] text-[#C8701E] border border-[rgba(200,112,30,0.25)] rounded-full px-2 py-0.5 font-label-sm text-label-sm uppercase tracking-wide">Tiết kiệm</span></a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors py-1" data-path="farm-box" href="#">Farm Box</a></nav></div><div class="flex items-center gap-space-md"><button aria-label="Tìm kiếm" class="w-11 h-11 flex items-center justify-center rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-[24px]">search</span></button><div class="relative flex items-center"><a aria-label="Giỏ hàng" class="w-11 h-11 flex items-center justify-center rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="gio-hang" href="#"><span class="material-symbols-outlined text-[24px]">shopping_bag</span><span class="absolute top-1.5 right-1.5 min-w-[18px] h-[18px] bg-primary-container text-on-primary font-label-sm text-[11px] font-bold rounded-full flex items-center justify-center px-1 leading-none">3</span></a></div><div class="h-6 w-px bg-outline-variant/40 hidden sm:block"></div><a class="hidden sm:inline-flex items-center justify-center h-11 px-space-md rounded-xl font-label-lg text-label-lg font-semibold text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="dang-nhap" href="#">Đăng nhập</a><a class="inline-flex items-center justify-center h-11 px-space-lg rounded-xl font-label-lg text-label-lg font-semibold bg-primary-container text-on-primary hover:bg-[#14572D] transition-colors shadow-sm" data-path="dang-ky" href="#">Đăng ký</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-20 bg-[#F8F9F3]"><div class="max-w-[1200px] mx-auto px-gutter"><div class="flex flex-col w-full pb-space-xl">
+<!-- BREADCRUMB & PAGE HEADER -->
+<section class="flex flex-col gap-space-xs pt-space-lg pb-space-md">
+<!-- Breadcrumb -->
+<nav aria-label="Đường dẫn phân cấp" class="flex items-center gap-space-xs font-body-sm text-body-sm text-on-surface-variant">
+<a class="hover:text-primary transition-colors" href="#">Trang chủ</a>
+<span class="text-outline-variant">/</span>
+<span class="font-semibold text-on-surface">Nông sản</span>
+</nav>
+<!-- Page Title & Subtitle -->
+<div class="flex flex-col md:flex-row md:items-baseline md:justify-between gap-space-xs">
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Nông sản</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+        Nông sản tiêu chuẩn từ các nông trại địa phương, có nguồn gốc và ngày thu hoạch rõ ràng.
+      </p>
+</div>
+</section>
+<!-- SEARCH BAR -->
+<section class="mt-space-sm mb-space-md">
+<div class="w-full bg-surface-container-lowest rounded-xl shadow-sm p-1.5 flex flex-col sm:flex-row items-center gap-space-xs">
+<div class="relative flex-1 flex items-center w-full px-space-sm">
+<span class="material-symbols-outlined text-on-surface-variant text-[22px] select-none pointer-events-none">search</span>
+<input class="w-full h-11 bg-transparent px-space-sm font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant focus:outline-none" id="product-search-input" placeholder="Tìm theo tên nông sản..." type="text"/>
+<button aria-label="Xóa văn bản tìm kiếm" class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" id="clear-search-btn" type="button">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<button class="w-full sm:w-auto h-11 px-space-xl bg-primary-container hover:bg-primary text-on-primary font-label-lg text-label-lg font-semibold rounded-xl transition-all shadow-sm flex items-center justify-center gap-space-xs flex-shrink-0" type="button">
+<span>Tìm kiếm</span>
+</button>
+</div>
+</section>
+<!-- FILTER & SORT CONTROLS -->
+<section class="flex flex-col gap-space-sm mb-space-lg">
+<div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-space-md">
+<!-- Filter Chips & Farm Dropdown -->
+<div class="flex flex-wrap items-center gap-space-xs sm:gap-space-sm">
+<!-- Active Chip 'Tất cả' -->
+<button class="h-9 px-space-md rounded-[10px] bg-primary-container text-on-primary font-label-md text-label-md font-semibold transition-colors shadow-sm" type="button">
+          Tất cả
+        </button>
+<!-- Inactive Filter Chips -->
+<button class="h-9 px-space-md rounded-[10px] bg-surface-container-lowest text-on-surface font-label-md text-label-md hover:bg-surface-container transition-colors shadow-sm" type="button">
+          Rau
+        </button>
+<button class="h-9 px-space-md rounded-[10px] bg-surface-container-lowest text-on-surface font-label-md text-label-md hover:bg-surface-container transition-colors shadow-sm" type="button">
+          Củ
+        </button>
+<button class="h-9 px-space-md rounded-[10px] bg-surface-container-lowest text-on-surface font-label-md text-label-md hover:bg-surface-container transition-colors shadow-sm" type="button">
+          Trái cây
+        </button>
+<!-- 'Theo mùa' with leaf icon -->
+<button class="h-9 px-space-md rounded-[10px] bg-surface-container-lowest text-on-surface font-label-md text-label-md hover:bg-surface-container transition-colors shadow-sm flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-primary-container text-[16px]">eco</span>
+<span>Theo mùa</span>
+</button>
+<!-- Farm Dropdown Simulated -->
+<div class="relative">
+<button class="h-9 px-space-md rounded-[10px] bg-surface-container-lowest text-on-surface font-label-md text-label-md hover:bg-surface-container transition-colors shadow-sm flex items-center gap-space-xs" id="farm-filter-btn" type="button">
+<span>Theo nông trại</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">keyboard_arrow_down</span>
+</button>
+<!-- Dropdown Menu -->
+<div class="hidden absolute top-full left-0 mt-1.5 w-64 bg-surface-container-lowest rounded-xl shadow-lg p-space-sm z-30 flex-col gap-space-xs" id="farm-filter-menu">
+<label class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg hover:bg-surface-container cursor-pointer select-none">
+<input checked="" class="w-4 h-4 rounded text-primary-container focus:ring-0 accent-primary-container" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface">Green Farm Đà Lạt</span>
+</label>
+<label class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg hover:bg-surface-container cursor-pointer select-none">
+<input checked="" class="w-4 h-4 rounded text-primary-container focus:ring-0 accent-primary-container" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface">Nông trại Mộc Châu</span>
+</label>
+<label class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg hover:bg-surface-container cursor-pointer select-none">
+<input checked="" class="w-4 h-4 rounded text-primary-container focus:ring-0 accent-primary-container" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface">Vườn Tiền Giang</span>
+</label>
+</div>
+</div>
+</div>
+<!-- Sort Dropdown -->
+<div class="relative w-full sm:w-auto">
+<div class="relative inline-flex items-center w-full sm:w-auto">
+<select aria-label="Sắp xếp danh sách" class="w-full sm:w-auto appearance-none h-9 pl-space-md pr-10 rounded-[10px] bg-surface-container-lowest text-on-surface font-label-md text-label-md font-medium shadow-sm focus:outline-none cursor-pointer hover:bg-surface-container transition-colors">
+<option selected="" value="default">Sắp xếp: Mặc định</option>
+<option value="price-asc">Giá thấp đến cao</option>
+<option value="price-desc">Giá cao đến thấp</option>
+<option value="newest">Mới thu hoạch</option>
+<option value="alpha">Tên A–Z</option>
+</select>
+<span class="material-symbols-outlined text-on-surface-variant text-[18px] absolute right-3 pointer-events-none select-none">unfold_more</span>
+</div>
+</div>
+</div>
+<!-- Active Count Counter -->
+<div class="flex items-center justify-between pt-1">
+<span class="font-label-lg text-label-lg text-on-surface-variant font-normal">
+        Hiển thị <span class="font-semibold text-on-surface">12</span> nông sản
+      </span>
+<span class="text-xs text-on-surface-variant bg-surface-container px-2.5 py-1 rounded-full font-label-sm">
+        Thu hoạch tươi trực tiếp
+      </span>
+</div>
+</section>
+<!-- PRODUCT GRID (12 ITEMS - 4 COLUMNS) -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter mb-space-xl">
+<!-- Card 1: Cà chua Đà Lạt -->
+<article class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col group transition-all duration-300 hover:shadow-md">
+<div class="relative w-full aspect-[4/3] bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Close-up professional product shot of fresh ripe red Da Lat tomatoes with fine dew drops and natural green calyx, resting on a bright rustic wooden tray in soft daylight with an airy agricultural ambiance." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyUTg0dDRzbfrtSplVJCuOwyeANJn7cGR85q2w-yoInaSxzyx1aleKrD6EKzZeflW-7iEg3qYkPdoVWpg6MNMTol3_tGjzRcSZn9DJUXSGcUTrfJjnX3tD_veNaFiq7pnuZitjfPgleQlRKcQ4KdcPikZVSUOrTTPCsVWDbM1Hd4vRmK4bGByACxnNkOOKLZZbEoElDHaFGJIJAArZEZnKQ68G87xlZS9pFbsm59_FXHsTMkY9DdsD9A"/>
+<div class="absolute top-2.5 left-2.5">
+<span class="bg-secondary-container/90 backdrop-blur-sm text-primary font-label-sm text-label-sm font-semibold px-2 py-1 rounded-[6px]">
+            Đang vào mùa
+          </span>
+</div>
+</div>
+<div class="p-space-md flex flex-col flex-1 justify-between gap-space-sm">
+<div class="flex flex-col gap-1">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold leading-tight">Cà chua Đà Lạt</h2>
+<div class="flex items-center gap-1 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[15px] text-primary-container">location_on</span>
+<span>Green Farm Đà Lạt</span>
+</div>
+<div class="mt-1 flex items-baseline gap-1">
+<span class="font-label-lg text-[18px] font-bold text-primary-container leading-none">32.000đ</span>
+<span class="text-on-surface-variant text-label-sm font-normal">/kg</span>
+</div>
+<p class="font-body-sm text-label-sm text-on-surface-variant mt-0.5">Thu hoạch: 21/10/2026</p>
+</div>
+<div class="flex items-center gap-2 pt-2">
+<div class="flex items-center bg-surface-container rounded-lg h-9 px-1">
+<button aria-label="Giảm số lượng" class="w-7 h-7 flex items-center justify-center rounded-md hover:bg-surface-container-lowest text-on-surface-variant transition-colors leading-none font-bold text-sm" type="button">−</button>
+<span class="w-7 text-center font-label-md text-label-md font-semibold text-on-surface">1</span>
+<button aria-label="Tăng số lượng" class="w-7 h-7 flex items-center justify-center rounded-md hover:bg-surface-container-lowest text-on-surface-variant transition-colors leading-none font-bold text-sm" type="button">+</button>
+</div>
+<button class="flex-1 h-9 bg-primary-container hover:bg-primary text-on-primary rounded-lg font-label-sm text-label-sm font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[17px]">shopping_bag</span>
+<span>Thêm vào giỏ</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Card 2: Cà rốt Đà Lạt -->
+<article class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col group transition-all duration-300 hover:shadow-md">
+<div class="relative w-full aspect-[4/3] bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Crisp freshly washed orange carrots bunched together with rich feathery green leaves, studio kitchen backdrop with soft morning sunlight highlighting the vibrant orange texture and clean soil-free skin." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHPIHxRtVfTMsc34NzEHksVHClVsv027Hz1EWI4fP1PF-YESAbR9dmtFjeNLgq2-4fJiVfxOVIjJ6hglQYZmiEcBaYEzsmiKyC65RmwBGf22uJVMDISLVJGUAY_mgedsk-EvIAQNDTv8DkH934NET_sKJi1S4aSHhtwF3CNIAErxDPdFCLoCRDvl9okLg6P92hoWWH5PvSQ-UgwJi_v0qqqBhKoux2x36KO-PXFxK-U_Tf6QmtZdJy5A"/>
+<div class="absolute top-2.5 left-2.5">
+<span class="bg-secondary-container/90 backdrop-blur-sm text-primary font-label-sm text-label-sm font-semibold px-2 py-1 rounded-[6px]">
+            Đang vào mùa
+          </span>
+</div>
+</div>
+<div class="p-space-md flex flex-col flex-1 justify-between gap-space-sm">
+<div class="flex flex-col gap-1">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold leading-tight">Cà rốt Đà Lạt</h2>
+<div class="flex items-center gap-1 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[15px] text-primary-container">location_on</span>
+<span>Green Farm Đà Lạt</span>
+</div>
+<div class="mt-1 flex items-baseline gap-1">
+<span class="font-label-lg text-[18px] font-bold text-primary-container leading-none">35.000đ</span>
+<span class="text-on-surface-variant text-label-sm font-normal">/kg</span>
+</div>
+<p class="font-body-sm text-label-sm text-on-surface-variant mt-0.5">Thu hoạch: 21/10/2026</p>
+</div>
+<div class="flex items-center gap-2 pt-2">
+<div class="flex items-center bg-surface-container rounded-lg h-9 px-1">
+<button aria-label="Giảm số lượng" class="w-7 h-7 flex items-center justify-center rounded-md hover:bg-surface-container-lowest text-on-surface-variant transition-colors leading-none font-bold text-sm" type="button">−</button>
+<span class="w-7 text-center font-label-md text-label-md font-semibold text-on-surface">1</span>
+<button aria-label="Tăng số lượng" class="w-7 h-7 flex items-center justify-center rounded-md hover:bg-surface-container-lowest text-on-surface-variant transition-colors leading-none font-bold text-sm" type="button">+</button>
+</div>
+<button class="flex-1 h-9 bg-primary-container hover:bg-primary text-on-primary rounded-lg font-label-sm text-label-sm font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[17px]">shopping_bag</span>
+<span>Thêm vào giỏ</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Card 3: Cải xanh -->
+<article class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col group transition-all duration-300 hover:shadow-md">
+<div class="relative w-full aspect-[4/3] bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Lush bunch of fresh green mustard greens or cai xanh with crispy textured emerald leaves, clear water droplet sprinkles, arranged neatly on a neutral botanical stone counter under clean gentle ambient light." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6lKmVi55xFmK_hpoLviesIK0K0nYE1s34c6Vn5ZFL8rTw9gZC8-0fV7wJkNwImeduEVAGv50rSxwBw7tNnDZGLX96TtossvPpudSnUJ0QLvzOkzS6gc7TmmJAluALPbIjdP8ssLgk-_Iq8VVs5dFtazJ_cmaHIwALFiWcImcuZU0hcRPb-fLWugn2Oo4esiB6zT3bwvxR0_y7wYkyxMkh0AMv7-wBYDVj55ulfz4ZcYQCjojR_-0qZw"/>
+<div class="absolute top-2.5 left-2.5">
+<span class="bg-secondary-container/90 backdrop-blur-sm text-primary font-label-sm text-label-sm font-semibold px-2 py-1 rounded-[6px]">
+            Đang vào mùa
+          </span>
+</div>
+</div>
+<div class="p-space-md flex flex-col flex-1 justify-between gap-space-sm">
+<div class="flex flex-col gap-1">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold leading-tight">Cải xanh</h2>
+<div class="flex items-center gap-1 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[15px] text-primary-container">location_on</span>
+<span>Green Farm Đà Lạt</span>
+</div>
+<div class="mt-1 flex items-baseline gap-1">
+<span class="font-label-lg text-[18px] font-bold text-primary-container leading-none">28.000đ</span>
+<span class="text-on-surface-variant text-label-sm font-normal">/kg</span>
+</div>
+<p class="font-body-sm text-label-sm text-on-surface-variant mt-0.5">Thu hoạch: 22/10/2026</p>
+</div>
+<div class="flex items-center gap-2 pt-2">
+<div class="flex items-center bg-surface-container rounded-lg h-9 px-1">
+<button aria-label="Giảm số lượng" class="w-7 h-7 flex items-center justify-center rounded-md hover:bg-surface-container-lowest text-on-surface-variant transition-colors leading-none font-bold text-sm" type="button">−</button>
+<span class="w-7 text-center font-label-md text-label-md font-semibold text-on-surface">1</span>
+<button aria-label="Tăng số lượng" class="w-7 h-7 flex items-center justify-center rounded-md hover:bg-surface-container-lowest text-on-surface-variant transition-colors leading-none font-bold text-sm" type="button">+</button>
+</div>
+<button class="flex-1 h-9 bg-primary-container hover:bg-primary text-on-primary rounded-lg font-label-sm text-label-sm font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[17px]">shopping_bag</span>
+<span>Thêm vào giỏ</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Card 4: Dưa leo -->
+<article class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col group transition-all duration-300 hover:shadow-md">
+<div class="relative w-full aspect-[4/3] bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Harvest basket with straight organic green cucumbers showing natural prickly skin and yellow morning flowers attached, set in an organic highland greenhouse with soft airy lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBM6XRX4UZqI3QJ3hlMsp1-Hvgx3gzi4vcPkKIx5qFzs8ut68qoQC7uUS-7CxoXU_FirbMAZaV2rnT6GM0N5qYjuNeAO-WV4J_KS54cUPLu8tQyhVTYnPLjfy1p2l_3sdTvVDDyitucBq9RE2LPsa6BbuALJUGbg9l0AZgBL_LExYNS5iEzJmTj0vKHBbA2p3IujvlKruOOUbNmeyvl7g15uOnqJyPKmi-PZUaH9LVSv6xYz6mrLZDofA"/>
+<div class="absolute top-2.5 left-2.5">
+<span class="bg-secondary-container/90 backdrop-blur-sm text-primary font-label-sm text-label-sm font-semibold px-2 py-1 rounded-[6px]">
+            Đang vào mùa
+          </span>
+</div>
+</div>
+<div class="p-space-md flex flex-col flex-1 justify-between gap-space-sm">
+<div class="flex flex-col gap-1">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold leading-tight">Dưa leo</h2>
+<div class="flex items-center gap-1 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[15px] text-primary-container">location_on</span>
+<span>Nông trại Mộc Châu</span>
+</div>
+<div class="mt-1 flex items-baseline gap-1">
+<span class="font-label-lg text-[18px] font-bold text-primary-container leading-none">25.000đ</span>
+<span class="text-on-surface-variant text-label-sm font-normal">/kg</span>
+</div>
+<p class="font-body-sm text-label-sm text-on-surface-variant mt-0.5">Thu hoạch: 22/10/2026</p>
+</div>
+<div class="flex items-center gap-2 pt-2">
+<div class="flex items-center bg-surface-container rounded-lg h-9 px-1">
+<button aria-label="Giảm số lượng" class="w-7 h-7 flex items-center justify-center rounded-md hover:bg-surface-container-lowest text-on-surface-variant transition-colors leading-none font-bold text-sm" type="button">−</button>
+<span class="w-7 text-center font-label-md text-label-md font-semibold text-on-surface">1</span>
+<button aria-label="Tăng số lượng" class="w-7 h-7 flex items-center justify-center rounded-md hover:bg-surface-container-lowest text-on-surface-variant transition-colors leading-none font-bold text-sm" type="button">+</button>
+</div>
+<button class="flex-1 h-9 bg-primary-container hover:bg-primary text-on-primary rounded-lg font-label-sm text-label-sm font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[17px]">shopping_bag</span>
+<span>Thêm vào giỏ</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Card 5: Bí đỏ -->
+<article class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col group transition-all duration-300 hover:shadow-md">
+<div class="relative w-full aspect-[4/3] bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Freshly harvested whole butternut squash pumpkin with matte earthy tan skin resting gracefully beside farm burlap sacks, soft natural daylight highlighting sculptural contours." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGhusJgPo9HHxzRY2pZf4DL9zQl6FL7NCPwJntYY3APHwqEdYv9FbxDLHKP_3NL6yAikLdamKp6Pjhjz73cdKMC4Kjzm9PN2-OANgcA74ctw1v6A_nb702PbAgm0tNO_RLJwHYclt2kq-qLQ44hOSGRhTfg9VSzA2nPeeGLbExzqL_h89u9ws5XMOXIlmTAaAUV12J3RhdNcpm0sgFn67gBsHVJ8CSotNkIGiV5IYV_9w3xhl3NUJiZQ"/>
+</div>
+<div class="p-space-md flex flex-col flex-1 justify-between gap-space-sm">
+<div class="flex flex-col gap-1">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold leading-tight">Bí đỏ</h2>
+<div class="flex items-center gap-1 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[15px] text-primary-container">location_on</span>
+<span>Nông trại Mộc Châu</span>
+</div>
+<div class="mt-1 flex items-baseline gap-1">
+<span class="font-label-lg text-[18px] font-bold text-primary-container leading-none">22.000đ</span>
+<span class="text-on-surface-variant text-label-sm font-normal">/kg</span>
+</div>
+<p class="font-body-sm text-label-sm text-on-surface-variant mt-0.5">Thu hoạch: 20/10/2026</p>
+</div>
+<div class="flex items-center gap-2 pt-2">
+<div class="flex items-center bg-surface-container rounded-lg h-9 px-1">
+<button aria-label="Giảm số lượng" class="w-7 h-7 flex items-center justify-center rounded-md hover:bg-surface-container-lowest text-on-surface-variant transition-colors leading-none font-bold text-sm" type="button">−</button>
+<span class="w-7 text-center font-label-md text-label-md font-semibold text-on-surface">1</span>
+<button aria-label="Tăng số lượng" class="w-7 h-7 flex items-center justify-center rounded-md hover:bg-surface-container-lowest text-on-surface-variant transition-colors leading-none font-bold text-sm" type="button">+</button>
+</div>
+<button class="flex-1 h-9 bg-primary-container hover:bg-primary text-on-primary rounded-lg font-label-sm text-label-sm font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[17px]">shopping_bag</span>
+<span>Thêm vào giỏ</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Card 6: Khoai tây Đà Lạt -->
+<article class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col group transition-all duration-300 hover:shadow-md">
+<div class="relative w-full aspect-[4/3] bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Round yellow Da Lat organic potatoes in a shallow woven bamboo basket, showing authentic thin yellow-gold skin in warm filtered morning garden light with minimal culinary styling." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLPHwfbu7xfevgS6S91iPM0WPLTHMWezpQrBoXrDXgcTlNJBFoAmkICNn3n-JLYbvGqfbPSJkKB8TuIOazlWR4RA5kh1jjbd5ZLFRE1MK46VZiseaxxsy964AS3wmC6ECsApSO58xn4m1NjpGHFPYkTNNg6PICDglSRzqslw8t36x6aWmGR0EjEX4Crsd9GxHfJOUzHwHo3gmZZGx1LeWiDCpDnLn_jPHeRVbaLKN5flt7BLYQUBIMUw"/>
+</div>
+<div class="p-space-md flex flex-col flex-1 justify-between gap-space-sm">
+<div class="flex flex-col gap-1">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold leading-tight">Khoai tây Đà Lạt</h2>
+<div class="flex items-center gap-1 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[15px] text-primary-container">location_on</span>
+<span>Green Farm Đà Lạt</span>
+</div>
+<div class="mt-1 flex items-baseline gap-1">
+<span class="font-label-lg text-[18px] font-bold text-primary-container leading-none">30.000đ</span>
+<span class="text-on-surface-variant text-label-sm font-normal">/kg</span>
+</div>
+<p class="font-body-sm text-label-sm text-on-surface-variant mt-0.5">Thu hoạch: 21/10/2026</p>
+</div>
+<div class="flex items-center gap-2 pt-2">
+<div class="flex items-center bg-surface-container rounded-lg h-9 px-1">
+<button aria-label="Giảm số lượng" class="w-7 h-7 flex items-center justify-center rounded-md hover:bg-surface-container-lowest text-on-surface-variant transition-colors leading-none font-bold text-sm" type="button">−</button>
+<span class="w-7 text-center font-label-md text-label-md font-semibold text-on-surface">1</span>
+<button aria-label="Tăng số lượng" class="w-7 h-7 flex items-center justify-center rounded-md hover:bg-surface-container-lowest text-on-surface-variant transition-colors leading-none font-bold text-sm" type="button">+</button>
+</div>
+<button class="flex-1 h-9 bg-primary-container hover:bg-primary text-on-primary rounded-lg font-label-sm text-label-sm font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[17px]">shopping_bag</span>
+<span>Thêm vào giỏ</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Card 7: XÀ LÁCH (OUT-OF-STOCK STATE) -->
+<article class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col opacity-90">
+<div class="relative w-full aspect-[4/3] bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover opacity-60 grayscale-[25%]" data-alt="Tender crisp head of butterhead green lettuce grown hydroponically, displayed in muted soft lighting with faint dew drops on outer leaves." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqPMAW_YVMFATvPC7kbDx8Qi3ANIlkzOrLB5w8xmQov7AWT6r3luVQMqi45L7b64hBL-RozzvzMuA_DAm_1aMXwCghJeyPLVjk_sVUnqQ8V8uaX73aAa0GKBd1rsQotwHcXwC4DdLcCrLZKl2uwOw_iOHfAx1g7HCFwToEL4-5h3ovAHJXPGgi9ffiPmto-vavkjNqNHGHwwoCPW1GUAkxXXg1_IXFcTI9YncrpHUR6RyuPTTeaQG4Kw"/>
+<!-- Out of stock badge -->
+<div class="absolute top-2.5 left-2.5">
+<span class="bg-surface-variant text-outline font-label-sm text-label-sm font-semibold px-2.5 py-1 rounded-[6px]">
+            Hết hàng
+          </span>
+</div>
+</div>
+<div class="p-space-md flex flex-col flex-1 justify-between gap-space-sm">
+<div class="flex flex-col gap-1">
+<h2 class="font-headline-sm text-headline-sm text-on-surface/70 font-bold leading-tight">Xà lách</h2>
+<div class="flex items-center gap-1 text-on-surface-variant/70 font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[15px] text-outline">location_on</span>
+<span>Green Farm Đà Lạt</span>
+</div>
+<div class="mt-1 flex items-baseline gap-1">
+<span class="font-label-lg text-[18px] font-bold text-outline leading-none">40.000đ</span>
+<span class="text-on-surface-variant/70 text-label-sm font-normal">/kg</span>
+</div>
+<p class="font-body-sm text-label-sm text-on-surface-variant/70 mt-0.5">Thu hoạch: 21/10/2026</p>
+</div>
+<div class="flex items-center gap-2 pt-2">
+<!-- Disabled stepper -->
+<div class="flex items-center bg-surface-container-high rounded-lg h-9 px-1 opacity-50 cursor-not-allowed">
+<button class="w-7 h-7 flex items-center justify-center text-outline cursor-not-allowed leading-none font-bold text-sm" disabled="" type="button">−</button>
+<span class="w-7 text-center font-label-md text-label-md font-semibold text-outline">0</span>
+<button class="w-7 h-7 flex items-center justify-center text-outline cursor-not-allowed leading-none font-bold text-sm" disabled="" type="button">+</button>
+</div>
+<!-- Disabled Button -->
+<button class="flex-1 h-9 bg-surface-variant text-outline rounded-lg font-label-sm text-label-sm font-semibold flex items-center justify-center gap-1.5 cursor-not-allowed" disabled="" type="button">
+<span class="material-symbols-outlined text-[17px]">remove_shopping_cart</span>
+<span>Hết hàng</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Card 8: Cam sành -->
+<article class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col group transition-all duration-300 hover:shadow-md">
+<div class="relative w-full aspect-[4/3] bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Mekong Delta green skin King Orange cam sanh showing rugged dark green textured rind with one sliced open revealing glistening seeded deep orange pulp on an earthen ceramic plate." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtw7S0P7jHNDTYbOVH_tQYb-t0GYIFgizbn_B04FACA4L_JKI81ZgIF3-1drUVlZZqev36Xcybc-78ez8n6y9ww-N0hffWQG_kmPxq-mOhU6X3cUZ7uESfog5PVkGLuJFxSZB_bcnVDwgqBksrP3CDPuT5yiTjDxnspC5Zq1vlhSD_o4A3s4Wvj8Cmwv7QEa8oAxxI53VNJ_WW3C-jEGIMKQqTKFtpnZjZ10It5HWscXlT7UrCDfRbUQ"/>
+<div class="absolute top-2.5 left-2.5">
+<span class="bg-secondary-container/90 backdrop-blur-sm text-primary font-label-sm text-label-sm font-semibold px-2 py-1 rounded-[6px]">
+            Đang vào mùa
+          </span>
+</div>
+</div>
+<div class="p-space-md flex flex-col flex-1 justify-between gap-space-sm">
+<div class="flex flex-col gap-1">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold leading-tight">Cam sành</h2>
+<div class="flex items-center gap-1 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[15px] text-primary-container">location_on</span>
+<span>Vườn Tiền Giang</span>
+</div>
+<div class="mt-1 flex items-baseline gap-1">
+<span class="font-label-lg text-[18px] font-bold text-primary-container leading-none">45.000đ</span>
+<span class="text-on-surface-variant text-label-sm font-normal">/kg</span>
+</div>
+<p class="font-body-sm text-label-sm text-on-surface-variant mt-0.5">Thu hoạch: 22/10/2026</p>
+</div>
+<div class="flex items-center gap-2 pt-2">
+<div class="flex items-center bg-surface-container rounded-lg h-9 px-1">
+<button aria-label="Giảm số lượng" class="w-7 h-7 flex items-center justify-center rounded-md hover:bg-surface-container-lowest text-on-surface-variant transition-colors leading-none font-bold text-sm" type="button">−</button>
+<span class="w-7 text-center font-label-md text-label-md font-semibold text-on-surface">1</span>
+<button aria-label="Tăng số lượng" class="w-7 h-7 flex items-center justify-center rounded-md hover:bg-surface-container-lowest text-on-surface-variant transition-colors leading-none font-bold text-sm" type="button">+</button>
+</div>
+<button class="flex-1 h-9 bg-primary-container hover:bg-primary text-on-primary rounded-lg font-label-sm text-label-sm font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[17px]">shopping_bag</span>
+<span>Thêm vào giỏ</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Card 9: Bông cải xanh -->
+<article class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col group transition-all duration-300 hover:shadow-md">
+<div class="relative w-full aspect-[4/3] bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Tight, lush deep emerald head of organic broccoli resting on a cool granite cutting board with faint natural mist, bright clean lighting bringing out the delicate floral buds." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNcACPx98EVSEvUjn391UCkfNjaP8Y1jdLE4M8K3yDgci5Y5OipOy4t8RvifiFuDTbqw2a5O6sKImcHXwrWEpap143zTzjT5sBvUKcpyiZPGBEuHghURfSfsGMfQ_OD4KU2udZBsoB-1XNPNHt8pSuQpOZ-zvoypLqGD4UMJUTj6IaQXPReqobbmyBPaVDa5VlbiCGpZk1kbkcaxf87HT0rMldoc5tce4hMK5D5dnlYqsDCnCymklN6w"/>
+<div class="absolute top-2.5 left-2.5">
+<span class="bg-secondary-container/90 backdrop-blur-sm text-primary font-label-sm text-label-sm font-semibold px-2 py-1 rounded-[6px]">
+            Đang vào mùa
+          </span>
+</div>
+</div>
+<div class="p-space-md flex flex-col flex-1 justify-between gap-space-sm">
+<div class="flex flex-col gap-1">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold leading-tight">Bông cải xanh</h2>
+<div class="flex items-center gap-1 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[15px] text-primary-container">location_on</span>
+<span>Green Farm Đà Lạt</span>
+</div>
+<div class="mt-1 flex items-baseline gap-1">
+<span class="font-label-lg text-[18px] font-bold text-primary-container leading-none">38.000đ</span>
+<span class="text-on-surface-variant text-label-sm font-normal">/kg</span>
+</div>
+<p class="font-body-sm text-label-sm text-on-surface-variant mt-0.5">Thu hoạch: 21/10/2026</p>
+</div>
+<div class="flex items-center gap-2 pt-2">
+<div class="flex items-center bg-surface-container rounded-lg h-9 px-1">
+<button aria-label="Giảm số lượng" class="w-7 h-7 flex items-center justify-center rounded-md hover:bg-surface-container-lowest text-on-surface-variant transition-colors leading-none font-bold text-sm" type="button">−</button>
+<span class="w-7 text-center font-label-md text-label-md font-semibold text-on-surface">1</span>
+<button aria-label="Tăng số lượng" class="w-7 h-7 flex items-center justify-center rounded-md hover:bg-surface-container-lowest text-on-surface-variant transition-colors leading-none font-bold text-sm" type="button">+</button>
+</div>
+<button class="flex-1 h-9 bg-primary-container hover:bg-primary text-on-primary rounded-lg font-label-sm text-label-sm font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[17px]">shopping_bag</span>
+<span>Thêm vào giỏ</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Card 10: Củ dền đỏ -->
+<article class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col group transition-all duration-300 hover:shadow-md">
+<div class="relative w-full aspect-[4/3] bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Deep ruby purple whole beetroot bulbs with vibrant stalks and clean root tips, bathed in natural morning studio illumination against a textured pale linen surface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwVCyDMhwuufY1xSoW7FecOSUz69Ptq7gBSstkxQ-6nTZ3lo3IPdBLOnZ5sQK0BBqCIOwlYDLVCcBK8vpuhQqSRiyWjuz7wPUDmOHVKJn-Jl-SUikngHMwOoHDQG3jgzhG7I62iN3P2NecvmfL8sakLYXRothrPd_67FEygvWKYDT6qGIKgUzms8Kg309H59AU1dos4Mm6TczFcxXi0e0NoakyVPq38hsZWrYJ5STxxnD599hSExytUA"/>
+</div>
+<div class="p-space-md flex flex-col flex-1 justify-between gap-space-sm">
+<div class="flex flex-col gap-1">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold leading-tight">Củ dền đỏ</h2>
+<div class="flex items-center gap-1 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[15px] text-primary-container">location_on</span>
+<span>Nông trại Mộc Châu</span>
+</div>
+<div class="mt-1 flex items-baseline gap-1">
+<span class="font-label-lg text-[18px] font-bold text-primary-container leading-none">26.000đ</span>
+<span class="text-on-surface-variant text-label-sm font-normal">/kg</span>
+</div>
+<p class="font-body-sm text-label-sm text-on-surface-variant mt-0.5">Thu hoạch: 20/10/2026</p>
+</div>
+<div class="flex items-center gap-2 pt-2">
+<div class="flex items-center bg-surface-container rounded-lg h-9 px-1">
+<button aria-label="Giảm số lượng" class="w-7 h-7 flex items-center justify-center rounded-md hover:bg-surface-container-lowest text-on-surface-variant transition-colors leading-none font-bold text-sm" type="button">−</button>
+<span class="w-7 text-center font-label-md text-label-md font-semibold text-on-surface">1</span>
+<button aria-label="Tăng số lượng" class="w-7 h-7 flex items-center justify-center rounded-md hover:bg-surface-container-lowest text-on-surface-variant transition-colors leading-none font-bold text-sm" type="button">+</button>
+</div>
+<button class="flex-1 h-9 bg-primary-container hover:bg-primary text-on-primary rounded-lg font-label-sm text-label-sm font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[17px]">shopping_bag</span>
+<span>Thêm vào giỏ</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Card 11: Ớt chuông đỏ -->
+<article class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col group transition-all duration-300 hover:shadow-md">
+<div class="relative w-full aspect-[4/3] bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Glossy vibrant scarlet red bell pepper with a stout fresh green stem, studio close-up on clean organic wooden surface with subtle specular reflections highlighting crisp skin." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAV4_8J0_VnMCTOz0vPZpt1xWPEjSxKDe0-fbpVYEeg23baj2_XQvyw_lOUUu3RckkqnAPSGnuXtQTqbFaU2FxmoJrUYlZJc_EnlVvfvp6t6Pa9UNJGIp_gZ5YBX0FbDzaAU3kNVQJb5-6bbVbwVFPqRqiTe-TwDcgBXCCuiSQdKy8gIdN3On4BrfJsZHvL4mCw4YA5SpzDMLZb1KpPBwxY3nOG7Hacppv7fruKgQGPA-WS0mumTAHt2Q"/>
+</div>
+<div class="p-space-md flex flex-col flex-1 justify-between gap-space-sm">
+<div class="flex flex-col gap-1">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold leading-tight">Ớt chuông đỏ</h2>
+<div class="flex items-center gap-1 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[15px] text-primary-container">location_on</span>
+<span>Green Farm Đà Lạt</span>
+</div>
+<div class="mt-1 flex items-baseline gap-1">
+<span class="font-label-lg text-[18px] font-bold text-primary-container leading-none">48.000đ</span>
+<span class="text-on-surface-variant text-label-sm font-normal">/kg</span>
+</div>
+<p class="font-body-sm text-label-sm text-on-surface-variant mt-0.5">Thu hoạch: 22/10/2026</p>
+</div>
+<div class="flex items-center gap-2 pt-2">
+<div class="flex items-center bg-surface-container rounded-lg h-9 px-1">
+<button aria-label="Giảm số lượng" class="w-7 h-7 flex items-center justify-center rounded-md hover:bg-surface-container-lowest text-on-surface-variant transition-colors leading-none font-bold text-sm" type="button">−</button>
+<span class="w-7 text-center font-label-md text-label-md font-semibold text-on-surface">1</span>
+<button aria-label="Tăng số lượng" class="w-7 h-7 flex items-center justify-center rounded-md hover:bg-surface-container-lowest text-on-surface-variant transition-colors leading-none font-bold text-sm" type="button">+</button>
+</div>
+<button class="flex-1 h-9 bg-primary-container hover:bg-primary text-on-primary rounded-lg font-label-sm text-label-sm font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[17px]">shopping_bag</span>
+<span>Thêm vào giỏ</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Card 12: Bưởi da xanh -->
+<article class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col group transition-all duration-300 hover:shadow-md">
+<div class="relative w-full aspect-[4/3] bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Whole large green-peeled Vietnamese Da Xanh pomelo next to a peeled cluster with sparkling ruby pink juicy pulps, styled tastefully on botanical leaves with warm morning sunlight." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8CWfiInWwG14Ff787Rn9CSmJRSWBBgpanBJeeb63osMQM0dVlmio4B7h4tkYGJBzxUsvE288gEcFuT7NHCAejvfmhlUTBxepGa6WdlYak-SWSLYAY3OjQ0cdzUSA5weuh4pMS09DSMV1GgGth7r4brRAAv2DQFQcg_ZkgfM4exgiKWoupDgdZNoqTQ0vgmE1WnLnmzSzLgexKvZ5lS4napLn2QQLnk3vKRRApNP6qdAlwFrk04mYKHQ"/>
+<div class="absolute top-2.5 left-2.5">
+<span class="bg-secondary-container/90 backdrop-blur-sm text-primary font-label-sm text-label-sm font-semibold px-2 py-1 rounded-[6px]">
+            Đang vào mùa
+          </span>
+</div>
+</div>
+<div class="p-space-md flex flex-col flex-1 justify-between gap-space-sm">
+<div class="flex flex-col gap-1">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold leading-tight">Bưởi da xanh</h2>
+<div class="flex items-center gap-1 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[15px] text-primary-container">location_on</span>
+<span>Vườn Tiền Giang</span>
+</div>
+<div class="mt-1 flex items-baseline gap-1">
+<span class="font-label-lg text-[18px] font-bold text-primary-container leading-none">55.000đ</span>
+<span class="text-on-surface-variant text-label-sm font-normal">/kg</span>
+</div>
+<p class="font-body-sm text-label-sm text-on-surface-variant mt-0.5">Thu hoạch: 21/10/2026</p>
+</div>
+<div class="flex items-center gap-2 pt-2">
+<div class="flex items-center bg-surface-container rounded-lg h-9 px-1">
+<button aria-label="Giảm số lượng" class="w-7 h-7 flex items-center justify-center rounded-md hover:bg-surface-container-lowest text-on-surface-variant transition-colors leading-none font-bold text-sm" type="button">−</button>
+<span class="w-7 text-center font-label-md text-label-md font-semibold text-on-surface">1</span>
+<button aria-label="Tăng số lượng" class="w-7 h-7 flex items-center justify-center rounded-md hover:bg-surface-container-lowest text-on-surface-variant transition-colors leading-none font-bold text-sm" type="button">+</button>
+</div>
+<button class="flex-1 h-9 bg-primary-container hover:bg-primary text-on-primary rounded-lg font-label-sm text-label-sm font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[17px]">shopping_bag</span>
+<span>Thêm vào giỏ</span>
+</button>
+</div>
+</div>
+</article>
+</section>
+<!-- PAGINATION -->
+<section class="flex items-center justify-center gap-2 pt-space-xs pb-space-lg">
+<!-- Prev Button -->
+<button class="h-10 px-4 rounded-xl bg-surface-container-lowest text-on-surface-variant hover:text-on-surface hover:bg-surface-container font-label-md text-label-md font-medium transition-colors shadow-sm flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+<span>Trước</span>
+</button>
+<!-- Page 1 (Active) -->
+<button class="w-10 h-10 rounded-xl bg-primary-container text-on-primary font-label-md text-label-md font-bold transition-all shadow-sm flex items-center justify-center" type="button">
+      1
+    </button>
+<!-- Page 2 -->
+<button class="w-10 h-10 rounded-xl bg-surface-container-lowest text-on-surface hover:bg-surface-container font-label-md text-label-md font-medium transition-colors shadow-sm flex items-center justify-center" type="button">
+      2
+    </button>
+<!-- Page 3 -->
+<button class="w-10 h-10 rounded-xl bg-surface-container-lowest text-on-surface hover:bg-surface-container font-label-md text-label-md font-medium transition-colors shadow-sm flex items-center justify-center" type="button">
+      3
+    </button>
+<!-- Next Button -->
+<button class="h-10 px-4 rounded-xl bg-surface-container-lowest text-primary-container hover:bg-surface-container font-label-md text-label-md font-semibold transition-colors shadow-sm flex items-center gap-1" type="button">
+<span>Sau</span>
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</section>
+</div>
+<script>
+  // Simple interaction for farm dropdown and clear search button
+  document.addEventListener('DOMContentLoaded', function () {
+    const farmBtn = document.getElementById('farm-filter-btn');
+    const farmMenu = document.getElementById('farm-filter-menu');
+    const searchInput = document.getElementById('product-search-input');
+    const clearBtn = document.getElementById('clear-search-btn');
+
+    if (farmBtn && farmMenu) {
+      farmBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        farmMenu.classList.toggle('hidden');
+        farmMenu.classList.toggle('flex');
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!farmMenu.contains(e.target) && !farmBtn.contains(e.target)) {
+          farmMenu.classList.add('hidden');
+          farmMenu.classList.remove('flex');
+        }
+      });
+    }
+
+    if (searchInput && clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        searchInput.focus();
+      });
+    }
+
+    // Stepper interaction handlers
+    document.querySelectorAll('article').forEach(card => {
+      const minusBtn = card.querySelector('button[aria-label="Giảm số lượng"]');
+      const plusBtn = card.querySelector('button[aria-label="Tăng số lượng"]');
+      const qtySpan = card.querySelector('.font-label-md.font-semibold.text-on-surface');
+
+      if (minusBtn && plusBtn && qtySpan) {
+        minusBtn.addEventListener('click', () => {
+          let current = parseInt(qtySpan.textContent, 10) || 1;
+          if (current > 1) {
+            qtySpan.textContent = current - 1;
+          }
+        });
+
+        plusBtn.addEventListener('click', () => {
+          let current = parseInt(qtySpan.textContent, 10) || 1;
+          if (current < 99) {
+            qtySpan.textContent = current + 1;
+          }
+        });
+      }
+    });
+  });
+</script></div></main><footer class="w-full bg-[#14572D] text-on-primary mt-space-xl"><div class="max-w-[1200px] mx-auto px-gutter py-space-xl"><div class="grid grid-cols-1 md:grid-cols-12 gap-space-xl items-start pb-space-xl border-b border-white/10"><div class="md:col-span-5 flex flex-col gap-space-sm"><div class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-primary-fixed text-[32px]">eco</span><span class="font-headline-sm text-headline-sm font-bold text-on-primary tracking-tight">GreenNova</span></div><p class="font-body-md text-body-md text-on-primary/80">Fresh choices. Less waste.</p></div><div class="md:col-span-7 flex flex-wrap gap-x-space-xl gap-y-space-md justify-start md:justify-end items-center"><a class="font-label-lg text-label-lg text-on-primary/90 hover:text-primary-fixed transition-colors" data-path="ve-chung-toi" href="#">Về chúng tôi</a><a class="font-label-lg text-label-lg text-on-primary/90 hover:text-primary-fixed transition-colors" data-path="huong-dan-mua-hang" href="#">Hướng dẫn mua hàng</a><a class="font-label-lg text-label-lg text-on-primary/90 hover:text-primary-fixed transition-colors" data-path="chinh-sach-giao-hang" href="#">Chính sách giao hàng</a><a class="font-label-lg text-label-lg text-on-primary/90 hover:text-primary-fixed transition-colors" data-path="lien-he" href="#">Liên hệ</a></div></div><div class="pt-space-md flex flex-col sm:flex-row items-center justify-between gap-space-sm font-body-sm text-body-sm text-on-primary/60"><div>© 2025 GreenNova. Nông sản tươi sạch từ nguồn đất mẹ.</div><div class="flex gap-space-md"><a class="hover:text-on-primary transition-colors" href="#">Điều khoản</a><a class="hover:text-on-primary transition-colors" href="#">Bảo mật</a></div></div></div></footer></body></html>
