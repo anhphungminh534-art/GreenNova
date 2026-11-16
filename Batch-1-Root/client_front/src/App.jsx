@@ -975,7 +975,12 @@ function applyStoreProducts(documentFromStitch, route, products, productPage = 1
     const sortSelect = documentFromStitch.body.querySelector('select[aria-label="Sắp xếp danh sách"]')
     if (sortSelect) {
       sortSelect.dataset.productSort = 'true'
-      sortSelect.value = catalogFilters.sort || 'default'
+      const selectedSort = catalogFilters.sort || 'default'
+      ;[...sortSelect.options].forEach((option) => {
+        const isSelected = option.value === selectedSort
+        option.selected = isSelected
+        option.toggleAttribute('selected', isSelected)
+      })
     }
 
     const grid = [...documentFromStitch.body.querySelectorAll('.grid')]
