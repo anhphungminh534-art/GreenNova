@@ -9128,6 +9128,10 @@ function App() {
             if (addMoreLabel) addMoreLabel.textContent = `Thêm vào giỏ - ${money(Number(comboDetail.dataset.comboPrice))}`
           }
         }
+        if (comboButton.dataset.buyNowCombo === 'true') {
+          navigateTo('/checkout')
+          return
+        }
         window.alert(`Đã thêm ${quantity} combo vào giỏ hàng.`)
         return
       }
