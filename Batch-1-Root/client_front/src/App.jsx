@@ -651,6 +651,18 @@ function applyImperfectComboScreen(documentFromStitch, route, availableCombos = 
     increaseButton.disabled = remainingStock <= 1
   }
   if (addButton) {
+    const buyNowButton = [...documentFromStitch.body.querySelectorAll('main button')]
+      .find((button) => normalizeLabel(button.textContent).includes('mua ngay'))
+    if (buyNowButton) {
+      buyNowButton.dataset.buyNowCombo = 'true'
+      buyNowButton.dataset.addComboId = combo.id || route.path
+      if (combo.id) buyNowButton.dataset.mongoComboId = combo.id
+      buyNowButton.dataset.comboStock = String(Math.max(0, Math.floor(combo.stock)))
+      buyNowButton.dataset.comboRemainingStock = String(remainingStock)
+      buyNowButton.disabled = remainingStock < 1
+      buyNowButton.classList.toggle('opacity-50', remainingStock < 1)
+      buyNowButton.classList.toggle('cursor-not-allowed', remainingStock < 1)
+  }
     addButton.dataset.addComboId = combo.id || route.path
     if (combo.id) addButton.dataset.mongoComboId = combo.id
     addButton.dataset.comboStock = String(Math.max(0, Math.floor(combo.stock)))
