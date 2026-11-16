@@ -392,6 +392,35 @@ function normalizeStoreHeader(documentFromStitch, route, authUser, cart = {}) {
     }
   }
 }
+function normalizeStoreFooter(documentFromStitch, route) {
+  if (route.path.startsWith('/admin') || route.folder.startsWith('qt0')) return
+
+  documentFromStitch.body.querySelectorAll('footer').forEach((footer) => footer.remove())
+
+  const footer = documentFromStitch.createElement('footer')
+  footer.className = 'w-full bg-[#105b32] text-white'
+  footer.innerHTML = `<div class="mx-auto max-w-[1280px] px-5 py-6 sm:px-8 lg:px-10">
+    <div class="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr] lg:gap-10">
+      <section>
+        <a href="/" data-route="/" aria-label="GreenNova - Trang chủ" class="mb-3 inline-flex items-center gap-2 text-white no-underline">
+          <img src="${GREENNOVA_LOGO_SRC}" alt="" class="h-7 w-7 object-contain brightness-0 invert" />
+          <span class="text-[22px] font-bold tracking-tight">GreenNova</span>
+        </a>
+        <p class="mb-4 max-w-sm text-[13px] leading-5 text-white/85">Nền tảng tiêu thụ nông sản địa phương và giảm lãng phí thực phẩm.</p>
+        <div class="flex items-center gap-2">
+          <a href="/" data-route="/" aria-label="Trang chủ GreenNova" class="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-[#26352c] transition hover:bg-[#e8f3e8]"><span class="material-symbols-outlined">language</span></a>
+          <a href="tel:19006886" aria-label="Gọi GreenNova" class="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-[#26352c] transition hover:bg-[#e8f3e8]"><span class="material-symbols-outlined">call</span></a>
+          <a href="mailto:support@greennova.vn" aria-label="Email GreenNova" class="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-[#26352c] transition hover:bg-[#e8f3e8]"><span class="material-symbols-outlined">mail</span></a>
+        </div>
+      </section>
+      <section><h2 class="mb-3 text-[17px] font-bold">Về GreenNova</h2><ul class="space-y-1.5 text-[13px] leading-5 text-white/85"><li>Câu chuyện thương hiệu</li><li>Hợp tác xã đối tác</li><li>Báo cáo tác động xanh</li><li>Cơ hội nghề nghiệp</li></ul></section>
+      <section><h2 class="mb-3 text-[17px] font-bold">Chính Sách &amp; Hỗ Trợ</h2><ul class="space-y-1.5 text-[13px] leading-5 text-white/85"><li>Chính sách thu hoạch trong ngày</li><li>Đổi trả nông sản hỏng dập trong 2h</li><li>Phương thức thanh toán &amp; ví xanh</li><li>Giao hàng giảm phát thải</li></ul></section>
+      <section><h2 class="mb-3 text-[17px] font-bold">Cam Kết Chuẩn Sạch</h2><ul class="space-y-1.5 text-[13px] leading-5 text-white/85"><li>Tiêu chuẩn kiểm nghiệm đất</li><li>Truy xuất nguồn gốc QR</li><li>Nông nghiệp tái sinh</li><li>Quy chuẩn kiểm định dư lượng</li></ul></section>
+    </div>
+  </div>`
+
+  documentFromStitch.body.append(footer)
+}
 
 const money = (amount) => new Intl.NumberFormat('vi-VN').format(amount) + 'đ'
 const formatSaigonToday = () => new Intl.DateTimeFormat('vi-VN', {
@@ -3879,6 +3908,7 @@ function parseScreenUnsafe(html, route, products, authUser, weeklyData, weeklyMe
     addFarmBoxEmergencyButton(documentFromStitch, route, customerOrders)
   }
   normalizeBrandLogo(documentFromStitch)
+  normalizeStoreFooter(documentFromStitch, route)
   applyWeeklyChart(documentFromStitch, route, weeklyData, weeklyMetric)
   applyWeeklySalesMix(documentFromStitch, route, weeklyData)
   applyAdminWeeklyOrderSummary(documentFromStitch, route, weeklyData, adminWeeklyOrderError)
