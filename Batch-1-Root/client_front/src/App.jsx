@@ -10160,11 +10160,15 @@ function App() {
   useEffect(() => {
     const handlePasswordControl = (event) => {
       const toggle = event.target.closest?.('[data-toggle-password]')
+        || (event.type === 'click'
+          ? [...document.querySelectorAll('button')].find((b) => b.contains(event.target) && /^(visibility|visibility_off)$/.test(b.textContent.trim()))
+          : null)
       if (toggle) {
-        const input = document.getElementById(toggle.dataset.togglePassword)
+        const input = (toggle.dataset.togglePassword ? document.getElementById(toggle.dataset.togglePassword) : null)
+          || toggle.parentElement?.querySelector('input[type="password"], input[type="text"]')
         if (input) {
           input.type = input.type === 'password' ? 'text' : 'password'
-          const icon = toggle.querySelector('.material-symbols-outlined')
+          const icon = toggle.querySelector('.material-symbols-outlined') || toggle
           if (icon) icon.textContent = input.type === 'password' ? 'visibility' : 'visibility_off'
           toggle.setAttribute('aria-label', input.type === 'password' ? 'Hiện mật khẩu' : 'Ẩn mật khẩu')
         }
