@@ -3818,9 +3818,12 @@ function applyAdminRefundPage(documentFromStitch, route, refunds = [], error = '
       profileLink.dataset.route = '/admin/profile'
       profileLink.dataset.adminProfileLink = 'true'
       profileLink.className = route.path === '/admin/profile' ? 'flex items-center gap-3 rounded-lg bg-[#0b5730] px-3 py-3 text-sm font-semibold text-white no-underline' : 'flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-[#e8f4e9] no-underline hover:bg-white/10'
-      profileLink.innerHTML = '<span class="material-symbols-outlined">admin_panel_settings</span><span>Hồ sơ & Phân quyền</span>'
+profileLink.innerHTML = '<span class="material-symbols-outlined">admin_panel_settings</span><span>Hồ sơ & Phân quyền</span>'
       refundLink.after(profileLink)
     }
+    const reportSettingLink = [...(documentFromStitch.body.querySelectorAll('aside a') || [])]
+      .find((link) => normalizeLabel(link.textContent).includes('bao cao'))
+    reportSettingLink?.remove()
   }
   if (route.path !== '/admin/refunds') return
   const main = documentFromStitch.body.querySelector('main')
