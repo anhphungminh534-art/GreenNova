@@ -8646,8 +8646,7 @@ function App() {
     const isPendingOrder = (order) => ['Chờ thanh toán', 'Đã thanh toán', 'Đang xử lý'].includes(order.status)
     const isExpressOrder = (order) => order.deliveryType === 'express' || /hỏa tốc|hoa toc|giao nhanh/i.test(order.note || '')
 
-    const section = tableBody.closest('section') || tableBody.closest('div.bg-surface-container-lowest') || tableBody.parentElement?.parentElement
-    const tabContainer = section?.querySelector('.inline-flex.items-center.p-1.rounded-xl')
+    const tabContainer = [...document.querySelectorAll('.inline-flex.items-center.p-1.rounded-xl')].find((el) => el.textContent.includes('Tất cả'))
     const tabButtons = tabContainer ? [...tabContainer.querySelectorAll('button')] : []
     const tabFilters = [
       { key: 'all', label: `Tất cả (${adminLatestOrders.length})`, test: () => true },
