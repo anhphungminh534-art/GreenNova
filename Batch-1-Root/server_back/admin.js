@@ -362,7 +362,7 @@ export function createAdminRouter(database) {
       const description = String(body.description || '').trim()
       const price = Number(body.price)
       const lowStockThreshold = body.lowStockThreshold === undefined ? 3 : Number(body.lowStockThreshold)
-      if (!name || name.length > 160 || !imageUrl || !imperfectReason
+      if (!name || name.length > 160 || !imperfectReason
         || !Number.isSafeInteger(price) || price < 0
         || !Number.isInteger(lowStockThreshold) || lowStockThreshold < 0 || lowStockThreshold > 2147483647) {
         return response.status(400).json({ error: 'Tên, ảnh, mô tả combo, giá hoặc ngưỡng tồn kho không hợp lệ.' })
