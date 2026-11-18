@@ -8752,6 +8752,7 @@ function App() {
     return () => {
       controller.abort()
       window.clearInterval(timer)
+      calBtn?.removeEventListener('click', onBtnClick)
       dateInput?.removeEventListener('change', onDateChange)
     }
   }, [route.path, route.folder, authUser?.id])
