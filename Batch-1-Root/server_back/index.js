@@ -537,10 +537,37 @@ app.post('/api/assistant/chat', async (request, response, next) => {
     }
 
     const normalizedQuestion = normalizeAssistantText(question)
-    const asksFarmBoxSchedule = /farm box|farmbox|hop nong trai|hop nong san/.test(normalizedQuestion)
-      && /tuan|lich|dang ky|thuc don|gom|san pham|mo ban|dang mo|ten|loai nao|hop nao|goi nao|loai nho|loai vua|loai lon|size nho|size vua|size lon|hop nho|hop vua|hop lon|cac loai|nhung loai|co gi|loai farm box/.test(normalizedQuestion)
+    const history = Array.isArray(request.body?.history)
+      ? request.body.history.slice(-10).map((entry) => ({
+      role: entry?.role === 'assistant' ? 'assistant' : 'user',
+      content: String(entry?.content || '').trim().slice(0, 500),
+    })).filter((entry) => entry.content)
+    : []
+
+    const hasFarmBoxContext = history.some((entry) =>
+      /farm box|farmbox|hop nong trai|hop nong san/.test(normalizeAssistantText(entry.content))
+    )
+    const followUpSize = normalizedQuestion.match(/(?:loai|size|hop|box)\s+(nho|vua|lon)\b/)?.[1]
+      || normalizedQuestion.match(/^(nho|vua|lon)$/)?.[1]
+    const isFarmBoxSizeFollowUp = Boolean(hasFarmBoxContext && followUpSize)
+
+    const previousWeekQuestion = [...history].reverse().find((entry) =>
+      entry.role === 'user' && /tuan nay|tuan toi|tuan sau|tuan tiep theo/.test(normalizeAssistantText(entry.content))
+    )
+    const previousWeekPhrase = previousWeekQuestion
+      ? normalizeAssistantText(previousWeekQuestion.content).match(/tuan nay|tuan toi|tuan sau|tuan tiep theo/)?.[0] || ''
+      : ''
+
+    const farmBoxQuestion = isFarmBoxSizeFollowUp
+      ? `farm box loai ${followUpSize} ${previousWeekPhrase}`.trim()
+      : question
+    const effectiveQuestion = normalizeAssistantText(farmBoxQuestion)
+
+    const asksFarmBoxSchedule = /farm box|farmbox|hop nong trai|hop nong san/.test(effectiveQuestion)
+      && /tuan|lich|dang ky|thuc don|gom|san pham|mo ban|dang mo|ten|loai nao|hop nao|goi nao|loai nho|loai vua|loai lon|size nho|size vua|size lon|hop nho|hop vua|hop lon|cac loai|nhung loai|co gi|loai farm box/.test(effectiveQuestion)
+
     if (asksFarmBoxSchedule) {
-      const data = await getAssistantFarmBoxScheduleAnswer(normalizedQuestion)
+      const data = await getAssistantFarmBoxScheduleAnswer(effectiveQuestion)
       return response.json({ data })
     }
     const stopWords = new Set(['cho', 'toi', 'gia', 'bao', 'nhieu', 'co', 'khong', 'nao', 'la', 'the', 'gi', 'cua', 've', 'voi', 'mot', 'cac', 'hay', 'giup', 'minh', 'nhe', 'xin', 'hoi'])
