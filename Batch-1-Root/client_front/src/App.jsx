@@ -7528,6 +7528,26 @@ function App() {
         root.append(modal)
         return
       }
+      const createComboButton = [...root.querySelectorAll('button')].find((btn) => normalizeLabel(btn.textContent).includes('tao combo moi'))
+      if (createComboButton && event.target.closest?.('button') === createComboButton) {
+        event.preventDefault()
+        event.stopImmediatePropagation()
+        closeEditor()
+        const ingredientPool = adminImperfectIngredients.filter((ingredient) => ingredient.selected)
+        const ingredients = ingredientPool.map((ingredient) => {
+          const ingredientId = String(ingredient.id)
+          return `<div class="grid grid-cols-[24px_minmax(0,1fr)_112px] items-center gap-3 rounded-xl border border-[#E0E9E0] bg-[#F8FBF7] p-3"><input name="componentProductId" value="${escape(ingredientId)}" type="checkbox" class="h-4 w-4 accent-[#126B38]" aria-label="Dùng ${escape(ingredient.name)} trong combo"><span class="min-w-0"><strong class="block truncate text-sm text-[#243D2D]">${escape(ingredient.name)}</strong><small class="text-xs text-[#718075]">Tồn khả dụng ${Number(ingredient.availableQty || 0).toLocaleString('vi-VN', { maximumFractionDigits: 3 })} ${escape(ingredient.unit)}</small></span><label class="text-xs font-semibold text-[#607064]">Định lượng<input name="quantityPerCombo:${escape(ingredientId)}" type="number" min="0.001" step="0.001" value="1" class="mt-1 h-10 w-full rounded-lg border border-[#CAD8CB] bg-white px-2 text-sm font-semibold text-[#183D28] outline-none focus:border-[#1B723B]"></label></div>`
+        }).join('')
+        const modal = document.createElement('div')
+        modal.dataset.imperfectComboEditorModal = 'true'
+        modal.className = 'fixed inset-0 z-[145] flex items-center justify-center bg-[#13251A]/60 p-4 backdrop-blur-sm'
+        modal.innerHTML = `<section role="dialog" aria-modal="true" class="flex max-h-[90vh] w-full max-w-xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"><header class="flex items-start justify-between border-b border-[#E0E9E0] p-5"><div><h2 class="text-xl font-bold text-[#173D28]">Tạo Combo Imperfect mới</h2><p class="mt-1 text-sm text-[#647469]">Điền thông tin và chọn nguyên liệu từ kho Imperfect.</p></div><button type="button" data-close-imperfect-editor class="rounded-lg p-2 text-[#52665A] hover:bg-[#EFF6EF]" aria-label="Đóng"><span class="material-symbols-outlined">close</span></button></header><form data-imperfect-edit-form="new" class="flex min-h-0 flex-col"><div class="space-y-4 overflow-y-auto p-5"><label class="block text-sm font-semibold text-[#344238]">Tên combo<input name="name" maxlength="160" required placeholder="VD: Combo Rau Củ Tiết Kiệm (3kg)" class="mt-1.5 h-11 w-full rounded-lg border border-[#CAD8CB] px-3 outline-none focus:border-[#1B723B]"></label><label class="block text-sm font-semibold text-[#344238]">Link ảnh combo<input name="imageUrl" required placeholder="https://..." class="mt-1.5 h-11 w-full rounded-lg border border-[#CAD8CB] px-3 outline-none focus:border-[#1B723B]"></label><div class="grid grid-cols-2 gap-3"><label class="block text-sm font-semibold text-[#344238]">Giá bán (đ)<input name="price" type="number" min="0" step="1" required value="79000" class="mt-1.5 h-11 w-full rounded-lg border border-[#CAD8CB] px-3 outline-none focus:border-[#1B723B]"></label><label class="block text-sm font-semibold text-[#344238]">Ngưỡng cảnh báo<input name="lowStockThreshold" type="number" min="0" step="1" required value="3" class="mt-1.5 h-11 w-full rounded-lg border border-[#CAD8CB] px-3 outline-none focus:border-[#1B723B]"></label></div><label class="block text-sm font-semibold text-[#344238]">Chọn nguyên liệu và định lượng<div class="mt-2 space-y-2">${ingredients || '<p class="rounded-lg bg-[#FFF4E5] p-3 text-sm font-normal text-[#87531A]">Kho nguyên liệu chưa có sản phẩm nào được chọn.</p>'}</div></label><label class="block text-sm font-semibold text-[#344238]">Lý do Imperfect / Mô tả<textarea name="imperfectReason" rows="3" maxlength="2000" required placeholder="Nông sản lệch kích thước, hình dáng không đều nhưng chất lượng tươi ngon." class="mt-1.5 w-full resize-y rounded-lg border border-[#CAD8CB] p-3 font-normal outline-none focus:border-[#1B723B]"></textarea></label><div class="grid gap-2 sm:grid-cols-2"><label class="flex items-center gap-2 rounded-lg bg-[#F4F8F2] p-3 text-sm text-[#344238]"><input name="isActive" type="checkbox" class="h-4 w-4 accent-[#126B38]" checked> Đang hoạt động / được phép bán</label><label class="flex items-center gap-2 rounded-lg bg-[#F4F8F2] p-3 text-sm text-[#344238]"><input name="isPublished" type="checkbox" class="h-4 w-4 accent-[#126B38]" checked> Có trong danh sách tuần này</label></div></div><footer class="flex justify-end gap-2 border-t border-[#E0E9E0] p-4"><button type="button" data-close-imperfect-editor class="rounded-lg border border-[#CAD8CB] px-4 py-2.5 text-sm font-semibold text-[#344238]">Hủy</button><button type="submit" class="rounded-lg bg-[#00602E] px-5 py-2.5 text-sm font-semibold text-white">Tạo combo</button></footer></form></section>`
+        modal.addEventListener('click', (modalEvent) => {
+          if (modalEvent.target === modal || modalEvent.target.closest('[data-close-imperfect-editor]')) closeEditor()
+        })
+        root.append(modal)
+        return
+      }
       const editButton = event.target.closest?.('[data-imperfect-combo-edit]')
       if (editButton) {
         event.preventDefault()
@@ -7615,9 +7635,10 @@ function App() {
       if (!form) return
       event.preventDefault()
       event.stopImmediatePropagation()
-      const combo = adminImperfectCombos.find((entry) => entry.id === form.dataset.imperfectEditForm)
+      const isCreate = form.dataset.imperfectEditForm === 'new'
+      const combo = isCreate ? null : adminImperfectCombos.find((entry) => entry.id === form.dataset.imperfectEditForm)
       const submit = form.querySelector('button[type="submit"]')
-      if (!combo || !submit) return
+      if ((!isCreate && !combo) || !submit) return
       submit.disabled = true
       submit.textContent = 'Đang lưu…'
       try {
@@ -7629,11 +7650,12 @@ function App() {
         if (!items.length) {
           showCartToast('Hãy chọn ít nhất một nguyên liệu từ kho Imperfect.')
           submit.disabled = false
-          submit.textContent = 'Lưu cấu hình'
+          submit.textContent = isCreate ? 'Tạo combo' : 'Lưu cấu hình'
           return
         }
         const body = {
           name: String(formData.get('name') || '').trim(),
+          ...(isCreate ? { imageUrl: String(formData.get('imageUrl') || '').trim(), description: String(formData.get('imperfectReason') || '').trim() } : {}),
           price: Number(formData.get('price')),
           lowStockThreshold: Number(formData.get('lowStockThreshold')),
           imperfectReason: String(formData.get('imperfectReason') || '').trim(),
@@ -7642,8 +7664,8 @@ function App() {
           items,
         }
         const token = sessionStorage.getItem('greennovaToken')
-        const response = await fetch(`/api/admin/combos/${encodeURIComponent(combo.id)}`, {
-          method: 'PATCH',
+        const response = await fetch(isCreate ? '/api/admin/combos' : `/api/admin/combos/${encodeURIComponent(combo.id)}`, {
+          method: isCreate ? 'POST' : 'PATCH',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
           body: JSON.stringify(body),
         })
