@@ -845,6 +845,18 @@ function applyCustomerProfileNavigation(documentFromStitch, route) {
     return anchor
   })
   nav.replaceChildren(...selected)
+  const sidebarCard = nav.parentElement
+  if (sidebarCard && !sidebarCard.querySelector('[data-action="logout"]') && !normalizeLabel(sidebarCard.textContent).includes('dang xuat')) {
+    const divider = documentFromStitch.createElement('div')
+    divider.className = 'mt-3 border-t border-[#e6eee5] pt-3'
+    const logoutBtn = documentFromStitch.createElement('button')
+    logoutBtn.type = 'button'
+    logoutBtn.dataset.action = 'logout'
+    logoutBtn.className = 'flex w-full items-center gap-3 rounded-lg px-3.5 py-3 text-left font-title-md text-title-md text-on-surface-variant transition-colors hover:bg-surface-container-low hover:text-on-surface'
+    logoutBtn.innerHTML = '<span class="material-symbols-outlined text-[20px]">logout</span><span>Đăng xuất</span>'
+    divider.append(logoutBtn)
+    nav.after(divider)
+  }
 }
 
 function applyStoreProducts(documentFromStitch, route, products, productPage = 1, productSearch = '', catalogFilters = {}, selectedProductId = '') {
