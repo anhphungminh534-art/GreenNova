@@ -4011,7 +4011,7 @@ function parseScreenUnsafe(html, route, products, authUser, weeklyData, weeklyMe
         if (orderCodeBlock) orderCodeBlock.style.display = showTransfer ? 'flex' : 'none'
         const methodPicker = documentFromStitch.createElement('div')
         methodPicker.className = 'rounded-xl border border-[#DCE3D8] bg-white p-4'
-        methodPicker.innerHTML = '<h2 class="mb-3 text-base font-semibold text-[#1F2A22]">Đổi phương thức thanh toán</h2><div class="grid grid-cols-1 gap-3"><button type="button" data-payment-method-choice="CashOnDelivery" class="flex min-h-16 w-full items-center gap-3 rounded-xl border px-4 py-3 text-left transition-colors"><span class="material-symbols-outlined text-[22px]">payments</span><span><strong class="block text-sm">Thanh toán khi nhận hàng</strong><small class="text-xs">Thanh toán tiền mặt khi nhận hàng</small></span><span data-choice-indicator class="ml-auto text-[#1B723B]"></span></button><button type="button" data-payment-method-choice="BankTransfer" class="flex min-h-16 w-full items-center gap-3 rounded-xl border px-4 py-3 text-left transition-colors"><span class="material-symbols-outlined text-[22px]">account_balance</span><span><strong class="block text-sm">Chuyển khoản</strong><small class="text-xs">Thanh toán bằng VietQR</small></span><span data-choice-indicator class="ml-auto text-[#1B723B]"></span></button></div>'
+        methodPicker.innerHTML = '<h2 class="mb-3 text-base font-semibold text-[#1F2A22]">Phương thức thanh toán</h2><div class="grid grid-cols-1 gap-3"><button type="button" data-payment-method-choice="BankTransfer" class="flex min-h-16 w-full items-center gap-3 rounded-xl border px-4 py-3 text-left transition-colors"><span class="material-symbols-outlined text-[22px]">account_balance</span><span><strong class="block text-sm">Chuyển khoản</strong><small class="text-xs">Thanh toán bằng VietQR</small></span><span data-choice-indicator class="ml-auto text-[#1B723B]"></span></button></div>'
         methodPicker.querySelectorAll('[data-payment-method-choice]').forEach((button) => {
           const active = button.dataset.paymentMethodChoice === selectedMethod
           button.disabled = order.status !== 'Chờ thanh toán'
@@ -4077,10 +4077,10 @@ function parseScreenUnsafe(html, route, products, authUser, weeklyData, weeklyMe
           const subtotalRow = moneyRows.find((row) => row.textContent.includes('Tạm tính'))
           if (subtotalRow?.lastElementChild) subtotalRow.lastElementChild.textContent = money(Number(order.subtotal ?? order.totalAmount) || 0)
           const shippingRow = moneyRows.find((row) => row.textContent.includes('Phí giao hàng'))
-          if (shippingRow) {
-            const fee = [...shippingRow.querySelectorAll('span')].at(-1)
-            if (fee) fee.textContent = money(Number(order.shippingFee) || 0)
-          }
+         if (shippingRow) {
+          const feeValue = Number(order.shippingFee) || 0
+          shippingRow.innerHTML = `<span>Phí giao hàng</span><span class="font-semibold">${feeValue ? money(feeValue) : 'Miễn phí'}</span>`
+        }
           const totalRow = moneyRows.find((row) => row.textContent.includes('Tổng cộng'))
           if (totalRow?.lastElementChild) totalRow.lastElementChild.textContent = money(Number(order.totalAmount) || 0)
           const addressLabel = [...summary.querySelectorAll('span')].find((item) => item.textContent.includes('Địa chỉ nhận hàng:'))
