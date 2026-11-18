@@ -8570,6 +8570,105 @@ function App() {
   }, [route.path, route.folder])
 
   useEffect(() => {
+    if (route.path !== '/admin/orders') return undefined
+    const getRowBoxes = () => [...document.querySelectorAll('[data-admin-week-order-select]')]
+    const getBulkBar = () => [...document.querySelectorAll('div')].find((el) => el.textContent.includes('Đã chọn') && el.textContent.includes('In phiếu đóng gói'))
+    const syncCount = () => {
+      const bar = getBulkBar()
+      if (!bar) return
+      const boxes = getRowBoxes()
+      const checkedCount = boxes.filter((cb) => cb.checked).length
+      const label = [...bar.querySelectorAll('span')].find((sp) => /Đã chọn \d+ đơn/.test(sp.textContent.trim()))
+      if (label) label.textContent = `Đã chọn ${checkedCount} đơn`
+      const selectAll = bar.querySelector('input[type="checkbox"]')
+      if (selectAll) selectAll.checked = boxes.length > 0 && checkedCount === boxes.length
+    }
+    syncCount()
+
+    const onChange = (event) => {
+      const bar = getBulkBar()
+      const selectAll = bar?.querySelector('input[type="checkbox"]')
+      if (selectAll && event.target === selectAll) {
+        getRowBoxes().forEach((cb) => { cb.checked = selectAll.checked })
+        syncCount()
+        return
+      }
+      if (event.target.matches?.('[data-admin-week-order-select]')) syncCount()
+    }
+
+    const onClick = async (event) => {
+      const btn = event.target.closest?.('button')
+      if (!btn) return
+      const bar = getBulkBar()
+      if (!bar || !bar.contains(btn)) return
+      const selectedIds = getRowBoxes().filter((cb) => cb.checked).map((cb) => cb.dataset.adminWeekOrderSelect).filter(Boolean)
+      const selectedOrders = (adminWeekOrders || []).filter((o) => selectedIds.includes(o.id))
+      if (!selectedOrders.length) {
+        showCartToast('Vui lòng tick chọn ít nhất 1 đơn hàng ở bảng bên dưới.')
+        return
+      }
+      const label = normalizeLabel(btn.textContent)
+      if (label.includes('in phieu dong goi')) {
+        const rowsHtml = selectedOrders.map((o) => `<tr><td style="border:1px solid #ccc;padding:8px"><b>#${o.orderCode || o.id}</b></td><td style="border:1px solid #ccc;padding:8px">${o.receiver?.name || ''}<br>${o.receiver?.phone || ''}</td><td style="border:1px solid #ccc;padding:8px">${[o.shippingAddress, o.province].filter(Boolean).join(', ')}</td><td style="border:1px solid #ccc;padding:8px">${(o.items || []).map((i) => `${i.name} × ${i.quantity}`).join('<br>')}</td></tr>`).join('')
+        const w = window.open('', '_blank', 'width=900,height=650')
+        if (w) {
+          w.document.write(`<html><head><title>Phiếu đóng gói GreenNova</title></head><body style="font-family:Arial,sans-serif;padding:20px"><h2>Phiếu Đóng Gói Hàng Loạt (${selectedOrders.length} đơn)</h2><table style="width:100%;border-collapse:collapse"><thead><tr><th style="border:1px solid #ccc;padding:8px">Mã đơn</th><th style="border:1px solid #ccc;padding:8px">Người nhận</th><th style="border:1px solid #ccc;padding:8px">Địa chỉ</th><th style="border:1px solid #ccc;padding:8px">Sản phẩm</th></tr></thead><tbody>${rowsHtml}</tbody></table></body></html>`)
+          w.document.close()
+          w.print()
+        }
+        return
+      }
+      if (label.includes('xuat phan tuyen')) {
+        const csvEscape = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`
+        const header = ['Mã đơn', 'Khách hàng', 'SĐT', 'Địa chỉ', 'Tỉnh/TP', 'Sản phẩm', 'Tổng tiền', 'Trạng thái'].map(csvEscape).join(',')
+        const rows = selectedOrders.map((o) => [
+          o.orderCode || o.id, o.receiver?.name || '', o.receiver?.phone || '', o.shippingAddress || '', o.province || '',
+          (o.items || []).map((i) => `${i.name} x ${i.quantity}`).join(' | '), o.totalAmount || 0, o.status || '',
+        ].map(csvEscape).join(','))
+        const blob = new Blob(['\uFEFF' + [header, ...rows].join('\n')], { type: 'text/csv;charset=utf-8;' })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = 'phan_tuyen_giao_xe.csv'
+        a.click()
+        URL.revokeObjectURL(url)
+        showCartToast(`Đã xuất file phân tuyến cho ${selectedOrders.length} đơn.`)
+        return
+      }
+      if (label.includes('cap nhat trang thai')) {
+        const token = sessionStorage.getItem('greennovaToken')
+        if (!token) return showCartToast('Phiên quản trị đã hết hạn.')
+        const eligible = selectedOrders.filter((o) => !['Đã hủy', 'Đang giao', 'Đã nhận'].includes(o.status))
+        if (!eligible.length) return showCartToast('Các đơn đã chọn không ở trạng thái có thể duyệt giao.')
+        if (!window.confirm(`Duyệt & giao xe cho ${eligible.length} đơn hàng đã chọn?`)) return
+        btn.disabled = true
+        let okCount = 0
+        for (const o of eligible) {
+          try {
+            const res = await fetch(`/api/admin/orders/${encodeURIComponent(o.id)}/approve-delivery`, {
+              method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+            })
+            const payload = await res.json()
+            if (res.ok && payload.data) {
+              okCount += 1
+              setAdminWeekOrders((cur) => (cur || []).map((x) => x.id === payload.data.id ? payload.data : x))
+            }
+          } catch {}
+        }
+        btn.disabled = false
+        showCartToast(`Đã cập nhật sang Đang giao cho ${okCount}/${eligible.length} đơn.`)
+      }
+    }
+
+    document.addEventListener('change', onChange)
+    document.addEventListener('click', onClick)
+    return () => {
+      document.removeEventListener('change', onChange)
+      document.removeEventListener('click', onClick)
+    }
+  }, [route.path, adminWeekOrders])
+
+  useEffect(() => {
     if (route.path !== '/admin' && !route.folder.startsWith('qt01')) return undefined
     const token = sessionStorage.getItem('greennovaToken')
     if (!token) return undefined
