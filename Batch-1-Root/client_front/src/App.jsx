@@ -3002,7 +3002,7 @@ function applyCheckoutScreen(documentFromStitch, route, authUser) {
   const noteField = orderNote?.closest('.mt-5') || orderNote?.parentElement
   const paymentSection = documentFromStitch.createElement('section')
   paymentSection.className = 'rounded-xl border border-[#c8d9c8] bg-white p-4 shadow-sm sm:p-5'
-  paymentSection.innerHTML = '<h2 class="mb-4 flex items-center text-base font-semibold text-[#1f2d23]"><span class="mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#e4f1e5] text-[11px] font-bold text-[#176b36]">3</span>Phương thức thanh toán</h2><div class="flex flex-col gap-2"><label class="flex cursor-pointer items-start gap-3 rounded-xl border-2 border-[#08733a] bg-[#e8f3e8] p-3 has-[:checked]:border-[#08733a] has-[:checked]:bg-[#e8f3e8]"><input type="radio" name="checkoutPaymentMethod" value="BankTransfer" checked class="mt-1 accent-[#08733a]" aria-label="Chuyển khoản ngân hàng QR"><span class="material-symbols-outlined text-[19px] text-[#08733a]">qr_code_2</span><span class="min-w-0"><strong class="block text-sm font-semibold text-[#24372a]">Chuyển khoản ngân hàng (QR) <span class="material-symbols-outlined align-middle text-[14px] text-[#08733a]">qr_code_2</span></strong><span class="mt-1 block text-xs text-[#5a6b5d]">Quét mã QR để chuyển khoản.</span></span></label><label class="flex cursor-pointer items-start gap-3 rounded-xl border border-[#cbdacb] bg-white p-3 has-[:checked]:border-2 has-[:checked]:border-[#08733a] has-[:checked]:bg-[#e8f3e8]"><input type="radio" name="checkoutPaymentMethod" value="CashOnDelivery" class="mt-1 accent-[#08733a]" aria-label="Thanh toán khi nhận hàng"><span class="material-symbols-outlined text-[20px] text-[#526357]">payments</span><span class="min-w-0"><strong class="block text-sm font-semibold text-[#24372a]">Thanh toán khi nhận hàng</strong><span class="mt-1 block text-xs text-[#5a6b5d]">Thanh toán tiền mặt khi nhận hàng</span></span></label></div>'
+  paymentSection.innerHTML = '<h2 class="mb-4 flex items-center text-base font-semibold text-[#1f2d23]"><span class="mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#e4f1e5] text-[11px] font-bold text-[#176b36]">3</span>Phương thức thanh toán</h2><div class="flex flex-col gap-2"><label class="flex cursor-pointer items-start gap-3 rounded-xl border-2 border-[#08733a] bg-[#e8f3e8] p-3 has-[:checked]:border-[#08733a] has-[:checked]:bg-[#e8f3e8]"><input type="radio" name="checkoutPaymentMethod" value="BankTransfer" checked class="mt-1 accent-[#08733a]" aria-label="Chuyển khoản ngân hàng QR"><span class="material-symbols-outlined text-[19px] text-[#08733a]">qr_code_2</span><span class="min-w-0"><strong class="block text-sm font-semibold text-[#24372a]">Chuyển khoản ngân hàng (QR) <span class="material-symbols-outlined align-middle text-[14px] text-[#08733a]">qr_code_2</span></strong><span class="mt-1 block text-xs text-[#5a6b5d]">Quét mã QR để chuyển khoản.</span></span></label></div>'
   if (deliveryMethodSection) {
     deliveryMethodSection.after(paymentSection)
     deliveryMethodSection.remove()
@@ -3115,14 +3115,10 @@ function applyCheckoutSummary(documentFromStitch, route, products, cart, farmBox
   if (subtotalRow?.lastElementChild) subtotalRow.lastElementChild.textContent = money(subtotal)
   const shippingRow = moneyRows.find((row) => row.textContent.includes('Phí giao hàng'))
   if (shippingRow) {
-    const fee = shippingRow.querySelector('.font-semibold') || shippingRow.lastElementChild
-    if (fee) fee.textContent = shippingFee ? money(shippingFee) : 'Miễn phí'
-    const badge = [...shippingRow.querySelectorAll('span')]
-      .find((span) => span !== fee && normalizeLabel(span.textContent) === 'mien phi')
-    if (badge) badge.textContent = shippingFee ? 'Phí tiêu chuẩn' : 'Miễn phí'
+    shippingRow.innerHTML = `<span>Phí giao hàng</span><span class="font-semibold text-[#26372b]">${shippingFee ? money(shippingFee) : 'Miễn phí'}</span>`
     const shippingNote = shippingRow.parentElement?.querySelector('p')
     if (shippingNote) shippingNote.textContent = shippingFee
-      ? `Phí giao hàng 30.000đ. Đơn từ 300.000đ được miễn phí giao hàng.`
+      ? 'Phí giao hàng đồng giá 30.000đ. Đơn từ 300.000đ được miễn phí giao hàng.'
       : 'Đơn từ 300.000đ được miễn phí giao hàng.'
   }
   const totalRow = moneyRows.find((row) => row.textContent.includes('Tổng tiền'))
