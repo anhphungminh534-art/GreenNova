@@ -8702,6 +8702,16 @@ function App() {
     const controller = new AbortController()
     let selectedDate = getLocalDateString(new Date())
 
+    const updateDateLabel = (dateStr) => {
+      const calBtn = [...document.querySelectorAll('button')].find((b) => b.textContent.includes('calendar_today'))
+      if (!calBtn) return
+      const todayStr = getLocalDateString(new Date())
+      const [y, m, d] = dateStr.split('-')
+      const formatted = `${d}/${m}/${y}`
+      const textSpan = [...calBtn.querySelectorAll('span')].find((s) => !s.classList.contains('material-symbols-outlined'))
+      if (textSpan) textSpan.textContent = dateStr === todayStr ? `Hôm nay, ${formatted}` : `Ngày ${formatted}`
+    }
+
     const loadSummaryForDate = async (dateStr) => {
       try {
         const response = await fetch(`/api/admin/reports/daily?date=${encodeURIComponent(dateStr)}`, {
@@ -8711,49 +8721,50 @@ function App() {
         const result = await response.json()
         if (!response.ok) throw new Error(result.error || 'Không thể tải doanh thu ngày đã chọn.')
         setDailyDashboardData(result.data)
+        updateDateLabel(dateStr)
       } catch (error) {
         if (error.name !== 'AbortError') console.warn('Không thể cập nhật doanh thu:', error.message)
       }
     }
 
-    const calBtn = [...document.querySelectorAll('button')].find((b) => b.textContent.includes('calendar_today'))
-    let dateInput = calBtn?.parentElement?.querySelector('[data-dashboard-date-input]')
-    if (calBtn && !dateInput) {
-      dateInput = document.createElement('input')
-      dateInput.type = 'date'
-      dateInput.dataset.dashboardDateInput = 'true'
-      dateInput.value = selectedDate
-     dateInput.className = 'pointer-events-none absolute inset-0 h-full w-full opacity-0'
-      dateInput.setAttribute('aria-label', 'Chọn ngày xem báo cáo')
-      calBtn.parentElement.append(dateInput)
+    const onDocClick = (event) => {
+      const calBtn = event.target.closest?.('button')
+      if (calBtn && calBtn.textContent.includes('calendar_today')) {
+        event.preventDefault()
+        event.stopPropagation()
+        document.querySelector('[data-dash-date-popover]')?.remove()
+        const rect = calBtn.getBoundingClientRect()
+        const pop = document.createElement('div')
+        pop.dataset.dashDatePopover = 'true'
+        pop.style.cssText = `position:fixed;top:${rect.bottom + 8}px;right:${Math.max(12, window.innerWidth - rect.right)}px;z-index:200`
+        pop.className = 'flex items-center gap-2 rounded-xl border border-[#cde0cd] bg-white p-3 shadow-xl'
+        pop.innerHTML = `<input type="date" value="${selectedDate}" class="rounded-lg border border-[#cad8cb] px-3 py-1.5 text-sm text-[#173D28] outline-none focus:border-[#1B723B]"><button type="button" data-apply-date class="rounded-lg bg-[#00602E] px-3 py-1.5 text-xs font-bold text-white">Xem</button>`
+        const input = pop.querySelector('input')
+        const applyDate = () => {
+          if (!input?.value) return
+          selectedDate = input.value
+          pop.remove()
+          loadSummaryForDate(selectedDate)
+        }
+        pop.querySelector('[data-apply-date]')?.addEventListener('click', applyDate)
+        input?.addEventListener('change', applyDate)
+        document.body.append(pop)
+        input?.focus()
+        return
+      }
+      if (!event.target.closest?.('[data-dash-date-popover]')) {
+        document.querySelector('[data-dash-date-popover]')?.remove()
+      }
     }
-    const onBtnClick = () => {
-      try { dateInput?.showPicker?.() } catch { dateInput?.click() }
-    }
-    calBtn?.addEventListener('click', onBtnClick)
-    const updateDateLabel = (dateStr) => {
-      const todayStr = getLocalDateString(new Date())
-      const [y, m, d] = dateStr.split('-')
-      const formatted = `${d}/${m}/${y}`
-      const textSpan = calBtn ? [...calBtn.querySelectorAll('span')].find((s) => !s.classList.contains('material-symbols-outlined')) : null
-      if (textSpan) textSpan.textContent = dateStr === todayStr ? `Hôm nay, ${formatted}` : `Ngày ${formatted}`
-    }
-    const onDateChange = () => {
-      if (!dateInput?.value) return
-      selectedDate = dateInput.value
-      updateDateLabel(selectedDate)
-      loadSummaryForDate(selectedDate)
-    }
-    dateInput?.addEventListener('change', onDateChange)
 
-    updateDateLabel(selectedDate)
+    document.addEventListener('click', onDocClick)
     loadSummaryForDate(selectedDate)
     const timer = window.setInterval(() => loadSummaryForDate(selectedDate), 120_000)
     return () => {
       controller.abort()
       window.clearInterval(timer)
-      calBtn?.removeEventListener('click', onBtnClick)
-      dateInput?.removeEventListener('change', onDateChange)
+      document.removeEventListener('click', onDocClick)
+      document.querySelector('[data-dash-date-popover]')?.remove()
     }
   }, [route.path, route.folder, authUser?.id])
 
