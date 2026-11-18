@@ -8700,24 +8700,55 @@ function App() {
     const token = sessionStorage.getItem('greennovaToken')
     if (!token) return undefined
     const controller = new AbortController()
-    const loadTodaySummary = async () => {
+    let selectedDate = getLocalDateString(new Date())
+
+    const loadSummaryForDate = async (dateStr) => {
       try {
-        const response = await fetch(`/api/admin/reports/daily?date=${getLocalDateString(new Date())}`, {
+        const response = await fetch(`/api/admin/reports/daily?date=${encodeURIComponent(dateStr)}`, {
           signal: controller.signal,
           headers: { Authorization: `Bearer ${token}` },
         })
         const result = await response.json()
-        if (!response.ok) throw new Error(result.error || 'Không thể tải doanh thu hôm nay.')
+        if (!response.ok) throw new Error(result.error || 'Không thể tải doanh thu ngày đã chọn.')
         setDailyDashboardData(result.data)
       } catch (error) {
-        if (error.name !== 'AbortError') console.warn('Không thể cập nhật doanh thu hôm nay:', error.message)
+        if (error.name !== 'AbortError') console.warn('Không thể cập nhật doanh thu:', error.message)
       }
     }
-    loadTodaySummary()
-    const timer = window.setInterval(loadTodaySummary, 120_000)
+
+    const calBtn = [...document.querySelectorAll('button')].find((b) => b.textContent.includes('calendar_today'))
+    let dateInput = calBtn?.parentElement?.querySelector('[data-dashboard-date-input]')
+    if (calBtn && !dateInput) {
+      dateInput = document.createElement('input')
+      dateInput.type = 'date'
+      dateInput.dataset.dashboardDateInput = 'true'
+      dateInput.value = selectedDate
+      dateInput.className = 'absolute inset-0 h-full w-full cursor-pointer opacity-0'
+      dateInput.setAttribute('aria-label', 'Chọn ngày xem báo cáo')
+      calBtn.parentElement.append(dateInput)
+    }
+    const updateDateLabel = (dateStr) => {
+      const todayStr = getLocalDateString(new Date())
+      const [y, m, d] = dateStr.split('-')
+      const formatted = `${d}/${m}/${y}`
+      const textSpan = calBtn ? [...calBtn.querySelectorAll('span')].find((s) => !s.classList.contains('material-symbols-outlined')) : null
+      if (textSpan) textSpan.textContent = dateStr === todayStr ? `Hôm nay, ${formatted}` : `Ngày ${formatted}`
+    }
+    const onDateChange = () => {
+      if (!dateInput?.value) return
+      selectedDate = dateInput.value
+      updateDateLabel(selectedDate)
+      loadSummaryForDate(selectedDate)
+    }
+    dateInput?.addEventListener('change', onDateChange)
+
+    updateDateLabel(selectedDate)
+    loadSummaryForDate(selectedDate)
+    const timer = window.setInterval(() => loadSummaryForDate(selectedDate), 120_000)
     return () => {
       controller.abort()
       window.clearInterval(timer)
+      dateInput?.removeEventListener('change', onDateChange)
     }
   }, [route.path, route.folder, authUser?.id])
 
