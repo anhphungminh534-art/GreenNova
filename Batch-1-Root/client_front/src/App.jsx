@@ -403,7 +403,9 @@ function normalizeStoreFooter(documentFromStitch, route) {
     <div class="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr] lg:gap-10">
       <section>
         <a href="/" data-route="/" aria-label="GreenNova - Trang chủ" class="mb-3 inline-flex items-center gap-2 text-white no-underline">
-          <img src="${GREENNOVA_LOGO_SRC}" alt="" class="h-7 w-7 object-contain brightness-0 invert" />
+          <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-white p-1">
+            <img src="${GREENNOVA_LOGO_SRC}" alt="GreenNova" class="h-full w-full object-contain" />
+          </span>
           <span class="text-[22px] font-bold tracking-tight">GreenNova</span>
         </a>
         <p class="mb-4 max-w-sm text-[13px] leading-5 text-white/85">Nền tảng tiêu thụ nông sản địa phương và giảm lãng phí thực phẩm.</p>
