@@ -4078,8 +4078,8 @@ function parseScreenUnsafe(html, route, products, authUser, weeklyData, weeklyMe
           if (subtotalRow?.lastElementChild) subtotalRow.lastElementChild.textContent = money(Number(order.subtotal ?? order.totalAmount) || 0)
           const shippingRow = moneyRows.find((row) => row.textContent.includes('Phí giao hàng'))
          if (shippingRow) {
-          const feeValue = Number(order.shippingFee) || 0
-          shippingRow.innerHTML = `<span>Phí giao hàng</span><span class="font-semibold">${feeValue ? money(feeValue) : 'Miễn phí'}</span>`
+            const feeValue = Number(order.shippingFee) || 0
+            shippingRow.innerHTML = `<span>Phí giao hàng</span><span class="font-semibold">${feeValue ? money(feeValue) : 'Miễn phí'}</span>`
         }
           const totalRow = moneyRows.find((row) => row.textContent.includes('Tổng cộng'))
           if (totalRow?.lastElementChild) totalRow.lastElementChild.textContent = money(Number(order.totalAmount) || 0)
