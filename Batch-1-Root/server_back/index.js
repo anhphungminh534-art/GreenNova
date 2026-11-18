@@ -438,10 +438,9 @@ async function getAssistantFarmBoxScheduleAnswer(normalizedQuestion) {
       && getSaigonDateKey(week.endDate) >= nextWeekStart
     ))
   } else if (mentionsThisWeek) {
-    const currentWeekEnd = addDateKeyDays(currentWeekStart, 6)
-    scheduledWeeks = scheduledWeeks.filter((week) => (
-      getSaigonDateKey(week.startDate) <= currentWeekEnd
-      && getSaigonDateKey(week.endDate) >= currentWeekStart
+      scheduledWeeks = scheduledWeeks.filter((week) => (
+        getSaigonDateKey(week.startDate) <= todayKey
+        && getSaigonDateKey(week.endDate) >= todayKey
     ))
   } else if (scheduledWeeks.length) {
     const nearestStartKey = scheduledWeeks
@@ -455,9 +454,12 @@ async function getAssistantFarmBoxScheduleAnswer(normalizedQuestion) {
   }
 
   const getSize = (week, box) => {
-    const price = asNumber(week.price ?? box.price)
-    return price < 199000 ? 'small' : price < 300000 ? 'medium' : 'large'
-  }
+      const rawPrice = week.price ?? box.price
+      if (rawPrice === undefined || rawPrice === null || asNumber(rawPrice) <= 0) return ''
+
+      const price = asNumber(rawPrice)
+      return price < 199000 ? 'small' : price < 300000 ? 'medium' : 'large'
+  }  
 
   if (requestedSize) {
   scheduledWeeks = scheduledWeeks.filter((week) => {
@@ -507,7 +509,7 @@ async function getAssistantFarmBoxScheduleAnswer(normalizedQuestion) {
 
     const startKey = getSaigonDateKey(week.startDate)
     const endKey = getSaigonDateKey(week.endDate)
-    const weekLabel = week.name || `${formatSaigonDateKey(startKey)}–${formatSaigonDateKey(endKey)}`
+    const weekLabel = `${formatSaigonDateKey(startKey)}–${formatSaigonDateKey(endKey)}`
     const contents = itemNames.length
       ? `Dự kiến gồm: ${itemNames.join(', ')}.`
       : 'Thực đơn đang được cập nhật.'
