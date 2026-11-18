@@ -8633,7 +8633,7 @@ function App() {
     if (cod) cod.textContent = formatDashboardMoney(dailyDashboardData.codPendingRevenue)
   }, [dailyDashboardData, route.path, route.folder])
 
-  useEffect(() => {
+ useEffect(() => {
     if (!adminLatestOrders || (route.path !== '/admin' && !route.folder.startsWith('qt01'))) return
     const tableBody = document.querySelector('[data-dashboard-latest-orders]')
     if (!tableBody) return
@@ -8641,31 +8641,114 @@ function App() {
       '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
     })[character])
     const money = (value) => `${(Number(value) || 0).toLocaleString('vi-VN')}đ`
-    const emptyRow = '<tr><td colspan="7" class="py-8 px-4 text-center text-on-surface-variant">Chưa có đơn hàng.</td></tr>'
-    tableBody.innerHTML = adminLatestOrders.length ? adminLatestOrders.map((order) => {
-      const buyerName = order.receiver?.name || 'Khách hàng'
-      const buyerPhone = order.receiver?.phone || '—'
-      const province = order.province || ''
-      const itemSummary = (order.items || []).map((item) => `${item.name || 'Sản phẩm'} × ${Number(item.quantity) || 0}`).join(', ')
-      const paymentText = order.paymentMethod === 'CashOnDelivery' ? 'Thanh toán khi nhận hàng' : 'Chuyển khoản ngân hàng (VietQR)'
-      const paymentPaid = order.payment?.status === 'Đã thanh toán'
-        || (order.paymentMethod !== 'CashOnDelivery' && ['Đã thanh toán', 'Đang xử lý', 'Đang giao', 'Đã nhận'].includes(order.status))
-      const cancelled = order.status === 'Đã hủy'
-      const paymentBadge = cancelled
-        ? '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-error-container text-error font-label-sm text-label-sm font-bold"><span class="material-symbols-outlined text-[14px]">cancel</span>Đã hủy</span>'
-        : paymentPaid
-        ? '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-bold"><span class="material-symbols-outlined text-[14px]">check_circle</span>Đã xác nhận thanh toán</span>'
-        : '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-bold"><span class="material-symbols-outlined text-[14px]">schedule</span>Chờ thu / thanh toán</span>'
-      return `<tr class="hover:bg-surface-container-low/40 transition-colors">
-        <td class="py-4 px-4 font-headline-sm text-[15px] font-bold text-primary"><a class="hover:underline flex items-center gap-1" href="/admin/orders">#${escape(order.orderCode || order.id)}<span class="material-symbols-outlined text-[14px]">open_in_new</span></a></td>
-        <td class="py-4 px-4"><div class="font-semibold text-on-surface">${escape(buyerName)}</div><div class="text-on-surface-variant text-body-sm flex items-center gap-1"><span>${escape(buyerPhone)}</span><span>•</span><span>${escape(province || '—')}</span></div></td>
-        <td class="py-4 px-4"><div class="font-medium text-on-surface">${escape(itemSummary || '—')}</div></td>
-        <td class="py-4 px-4 text-right font-price-md text-price-md font-bold text-on-surface">${money(order.totalAmount)}</td>
-        <td class="py-4 px-4"><div class="flex flex-col"><span class="font-medium text-on-surface">${escape(paymentText)}</span></div></td>
-        <td class="py-4 px-4">${paymentBadge}</td>
-        <td class="py-4 px-4 text-center"><div class="flex items-center justify-center gap-1.5"><button ${cancelled ? 'disabled aria-disabled="true" title="Đơn hàng đã hủy, không thể duyệt giao"' : ''} class="h-9 px-3 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-title-md text-body-sm transition-colors flex items-center gap-1 shadow-sm ${cancelled ? 'opacity-50 cursor-not-allowed hover:bg-primary' : ''}" type="button"><span class="material-symbols-outlined text-[16px]">local_shipping</span>Duyệt &amp; Giao xe</button><button class="w-9 h-9 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface flex items-center justify-center transition-colors" title="Chi tiết đơn hàng" type="button"><span class="material-symbols-outlined text-[18px]">visibility</span></button></div></td>
-      </tr>`
-    }).join('') : emptyRow
+    const isPaidOrder = (order) => order.payment?.status === 'Đã thanh toán'
+      || (order.paymentMethod !== 'CashOnDelivery' && ['Đã thanh toán', 'Đang xử lý', 'Đang giao', 'Đã nhận'].includes(order.status))
+    const isPendingOrder = (order) => ['Chờ thanh toán', 'Đã thanh toán', 'Đang xử lý'].includes(order.status)
+    const isExpressOrder = (order) => order.deliveryType === 'express' || /hỏa tốc|hoa toc|giao nhanh/i.test(order.note || '')
+
+    const section = tableBody.closest('section') || tableBody.closest('div.bg-surface-container-lowest') || tableBody.parentElement?.parentElement
+    const tabContainer = section?.querySelector('.inline-flex.items-center.p-1.rounded-xl')
+    const tabButtons = tabContainer ? [...tabContainer.querySelectorAll('button')] : []
+    const tabFilters = [
+      { key: 'all', label: `Tất cả (${adminLatestOrders.length})`, test: () => true },
+      { key: 'pending', label: `Chờ duyệt (${adminLatestOrders.filter(isPendingOrder).length})`, test: isPendingOrder },
+      { key: 'paid', label: `Đã thanh toán (${adminLatestOrders.filter(isPaidOrder).length})`, test: isPaidOrder },
+      { key: 'express', label: `Hỏa tốc (${adminLatestOrders.filter(isExpressOrder).length})`, test: isExpressOrder },
+    ]
+    let activeKey = 'all'
+
+    const renderRows = () => {
+      const currentFilter = tabFilters.find((t) => t.key === activeKey) || tabFilters[0]
+      const filtered = adminLatestOrders.filter(currentFilter.test)
+      const emptyRow = '<tr><td colspan="7" class="py-8 px-4 text-center text-on-surface-variant">Không có đơn hàng phù hợp.</td></tr>'
+      tableBody.innerHTML = filtered.length ? filtered.map((order) => {
+        const buyerName = order.receiver?.name || 'Khách hàng'
+        const buyerPhone = order.receiver?.phone || '—'
+        const province = order.province || ''
+        const itemSummary = (order.items || []).map((item) => `${item.name || 'Sản phẩm'} × ${Number(item.quantity) || 0}`).join(', ')
+        const paymentText = order.paymentMethod === 'CashOnDelivery' ? 'Thanh toán khi nhận hàng' : 'Chuyển khoản ngân hàng (VietQR)'
+        const paymentPaid = isPaidOrder(order)
+        const cancelled = order.status === 'Đã hủy'
+        const canApprove = !cancelled && (paymentPaid || order.status === 'Đang xử lý') && !['Đang giao', 'Đã nhận'].includes(order.status)
+        const paymentBadge = cancelled
+          ? '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-error-container text-error font-label-sm text-label-sm font-bold"><span class="material-symbols-outlined text-[14px]">cancel</span>Đã hủy</span>'
+          : paymentPaid
+          ? '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-bold"><span class="material-symbols-outlined text-[14px]">check_circle</span>Đã xác nhận thanh toán</span>'
+          : '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-bold"><span class="material-symbols-outlined text-[14px]">schedule</span>Chờ thu / thanh toán</span>'
+        return `<tr class="hover:bg-surface-container-low/40 transition-colors">
+          <td class="py-4 px-4 font-headline-sm text-[15px] font-bold text-primary"><a class="hover:underline flex items-center gap-1" href="/admin/orders" data-route="/admin/orders">#${escape(order.orderCode || order.id)}<span class="material-symbols-outlined text-[14px]">open_in_new</span></a></td>
+          <td class="py-4 px-4"><div class="font-semibold text-on-surface">${escape(buyerName)}</div><div class="text-on-surface-variant text-body-sm flex items-center gap-1"><span>${escape(buyerPhone)}</span><span>•</span><span>${escape(province || '—')}</span></div></td>
+          <td class="py-4 px-4"><div class="font-medium text-on-surface">${escape(itemSummary || '—')}</div></td>
+          <td class="py-4 px-4 text-right font-price-md text-price-md font-bold text-on-surface">${money(order.totalAmount)}</td>
+          <td class="py-4 px-4"><div class="flex flex-col"><span class="font-medium text-on-surface">${escape(paymentText)}</span></div></td>
+          <td class="py-4 px-4">${paymentBadge}</td>
+          <td class="py-4 px-4 text-center"><div class="flex items-center justify-center gap-1.5"><button data-dash-approve="${escape(order.id)}" ${canApprove ? '' : 'disabled'} class="h-9 px-3 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-title-md text-body-sm transition-colors flex items-center gap-1 shadow-sm ${canApprove ? '' : 'opacity-50 cursor-not-allowed hover:bg-primary'}" type="button"><span class="material-symbols-outlined text-[16px]">local_shipping</span>${order.status === 'Đang giao' ? 'Đang giao' : order.status === 'Đã nhận' ? 'Đã giao' : 'Duyệt &amp; Giao xe'}</button><button data-dash-view="${escape(order.id)}" class="w-9 h-9 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface flex items-center justify-center transition-colors" title="Chi tiết đơn hàng" type="button"><span class="material-symbols-outlined text-[18px]">visibility</span></button></div></td>
+        </tr>`
+      }).join('') : emptyRow
+    }
+
+    const syncTabs = () => {
+      tabButtons.forEach((btn, idx) => {
+        const cfg = tabFilters[idx]
+        if (!cfg) return
+        btn.textContent = cfg.label
+        const isActive = cfg.key === activeKey
+        btn.className = isActive
+          ? 'px-3 py-1.5 rounded-lg bg-surface-container-lowest text-primary font-bold shadow-sm'
+          : 'px-3 py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface transition-colors'
+      })
+    }
+
+    const cleanups = []
+    tabButtons.forEach((btn, idx) => {
+      const cfg = tabFilters[idx]
+      if (!cfg) return
+      const onTab = () => { activeKey = cfg.key; syncTabs(); renderRows() }
+      btn.addEventListener('click', onTab)
+      cleanups.push(() => btn.removeEventListener('click', onTab))
+    })
+
+    const onTableClick = async (event) => {
+      const approveBtn = event.target.closest?.('[data-dash-approve]')
+      if (approveBtn && !approveBtn.disabled) {
+        const orderId = approveBtn.dataset.dashApprove
+        const token = sessionStorage.getItem('greennovaToken')
+        if (!token) return showCartToast('Phiên quản trị đã hết hạn.')
+        approveBtn.disabled = true
+        try {
+          const res = await fetch(`/api/admin/orders/${encodeURIComponent(orderId)}/approve-delivery`, {
+            method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+          })
+          const payload = await res.json()
+          if (!res.ok) throw new Error(payload.error || 'Không thể duyệt giao xe.')
+          setAdminLatestOrders((prev) => (prev || []).map((o) => o.id === orderId ? payload.data : o))
+          showCartToast('Đã duyệt & giao xe thành công.')
+        } catch (err) {
+          showCartToast(err.message || 'Không thể duyệt giao xe.')
+          approveBtn.disabled = false
+        }
+        return
+      }
+      const viewBtn = event.target.closest?.('[data-dash-view]')
+      if (viewBtn) {
+        const order = adminLatestOrders.find((o) => o.id === viewBtn.dataset.dashView)
+        if (!order) return
+        document.querySelector('[data-dash-order-modal]')?.remove()
+        const modal = document.createElement('div')
+        modal.dataset.dashOrderModal = 'true'
+        modal.className = 'fixed inset-0 z-[150] flex items-center justify-center bg-[#13251A]/60 p-4 backdrop-blur-sm'
+        const itemsHtml = (order.items || []).map((it) => `<li class="flex justify-between py-2 border-b border-[#edf2ec] text-sm"><span>${escape(it.name)} × ${Number(it.quantity) || 0}</span><strong>${money(it.lineTotal)}</strong></li>`).join('')
+        modal.innerHTML = `<section class="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl"><div class="flex items-center justify-between border-b pb-3"><h3 class="text-lg font-bold text-[#173D28]">Chi tiết đơn #${escape(order.orderCode || order.id)}</h3><button type="button" data-close-dash-modal class="p-1 text-[#52665A] hover:bg-[#EFF6EF] rounded-lg"><span class="material-symbols-outlined">close</span></button></div><div class="mt-4 space-y-2 text-sm text-[#334238]"><p><strong>Khách hàng:</strong> ${escape(order.receiver?.name || '—')} (${escape(order.receiver?.phone || '—')})</p><p><strong>Địa chỉ:</strong> ${escape([order.shippingAddress, order.province].filter(Boolean).join(', '))}</p><p><strong>Trạng thái:</strong> ${escape(order.status)}</p></div><ul class="mt-4">${itemsHtml}</ul><div class="mt-4 flex justify-between text-base font-bold text-[#173D28]"><span>Tổng cộng</span><span>${money(order.totalAmount)}</span></div></section>`
+        modal.addEventListener('click', (e) => { if (e.target === modal || e.target.closest('[data-close-dash-modal]')) modal.remove() })
+        document.body.append(modal)
+      }
+    }
+    tableBody.addEventListener('click', onTableClick)
+    cleanups.push(() => tableBody.removeEventListener('click', onTableClick))
+
+    syncTabs()
+    renderRows()
+    return () => cleanups.forEach((fn) => fn())
   }, [adminLatestOrders, route.path, route.folder])
 
   useEffect(() => {
