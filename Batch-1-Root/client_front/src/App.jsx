@@ -5351,6 +5351,7 @@ function App() {
     const messages = document.querySelector('#greennova-assistant-messages')
     const prompts = document.querySelector('#greennova-assistant-prompts')
     if (!launcher || !panel || !form || !input || !messages || !prompts) return undefined
+    const conversationHistory = []
 
     const loadSuggestedQuestions = async () => {
       try {
@@ -5389,14 +5390,18 @@ function App() {
       input.disabled = true
       const typing = appendMessage('Đang tìm câu trả lời…', true)
       try {
+        const history = conversationHistory.slice(-10)
         const response = await fetch('/api/assistant/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message }),
+          body: JSON.stringify({ message, history }),
         })
         const payload = await response.json()
         if (!response.ok) throw new Error(payload.error || 'Trợ lý chưa thể xử lý câu hỏi lúc này.')
-        typing.textContent = payload.data?.answer || 'Mình chưa tìm được câu trả lời phù hợp. Bạn thử hỏi cụ thể hơn nhé.'
+        const answer = payload.data?.answer || 'Mình chưa tìm được câu trả lời phù hợp. Bạn thử hỏi cụ thể hơn nhé.'
+        typing.textContent = answer
+        conversationHistory.push({ role: 'user', content: message }, { role: 'assistant', content: answer })
+        if (conversationHistory.length > 10) conversationHistory.splice(0, conversationHistory.length - 10)
       } catch (error) {
         typing.textContent = error.message || 'Không thể kết nối trợ lý. Bạn thử lại sau nhé.'
       } finally {
