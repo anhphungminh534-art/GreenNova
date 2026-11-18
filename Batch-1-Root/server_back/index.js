@@ -538,14 +538,20 @@ app.post('/api/assistant/chat', async (request, response, next) => {
 
     const normalizedQuestion = normalizeAssistantText(question)
     const history = Array.isArray(request.body?.history)
-      const previousUserMessages = history.filter((entry) => entry.role === 'user').slice(-4)
-      const isConversationalFollowUp = Boolean(previousUserMessages.length && (
-        /^(con|con nua|con gi|the con|the nao|vay|vay con|loai|size|gia|bao nhieu|thoi han|han su dung|doi tra|giao hang|cai do|loai do|san pham do)\b/.test(normalizedQuestion)
-        || /\b(con|vay|the nao|cai do|loai do|san pham do|hop do|combo do)\b/.test(normalizedQuestion)
+      ? request.body.history.slice(-10).map((entry) => ({
+        role: entry?.role === 'assistant' ? 'assistant' : 'user',
+        content: String(entry?.content || '').trim().slice(0, 500),
+      })).filter((entry) => entry.content)
+  : []
+
+    const previousUserMessages = history.filter((entry) => entry.role === 'user').slice(-4)
+    const isConversationalFollowUp = Boolean(previousUserMessages.length && (
+      /^(con|con nua|con gi|the con|the nao|vay|vay con|loai|size|gia|bao nhieu|thoi han|han su dung|doi tra|giao hang|cai do|loai do|san pham do)\b/.test(normalizedQuestion)
+      || /\b(con|vay|the nao|cai do|loai do|san pham do|hop do|combo do)\b/.test(normalizedQuestion)
     ))
-      const contextualQuestion = isConversationalFollowUp
-        ? normalizeAssistantText(`${previousUserMessages.map((entry) => entry.content).join(' ')} ${question}`)
-        : normalizedQuestion
+    const contextualQuestion = isConversationalFollowUp
+      ? normalizeAssistantText(`${previousUserMessages.map((entry) => entry.content).join(' ')} ${question}`)
+      : normalizedQuestion
       ? request.body.history.slice(-10).map((entry) => ({
       role: entry?.role === 'assistant' ? 'assistant' : 'user',
       content: String(entry?.content || '').trim().slice(0, 500),
