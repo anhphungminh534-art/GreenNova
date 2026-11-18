@@ -8280,7 +8280,7 @@ function App() {
       section.className = 'mt-8 w-full rounded-2xl border border-[#d6e8d5] bg-[#f1faf1] p-5 sm:p-7'
       contentMain.append(section)
     }
-    const productOptions = (selectedId) => `<option value="">Chọn nông sản từ MongoDB</option>${products.map((product) => `<option value="${escape(product.id)}" ${product.id === selectedId ? 'selected' : ''}>${escape(product.name)} · ${money(product.price)}/${escape(product.unit || 'kg')}</option>`).join('')}`
+    const productOptions = (selectedId) => `<option value="">Chọn nông sản</option>${products.map((product) => `<option value="${escape(product.id)}" ${product.id === selectedId ? 'selected' : ''}>${escape(product.name)} · ${money(product.price)}/${escape(product.unit || 'kg')}</option>`).join('')}`
     const emergencyLineAmount = (item) => (Number(products.find((product) => product.id === item.productId)?.price) || 0) * (Number(item.quantity) || 0)
     const emergencyBoxPrice = (box) => Math.round((box.items || []).reduce((sum, item) => sum + emergencyLineAmount(item), 0))
     const emergencyTabs = adminEmergencyFarmBoxes.map((box) => `<button type="button" data-emergency-tab="${escape(box.size)}" class="rounded-full px-5 py-2.5 text-sm font-semibold transition ${adminEmergencyFarmBoxTab === box.size ? 'bg-[#08733a] text-white shadow-sm' : 'bg-white text-[#47584b] hover:bg-[#eaf5e9]'}">${escape(box.label)}</button>`).join('')
