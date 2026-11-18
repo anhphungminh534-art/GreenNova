@@ -153,7 +153,7 @@ export function createAdminRouter(database) {
       return {
         id,
         name: product.name || source.name || 'Nguyên liệu Imperfect',
-        image: product.imageUrl || source.imageUrl || source.image || '',
+        image: product.imageUrl || product.image || source.imageUrl || source.image || '',
         unit,
         quantity,
         reservedQty,
