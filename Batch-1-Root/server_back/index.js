@@ -374,6 +374,129 @@ async function getAssistantFaqEntries() {
   return entries
 }
 
+function getSaigonDateKey(value) {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Ho_Chi_Minh', year: 'numeric', month: '2-digit', day: '2-digit',
+  }).formatToParts(value instanceof Date ? value : new Date(value))
+  const values = Object.fromEntries(parts.map(({ type, value: partValue }) => [type, partValue]))
+  return `${values.year}-${values.month}-${values.day}`
+}
+
+function addDateKeyDays(dateKey, days) {
+  const date = new Date(`${dateKey}T00:00:00.000Z`)
+  date.setUTCDate(date.getUTCDate() + days)
+  return date.toISOString().slice(0, 10)
+}
+
+function formatSaigonDateKey(dateKey) {
+  const [, year, month, day] = dateKey.match(/^(\d{4})-(\d{2})-(\d{2})$/) || []
+  return year ? `${day}/${month}` : ''
+}
+
+async function getAssistantFarmBoxScheduleAnswer(normalizedQuestion) {
+  const now = new Date()
+  const todayKey = getSaigonDateKey(now)
+  const todayUtc = new Date(`${todayKey}T00:00:00.000Z`)
+  const daysSinceMonday = (todayUtc.getUTCDay() + 6) % 7
+  const currentWeekStart = addDateKeyDays(todayKey, -daysSinceMonday)
+  const nextWeekStart = addDateKeyDays(currentWeekStart, 7)
+  const nextWeekEnd = addDateKeyDays(nextWeekStart, 6)
+  const mentionsNextWeek = /tuan toi|tuan sau|tuan tiep theo/.test(normalizedQuestion)
+  const mentionsThisWeek = /tuan nay|tuan hien tai/.test(normalizedQuestion)
+
+  const boxes = await database.collection('farmBoxes').find({}, {
+    projection: { name: 1, defaultItems: 1 },
+  }).toArray()
+
+  if (!boxes.length) {
+    return { answer: 'Hiện chưa có Farm Box nào được mở đăng ký.', source: 'mongodb-farm-boxes' }
+  }
+
+  const boxById = new Map(boxes.map((box) => [box._id.toString(), box]))
+  const weeks = await database.collection('farmBoxWeeks').find({
+    farmBoxId: { $in: boxes.map((box) => box._id) },
+    selectedForWeek: { $ne: false },
+    status: { $in: ['Đang mở', 'Sắp mở'] },
+    endDate: { $gte: now },
+  }).sort({ startDate: 1, endDate: 1 }).toArray()
+
+  let scheduledWeeks = weeks.filter((week) => {
+    const box = boxById.get(week.farmBoxId?.toString())
+    return Boolean(box?.name && week.startDate && week.endDate)
+  })
+
+  if (mentionsNextWeek) {
+    scheduledWeeks = scheduledWeeks.filter((week) => (
+      getSaigonDateKey(week.startDate) <= nextWeekEnd
+      && getSaigonDateKey(week.endDate) >= nextWeekStart
+    ))
+  } else if (mentionsThisWeek) {
+    const currentWeekEnd = addDateKeyDays(currentWeekStart, 6)
+    scheduledWeeks = scheduledWeeks.filter((week) => (
+      getSaigonDateKey(week.startDate) <= currentWeekEnd
+      && getSaigonDateKey(week.endDate) >= currentWeekStart
+    ))
+  } else if (scheduledWeeks.length) {
+    const nearestStartKey = scheduledWeeks
+      .map((week) => getSaigonDateKey(week.startDate))
+      .filter((key) => key >= todayKey)
+      .sort()[0]
+
+    if (nearestStartKey) {
+      scheduledWeeks = scheduledWeeks.filter((week) => getSaigonDateKey(week.startDate) === nearestStartKey)
+    }
+  }
+
+  if (!scheduledWeeks.length) {
+    const answer = mentionsThisWeek
+      ? 'Hiện chưa có Farm Box nào được admin chọn mở bán trong tuần này.'
+      : mentionsNextWeek
+        ? 'Hiện chưa có Farm Box nào được mở đăng ký cho tuần tới.'
+        : 'Hiện chưa có Farm Box nào được mở đăng ký trong lịch sắp tới.'
+    return { answer, source: 'mongodb-farm-boxes' }
+  }
+
+  const productIds = [...new Set(scheduledWeeks.flatMap((week) => {
+    const box = boxById.get(week.farmBoxId.toString())
+    const items = Array.isArray(week.items) && week.items.length ? week.items : (box?.defaultItems || [])
+    return items.map((item) => item.productId?.toString()).filter((id) => ObjectId.isValid(id))
+  }))]
+
+  const productDocs = productIds.length
+    ? await database.collection('products').find({
+      _id: { $in: productIds.map((id) => new ObjectId(id)) },
+    }, { projection: { name: 1, unit: 1 } }).toArray()
+    : []
+  const productsById = new Map(productDocs.map((product) => [product._id.toString(), product]))
+  const formatQuantity = (value) => new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 3 }).format(asNumber(value))
+
+  const lines = scheduledWeeks.map((week) => {
+    const box = boxById.get(week.farmBoxId.toString())
+    const items = Array.isArray(week.items) && week.items.length ? week.items : (box.defaultItems || [])
+    const itemNames = items.map((item) => {
+      const product = productsById.get(item.productId?.toString())
+      const name = product?.name || item.name
+      if (!name) return ''
+      const quantity = asNumber(item.quantity)
+      const unit = product?.unit || item.unit || ''
+      return `${name}${quantity > 0 ? ` ${formatQuantity(quantity)} ${unit}`.trimEnd() : ''}`
+    }).filter(Boolean)
+
+    const startKey = getSaigonDateKey(week.startDate)
+    const endKey = getSaigonDateKey(week.endDate)
+    const weekLabel = week.name || `${formatSaigonDateKey(startKey)}–${formatSaigonDateKey(endKey)}`
+    const contents = itemNames.length
+      ? `Dự kiến gồm: ${itemNames.join(', ')}.`
+      : 'Thực đơn đang được cập nhật.'
+    return `${box.name} — tuần ${weekLabel}. ${contents}`
+  })
+
+  return {
+    answer: `Farm Box theo lịch admin đã cập nhật:\n${lines.join('\n')}`,
+    source: 'mongodb-farm-boxes',
+  }
+}
+
 app.get('/api/assistant/questions', async (_request, response, next) => {
   try {
     const entries = await getAssistantFaqEntries()
