@@ -513,6 +513,12 @@ app.post('/api/assistant/chat', async (request, response, next) => {
     }
 
     const normalizedQuestion = normalizeAssistantText(question)
+    const asksFarmBoxSchedule = /farm box|farmbox|hop nong trai|hop nong san/.test(normalizedQuestion)
+      && /tuan|lich|dang ky|thuc don|gom|san pham|mo ban|dang mo|ten|loai nao|hop nao|goi nao/.test(normalizedQuestion)
+    if (asksFarmBoxSchedule) {
+      const data = await getAssistantFarmBoxScheduleAnswer(normalizedQuestion)
+      return response.json({ data })
+    }
     const stopWords = new Set(['cho', 'toi', 'gia', 'bao', 'nhieu', 'co', 'khong', 'nao', 'la', 'the', 'gi', 'cua', 've', 'voi', 'mot', 'cac', 'hay', 'giup', 'minh', 'nhe', 'xin', 'hoi'])
     const words = normalizedQuestion.split(/\s+/).filter((word) => word.length > 1 && !stopWords.has(word))
     const entries = await getAssistantFaqEntries()
