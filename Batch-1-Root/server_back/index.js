@@ -403,6 +403,13 @@ async function getAssistantFarmBoxScheduleAnswer(normalizedQuestion) {
   const nextWeekEnd = addDateKeyDays(nextWeekStart, 6)
   const mentionsNextWeek = /tuan toi|tuan sau|tuan tiep theo/.test(normalizedQuestion)
   const mentionsThisWeek = /tuan nay|tuan hien tai/.test(normalizedQuestion)
+  const requestedSize = /loai nho|size nho|hop nho|box nho/.test(normalizedQuestion)
+  ? 'small'
+  : /loai vua|size vua|hop vua|box vua|loai trung binh/.test(normalizedQuestion)
+    ? 'medium'
+    : /loai lon|size lon|hop lon|box lon/.test(normalizedQuestion)
+      ? 'large'
+      : ''
 
   const boxes = await database.collection('farmBoxes').find({}, {
     projection: { name: 1, defaultItems: 1 },
@@ -447,7 +454,23 @@ async function getAssistantFarmBoxScheduleAnswer(normalizedQuestion) {
     }
   }
 
+  const getSize = (week, box) => {
+    const price = asNumber(week.price ?? box.price)
+    return price < 199000 ? 'small' : price < 300000 ? 'medium' : 'large'
+  }
+
+  if (requestedSize) {
+  scheduledWeeks = scheduledWeeks.filter((week) => {
+    const box = boxById.get(week.farmBoxId?.toString())
+    return getSize(week, box) === requestedSize
+    })
+  }
+
   if (!scheduledWeeks.length) {
+    if (requestedSize) {
+      const sizeLabel = { small: 'loại nhỏ', medium: 'loại vừa', large: 'loại lớn' }[requestedSize]
+      return { answer: `Hiện chưa có Farm Box ${sizeLabel} được mở đăng ký trong tuần bạn hỏi.`, source: 'mongodb-farm-boxes' }
+    }
     const answer = mentionsThisWeek
       ? 'Hiện chưa có Farm Box nào được admin chọn mở bán trong tuần này.'
       : mentionsNextWeek
@@ -488,7 +511,8 @@ async function getAssistantFarmBoxScheduleAnswer(normalizedQuestion) {
     const contents = itemNames.length
       ? `Dự kiến gồm: ${itemNames.join(', ')}.`
       : 'Thực đơn đang được cập nhật.'
-    return `${box.name} — tuần ${weekLabel}. ${contents}`
+    const sizeLabel = getSize(week, box) === 'small' ? 'loại nhỏ' : getSize(week, box) === 'medium' ? 'loại vừa' : 'loại lớn'
+    return `${box.name} (${sizeLabel}) — tuần ${weekLabel}. ${contents}`
   })
 
   return {
@@ -514,7 +538,7 @@ app.post('/api/assistant/chat', async (request, response, next) => {
 
     const normalizedQuestion = normalizeAssistantText(question)
     const asksFarmBoxSchedule = /farm box|farmbox|hop nong trai|hop nong san/.test(normalizedQuestion)
-      && /tuan|lich|dang ky|thuc don|gom|san pham|mo ban|dang mo|ten|loai nao|hop nao|goi nao/.test(normalizedQuestion)
+      && /tuan|lich|dang ky|thuc don|gom|san pham|mo ban|dang mo|ten|loai nao|hop nao|goi nao|loai nho|loai vua|loai lon|size nho|size vua|size lon|hop nho|hop vua|hop lon|cac loai|nhung loai|co gi|loai farm box/.test(normalizedQuestion)
     if (asksFarmBoxSchedule) {
       const data = await getAssistantFarmBoxScheduleAnswer(normalizedQuestion)
       return response.json({ data })
