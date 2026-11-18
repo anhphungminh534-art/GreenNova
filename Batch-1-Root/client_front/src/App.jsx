@@ -8723,10 +8723,14 @@ function App() {
       dateInput.type = 'date'
       dateInput.dataset.dashboardDateInput = 'true'
       dateInput.value = selectedDate
-      dateInput.className = 'absolute inset-0 h-full w-full cursor-pointer opacity-0'
+     dateInput.className = 'pointer-events-none absolute inset-0 h-full w-full opacity-0'
       dateInput.setAttribute('aria-label', 'Chọn ngày xem báo cáo')
       calBtn.parentElement.append(dateInput)
     }
+    const onBtnClick = () => {
+      try { dateInput?.showPicker?.() } catch { dateInput?.click() }
+    }
+    calBtn?.addEventListener('click', onBtnClick)
     const updateDateLabel = (dateStr) => {
       const todayStr = getLocalDateString(new Date())
       const [y, m, d] = dateStr.split('-')
