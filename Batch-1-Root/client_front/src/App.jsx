@@ -10190,7 +10190,60 @@ function App() {
       document.removeEventListener('input', handlePasswordControl)
     }
   }, [])
+  useEffect(() => {
+    if (!route.path.startsWith('/admin')) return undefined
+    const onBellClick = async (event) => {
+      const bellBtn = [...document.querySelectorAll('header button')].find(
+        (b) => b.contains(event.target) && b.textContent.includes('notifications'),
+      )
+      if (!bellBtn) {
+        if (!event.target.closest?.('[data-admin-notif-popover]')) {
+          document.querySelector('[data-admin-notif-popover]')?.remove()
+        }
+        return
+      }
+      event.preventDefault()
+      event.stopPropagation()
+      const existing = document.querySelector('[data-admin-notif-popover]')
+      if (existing) { existing.remove(); return }
 
+      const rect = bellBtn.getBoundingClientRect()
+      const pop = document.createElement('div')
+      pop.dataset.adminNotifPopover = 'true'
+      pop.style.cssText = `position:fixed;top:${rect.bottom + 8}px;right:${Math.max(12, window.innerWidth - rect.right)}px;z-index:200`
+      pop.className = 'w-80 overflow-hidden rounded-2xl border border-[#d6e5d6] bg-white shadow-2xl'
+      pop.innerHTML = '<div class="border-b border-[#edf3ec] bg-[#f4faf3] px-4 py-3 text-sm font-bold text-[#173D28]">Thông báo hệ thống</div><div data-notif-body class="max-h-72 overflow-y-auto p-3 text-xs text-[#5B6B60]">Đang tải thông báo…</div>'
+      document.body.append(pop)
+
+      const token = sessionStorage.getItem('greennovaToken')
+      const bodyEl = pop.querySelector('[data-notif-body]')
+      if (!token || !bodyEl) return
+      try {
+        const [ordersRes, refundsRes] = await Promise.all([
+          fetch('/api/admin/orders', { headers: { Authorization: `Bearer ${token}` } }),
+          fetch('/api/admin/refunds', { headers: { Authorization: `Bearer ${token}` } }),
+        ])
+        const ordersData = ordersRes.ok ? (await ordersRes.json()).data || [] : []
+        const refundsData = refundsRes.ok ? (await refundsRes.json()).data || [] : []
+        const pendingOrders = ordersData.filter((o) => ['Đã thanh toán', 'Đang xử lý', 'Chờ thanh toán'].includes(o.status)).slice(0, 4)
+        const pendingRefunds = refundsData.filter((r) => r.status !== 'Đã hoàn tiền').slice(0, 3)
+
+        const items = [
+          ...pendingRefunds.map((r) => `<a href="/admin/refunds" data-route="/admin/refunds" class="block rounded-xl p-2.5 hover:bg-[#f2f8f1] no-underline"><strong class="block text-[#8c5700]">Hoàn tiền #${r.orderCode || ''}</strong><span class="text-[#5B6B60]">${r.customerName || 'Khách'} · ${(Number(r.amount) || 0).toLocaleString('vi-VN')}đ</span></a>`),
+          ...pendingOrders.map((o) => `<a href="/admin/orders" data-route="/admin/orders" class="block rounded-xl p-2.5 hover:bg-[#f2f8f1] no-underline"><strong class="block text-[#176b36]">Đơn #${o.orderCode || o.id} · ${o.status}</strong><span class="text-[#5B6B60]">${o.receiver?.name || 'Khách'} · ${(Number(o.totalAmount) || 0).toLocaleString('vi-VN')}đ</span></a>`),
+        ]
+        bodyEl.innerHTML = items.length ? items.join('') : '<p class="py-4 text-center text-[#718074]">Không có thông báo mới.</p>'
+      } catch {
+        bodyEl.innerHTML = '<p class="py-4 text-center text-red-600">Không tải được thông báo.</p>'
+      }
+    }
+
+    document.addEventListener('click', onBellClick)
+    return () => {
+      document.removeEventListener('click', onBellClick)
+      document.querySelector('[data-admin-notif-popover]')?.remove()
+    }
+  }, [route.path])
   if ((requiresAdminSession(route) && authUser?.role !== 'Admin')
     || (requiresCustomerSession(route) && !authUser)) {
     return <main className="min-h-screen p-8 text-center">Đang chuyển đến trang đăng nhập…</main>
