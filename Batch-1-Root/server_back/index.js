@@ -400,6 +400,60 @@ async function getAssistantComboListAnswer() {
   return { answer: `Các Combo đang mở bán:\n${lines.join('\n')}`, source: 'mongodb-combos' }
 }
 
+async function getAssistantComboDetailsAnswer(question, history = []) {
+  const combos = await database.collection('combos')
+    .find({ isActive: true, isPublished: true })
+    .toArray()
+  if (!combos.length) return null
+
+  const productIds = [...new Map(combos.flatMap((combo) => combo.items || [])
+    .filter((item) => item.productId)
+    .map((item) => [item.productId.toString(), item.productId])).values()]
+  const products = productIds.length
+    ? await database.collection('products').find({ _id: { $in: productIds } }, { projection: { name: 1, unit: 1 } }).toArray()
+    : []
+  const productById = new Map(products.map((product) => [product._id.toString(), product]))
+  const currentText = normalizeAssistantText(question)
+  const historyTexts = [...history].reverse().map((entry) => normalizeAssistantText(entry.content))
+  let combo = combos.find((entry) => {
+    const name = normalizeAssistantText(entry.name)
+    return name.length > 3 && currentText.includes(name)
+  })
+
+  if (!combo) {
+    for (const text of historyTexts) {
+      combo = combos.find((entry) => {
+        const name = normalizeAssistantText(entry.name)
+        return name.length > 3 && text.includes(name)
+      })
+      if (combo) break
+    }
+  }
+  if (!combo) return null
+
+  const items = (combo.items || []).map((item) => {
+    const product = productById.get(item.productId?.toString())
+    return {
+      name: product?.name || item.name || 'Sản phẩm',
+      quantity: asNumber(item.quantityPerCombo),
+      unit: product?.unit || '',
+    }
+  })
+  if (!items.length) {
+    return { answer: `Mình chưa có thông tin thành phần cho ${combo.name}.`, source: 'mongodb-combos' }
+  }
+  const formatQuantity = (quantity) => new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 2 }).format(quantity)
+  const totalKg = items.reduce((total, item) => (
+    normalizeAssistantText(item.unit).includes('kg') ? total + item.quantity : total
+  ), 0)
+  const itemList = items.map((item) => `${item.name} ${formatQuantity(item.quantity)} ${item.unit}`.trim()).join(', ')
+  const weightText = totalKg > 0 ? ` Tổng khối lượng khoảng ${formatQuantity(totalKg)} kg.` : ''
+  return {
+    answer: `${combo.name} gồm: ${itemList}.${weightText}`,
+    source: 'mongodb-combos',
+  }
+}
+
 async function getAssistantProductAnswer(normalizedQuestion, history = [], allowHistoryContext = false) {
   const ignoredWords = new Set(['ben', 'minh', 'co', 'khong', 'ban', 'gia', 'bao', 'nhieu', 'la', 'gi', 'nao', 'shop', 'green', 'nova', 'cho', 'toi', 'hoi', 'nhe', 'xin', 'muon', 'mua', 'hang', 'san', 'pham', 'nong', 'rau', 'cu', 'qua', 'hien', 'tai', 'con', 'het', 'loai', 'giup', 've', 'voi', 'nay', 'cua', 'thu', 'hoach', 'hom', 'ngay', 'nong', 'trai', 'vao'])
   const products = await database.collection('products').find({ isArchived: { $ne: true } }, {
@@ -709,6 +763,15 @@ app.post('/api/assistant/chat', async (request, response, next) => {
     if (asksForComboList) {
       const data = await getAssistantComboListAnswer()
       return response.json({ data })
+    }
+    const asksComboDetails = /\bcombo\b/.test(normalizedQuestion)
+      && /gom nhung gi|gom gi|thanh phan|bao nhieu kg|co nhung gi|combo nay|combo do/.test(normalizedQuestion)
+    if (asksComboDetails) {
+      const data = await getAssistantComboDetailsAnswer(question, history)
+      return response.json({ data: data || {
+        answer: 'Bạn cho mình biết tên combo muốn xem nhé, mình sẽ tra thành phần và khối lượng cụ thể.',
+        source: 'mongodb-combo-context-needed',
+      } })
     }
     const asksForProductList = /^(nong san|rau cu qua|san pham|nong san green nova)$/.test(normalizedQuestion)
       || /co (nong san|rau cu qua|san pham) gi|danh sach (nong san|san pham)|cac (nong san|san pham)|nhung (nong san|san pham)/.test(normalizedQuestion)
