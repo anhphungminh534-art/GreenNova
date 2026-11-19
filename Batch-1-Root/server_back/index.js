@@ -1296,6 +1296,72 @@ app.post('/api/assistant/chat', async (request, response, next) => {
         throw lastAiError || new Error('Gemini API không trả về nội dung văn bản.')
       } catch (error) {
         console.warn('Gemini chatbot chưa trả lời được, dùng FAQ MongoDB dự phòng:', error.message)
+        const groqApiKey = process.env.GROQ_API_KEY
+        if (groqApiKey) {
+          try {
+            const [fallbackProducts, fallbackCombos, fallbackBoxes] = await Promise.all([
+              database.collection('products').find({ productLine: 'Standard', status: 'Đang bán' }, { projection: { name: 1, price: 1, unit: 1 } }).limit(30).toArray(),
+              database.collection('combos').find({ isActive: true, isPublished: true }, { projection: { name: 1, price: 1 } }).limit(10).toArray(),
+              database.collection('farmBoxes').find({}, { projection: { name: 1, price: 1 } }).limit(10).toArray(),
+            ])
+            const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${groqApiKey}`,
+              },
+              body: JSON.stringify({
+                model: process.env.GROQ_MODEL || 'openai/gpt-oss-20b',
+                messages: [
+                  {
+                    role: 'system',
+                    content: [
+                      'Bạn là trợ lý tư vấn thân thiện của cửa hàng nông sản sạch GreenNova, trả lời ngắn gọn, tự nhiên bằng tiếng Việt.',
+                      'Phí giao hàng đồng giá 30.000đ, miễn phí từ 300.000đ. Thanh toán chuyển khoản VietQR.',
+                      'Chỉ dùng thông tin trong dữ liệu được cung cấp; không tự bịa sản phẩm, giá hoặc tình trạng còn hàng.',
+                    ].join(' '),
+                  },
+                  ...history.map(({ role, content }) => ({ role, content })),
+                  {
+                    role: 'user',
+                    content: JSON.stringify({
+                      contextualQuestion: isConversationalFollowUp ? contextualQuestion : '',
+                      question,
+                      storeCatalog: {
+                        products: fallbackProducts.map((product) => `${product.name} (${asNumber(product.price)}đ/${product.unit || 'kg'})`),
+                        combos: fallbackCombos.map((combo) => `${combo.name} (${asNumber(combo.price)}đ)`),
+                        farmBoxes: fallbackBoxes.map((box) => `${box.name} (${asNumber(box.price)}đ)`),
+                      },
+                      faqCandidates: candidates.map(({ question: faqQuestion, answer }) => ({
+                        question: faqQuestion.slice(0, 500),
+                        answer: answer.slice(0, 1200),
+                      })),
+                    }),
+                  },
+                ],
+                temperature: 0.4,
+                max_tokens: 700,
+              }),
+              signal: AbortSignal.timeout(20000),
+            })
+            const groqPayload = await groqResponse.json().catch(() => ({}))
+            if (!groqResponse.ok) {
+              throw new Error(groqPayload.error?.message || `Groq API trả về HTTP ${groqResponse.status}.`)
+            }
+            const groqAnswer = String(groqPayload.choices?.[0]?.message?.content || '').trim()
+            if (groqAnswer) {
+              return response.json({ data: {
+                answer: groqAnswer,
+                matchedQuestion: match?.question || '',
+                source: 'groq-mongodb-faq',
+                actions: getAssistantActionsForAnswer(question, groqAnswer),
+              } })
+            }
+            throw new Error('Groq API không trả về nội dung văn bản.')
+          } catch (groqError) {
+            console.warn('Groq chatbot dự phòng chưa trả lời được, dùng FAQ MongoDB:', groqError.message)
+          }
+        }
       }
     }
 
