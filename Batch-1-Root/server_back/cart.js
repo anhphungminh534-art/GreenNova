@@ -50,12 +50,13 @@ export function createCartRouter(database) {
           ? null : farms.findOne({ _id: product.farmId }),
       ])
       const category = product.categoryName || product.category || categoryDoc?.name || ''
+      const quantityStep = productQuantityStep(product, category)
       return {
         itemType, id, product, name: product.name, image: product.imageUrl || '',
         farm: product.farmName || product.farm || farmDoc?.name || 'Green Farm Đà Lạt',
         harvestDate: product.harvestDate || null,
-        unit: product.unit, price: asNumber(product.price), priceUnitQuantity: asNumber(product.stepQty),
-        step: productQuantityStep(product, category),
+        unit: product.unit, price: asNumber(product.price), priceUnitQuantity: quantityStep,
+        step: quantityStep,
         availableStock: await getProductStock(id),
         isAvailable: product.status === 'Đang bán',
         unavailableMessage: product.status !== 'Đang bán' ? 'Sản phẩm hiện không được bán.' : '',
