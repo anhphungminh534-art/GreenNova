@@ -984,6 +984,9 @@ function applyStoreProducts(documentFromStitch, route, products, productPage = 1
 
     const farmMenu = documentFromStitch.body.querySelector('#farm-filter-menu')
     if (farmMenu) {
+      const isFarmMenuOpen = Boolean(catalogFilters.farmMenuOpen)
+      farmMenu.classList.toggle('hidden', !isFarmMenuOpen)
+      farmMenu.classList.toggle('flex', isFarmMenuOpen)
       const farms = [...new Set(products.map((product) => product.farm).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'vi'))
       farmMenu.replaceChildren(...farms.map((farm) => {
         const label = documentFromStitch.createElement('label')
@@ -1006,6 +1009,7 @@ function applyStoreProducts(documentFromStitch, route, products, productPage = 1
         ? `Nông trại (${catalogFilters.farms.length})`
         : 'Theo nông trại'
     }
+    documentFromStitch.body.querySelector('#farm-filter-btn')?.setAttribute('aria-expanded', String(Boolean(catalogFilters.farmMenuOpen)))
     const sortSelect = documentFromStitch.body.querySelector('select[aria-label="Sắp xếp danh sách"]')
     if (sortSelect) {
       sortSelect.dataset.productSort = 'true'
@@ -5036,19 +5040,25 @@ function App() {
   const [productSearch, setProductSearch] = useState(() => new URLSearchParams(window.location.search).get('search') || '')
   const [productCategoryFilter, setProductCategoryFilter] = useState('all')
   const [productFarmFilters, setProductFarmFilters] = useState([])
+  const [productFarmMenuOpen, setProductFarmMenuOpen] = useState(false)
   const [productSeasonOnly, setProductSeasonOnly] = useState(false)
   const [productSort, setProductSort] = useState('default')
   const catalogFilters = {
     category: productCategoryFilter,
     farms: productFarmFilters,
+    farmMenuOpen: productFarmMenuOpen,
     seasonal: productSeasonOnly,
     sort: productSort,
   }
 
   const route = routes.find((item) => item.path === currentPath) || routes[0]
+  useEffect(() => {
+    if (route.path !== '/nong-san') setProductFarmMenuOpen(false)
+  }, [route.path])
+
   const screen = useMemo(
     () => parseScreen(findScreen(route), route, products, authUser, weeklyData, weeklyMetric, cartItems, productPage, productSearch, catalogFilters, selectedProductId, availableCombos, farmBoxes, currentSearch, serverCartItems, customerOrders, orderFilter, customerOrdersError, paymentOrder, activePaymentMethod, adminWeeklyOrderError, adminWeekOrders, adminWeekOrdersError, adminWeekOrdersPage, adminWeekOrderFilter, customerEmergencyFarmBoxes, adminRefunds, adminRefundError, adminProfileActivity),
-    [route, products, availableCombos, farmBoxes, farmBoxWeekClock, harvestDateClock, currentSearch, authUser, weeklyData, weeklyMetric, adminWeeklyOrderError, adminWeekOrders, adminWeekOrdersError, adminWeekOrdersPage, adminWeekOrderFilter, cartItems, serverCartItems, customerOrders, orderFilter, customerOrdersError, paymentOrder, activePaymentMethod, productPage, productSearch, productCategoryFilter, productFarmFilters, productSeasonOnly, productSort, selectedProductId, customerEmergencyFarmBoxes, adminRefunds, adminRefundError, adminProfileActivity],
+    [route, products, availableCombos, farmBoxes, farmBoxWeekClock, harvestDateClock, currentSearch, authUser, weeklyData, weeklyMetric, adminWeeklyOrderError, adminWeekOrders, adminWeekOrdersError, adminWeekOrdersPage, adminWeekOrderFilter, cartItems, serverCartItems, customerOrders, orderFilter, customerOrdersError, paymentOrder, activePaymentMethod, productPage, productSearch, productCategoryFilter, productFarmFilters, productFarmMenuOpen, productSeasonOnly, productSort, selectedProductId, customerEmergencyFarmBoxes, adminRefunds, adminRefundError, adminProfileActivity],
   )
 
   useEffect(() => {
@@ -9810,6 +9820,7 @@ function App() {
         const resetFiltersButton = event.target.closest?.('[data-reset-product-filters]')
         if (resetFiltersButton) {
           event.preventDefault()
+          setProductFarmMenuOpen(false)
           setProductSearch('')
           setProductCategoryFilter('all')
           setProductFarmFilters([])
@@ -9821,16 +9832,10 @@ function App() {
         }
         const farmMenu = document.querySelector('#farm-filter-menu')
         const farmButton = event.target.closest?.('#farm-filter-btn')
-        if (farmMenu && !farmMenu.classList.contains('hidden')
-          && !event.target.closest?.('#farm-filter-menu, #farm-filter-btn')) {
-          farmMenu.classList.add('hidden')
-          farmMenu.classList.remove('flex')
-        }
         if (farmButton && farmMenu) {
           event.preventDefault()
           event.stopImmediatePropagation()
-          farmMenu.classList.toggle('hidden')
-          farmMenu.classList.toggle('flex')
+          setProductFarmMenuOpen((open) => !open)
           return
         }
 
