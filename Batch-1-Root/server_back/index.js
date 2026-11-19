@@ -1272,6 +1272,75 @@ app.post('/api/assistant/chat', async (request, response, next) => {
     }
 
     const candidates = ranked.filter((entry) => entry.relevant).slice(0, 5)
+    const groqApiKey = process.env.GROQ_API_KEY
+
+    if (groqApiKey) {
+      try {
+        const [liveProducts, liveCombos, liveBoxes] = await Promise.all([
+          database.collection('products').find({ productLine: 'Standard', status: 'Đang bán' }, { projection: { name: 1, price: 1, unit: 1 } }).limit(30).toArray(),
+          database.collection('combos').find({ isActive: true, isPublished: true }, { projection: { name: 1, price: 1 } }).limit(10).toArray(),
+          database.collection('farmBoxes').find({}, { projection: { name: 1, price: 1 } }).limit(10).toArray(),
+        ])
+        const storeContext = {
+          products: liveProducts.map((product) => `${product.name} (${asNumber(product.price)}đ/${product.unit || 'kg'})`),
+          combos: liveCombos.map((combo) => `${combo.name} (${asNumber(combo.price)}đ)`),
+          farmBoxes: liveBoxes.map((box) => `${box.name} (${asNumber(box.price)}đ)`),
+          faq: candidates.map(({ question: faqQuestion, answer }) => ({
+            question: faqQuestion.slice(0, 300),
+            answer: answer.slice(0, 600),
+          })),
+        }
+        const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${groqApiKey}`,
+          },
+          body: JSON.stringify({
+            model: process.env.GROQ_MODEL || 'openai/gpt-oss-20b',
+            messages: [
+              {
+                role: 'system',
+                content: [
+                  'Bạn là trợ lý tư vấn thân thiện của cửa hàng nông sản sạch GreenNova, trả lời ngắn gọn, tự nhiên bằng tiếng Việt.',
+                  'Phí giao hàng đồng giá 30.000đ, miễn phí từ 300.000đ. Thanh toán chuyển khoản VietQR.',
+                  'Chỉ dùng đúng tên sản phẩm, giá và thông tin cửa hàng được cung cấp; không tự bịa dữ liệu.',
+                  `Dữ liệu cửa hàng: ${JSON.stringify(storeContext)}`,
+                ].join(' '),
+              },
+              ...history.map((entry) => ({ role: entry.role, content: entry.content })),
+              {
+                role: 'user',
+                content: JSON.stringify({
+                  contextualQuestion: isConversationalFollowUp ? contextualQuestion : '',
+                  question,
+                }),
+              },
+            ],
+            temperature: 0.4,
+            max_tokens: 500,
+          }),
+          signal: AbortSignal.timeout(15000),
+        })
+        const groqPayload = await groqResponse.json().catch(() => ({}))
+        if (!groqResponse.ok) {
+          throw new Error(groqPayload.error?.message || `Groq API trả về HTTP ${groqResponse.status}.`)
+        }
+        const groqAnswer = String(groqPayload.choices?.[0]?.message?.content || '').trim()
+        if (groqAnswer) {
+          return response.json({ data: {
+            answer: groqAnswer,
+            matchedQuestion: match?.question || '',
+            source: 'groq-mongodb-faq',
+            actions: getAssistantActionsForAnswer(question, groqAnswer),
+          } })
+        }
+        throw new Error('Groq API không trả về nội dung văn bản.')
+      } catch (error) {
+        console.warn('Groq chatbot chính chưa trả lời được, thử Gemini dự phòng:', error.message)
+      }
+    }
+
     const apiKey = process.env.GEMINI_API_KEY
 
     if (apiKey) {
