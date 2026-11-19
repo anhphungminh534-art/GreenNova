@@ -846,9 +846,10 @@ function applyCustomerProfileNavigation(documentFromStitch, route) {
   })
   nav.replaceChildren(...selected)
  const aside = nav.closest('aside')
-  aside?.querySelectorAll('a, button').forEach((el) => {
-    if (!nav.contains(el) && normalizeLabel(el.textContent).includes('dang xuat')) {
-      el.remove()
+  aside?.querySelectorAll('[data-path="dang-xuat"], a, button').forEach((el) => {
+    if (!nav.contains(el) && (el.dataset.path === 'dang-xuat' || normalizeLabel(el.textContent).includes('dang xuat'))) {
+      if (el.parentElement?.classList.contains('border-t')) el.parentElement.remove()
+      else el.remove()
     }
   })
   const sidebarCard = nav.parentElement
