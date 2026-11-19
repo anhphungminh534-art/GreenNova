@@ -631,6 +631,31 @@ async function getAssistantFruitListAnswer() {
   }
 }
 
+async function getAssistantCanhChuaIngredientsAnswer() {
+  const products = await database.collection('products').find({
+    productLine: 'Standard',
+    isArchived: { $ne: true },
+    status: 'Đang bán',
+  }, { projection: { name: 1, price: 1, unit: 1 } }).limit(1000).toArray()
+  const tomatoProducts = products.filter((product) => normalizeAssistantText(product.name).includes('ca chua'))
+  const availableTomatoes = tomatoProducts.map((product) => (
+    `${product.name} — ${new Intl.NumberFormat('vi-VN').format(asNumber(product.price))}đ/${product.unit || 'đơn vị'}`
+  ))
+  const availableNote = availableTomatoes.length
+    ? `Trong danh mục GreenNova hiện có: ${availableTomatoes.join('; ')}.`
+    : 'Hiện danh mục GreenNova chưa có cà chua đang bán.'
+
+  return {
+    answer: [
+      'Canh chua cá thường cần cá, cà chua, thơm (dứa), đậu bắp, bạc hà hoặc dọc mùng, me và rau thơm.',
+      availableNote,
+      'Bạn bổ sung những nguyên liệu còn thiếu theo khẩu vị và phần ăn của gia đình nhé.',
+    ].join('\n'),
+    source: 'mongodb-recipe-advice',
+    actions: assistantActions.products,
+  }
+}
+
 async function getAssistantSeasonalProductAnswer() {
   const month = Number(new Intl.DateTimeFormat('en-US', {
     timeZone: 'Asia/Ho_Chi_Minh', month: 'numeric',
@@ -1219,6 +1244,12 @@ app.post('/api/assistant/chat', async (request, response, next) => {
       && /(loai|nhung|cac|danh sach|nao|gi|ban gi)/.test(normalizedQuestion)
     if (asksForFruitList) {
       const data = await getAssistantFruitListAnswer()
+      return response.json({ data })
+    }
+    const asksCanhChuaIngredients = /canh chua/.test(normalizedQuestion)
+      && /(can mua|mua gi|chuan bi|nguyen lieu|nau)/.test(normalizedQuestion)
+    if (asksCanhChuaIngredients) {
+      const data = await getAssistantCanhChuaIngredientsAnswer()
       return response.json({ data })
     }
     if (asksForProductList) {
