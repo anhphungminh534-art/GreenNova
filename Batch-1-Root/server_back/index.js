@@ -458,12 +458,23 @@ async function getAssistantComboAvailabilityAnswer(question, history = []) {
   const combos = await database.collection('combos').find({ isActive: true, isPublished: true }).toArray()
   if (!combos.length) return null
   const texts = [normalizeAssistantText(question), ...[...history].reverse().map((entry) => normalizeAssistantText(entry.content))]
+  const genericWords = new Set(['combo', 'con', 'hang', 'khong', 'co', 'la', 'gi', 'bao', 'nhieu', 'dang', 'ban', 'mua', 'duoc', 'ton', 'kho'])
   let combo = null
   for (const text of texts) {
     combo = combos.find((entry) => {
       const name = normalizeAssistantText(entry.name)
       return name.length > 3 && text.includes(name)
     })
+    if (!combo) {
+      const queryTokens = [...new Set(text.split(/\s+/).filter((word) => word.length > 1 && !genericWords.has(word)))]
+      const ranked = combos.map((entry) => {
+        const nameTokens = [...new Set(normalizeAssistantText(entry.name).split(/\s+/).filter((word) => word.length > 1 && !genericWords.has(word)))]
+        const matched = nameTokens.filter((word) => queryTokens.includes(word))
+        return { entry, matchedCount: matched.length, score: matched.length / Math.max(1, nameTokens.length) }
+      }).filter(({ matchedCount, score }) => matchedCount >= 2 && score >= 0.5)
+        .sort((left, right) => right.score - left.score || right.matchedCount - left.matchedCount)
+      combo = ranked[0]?.entry || null
+    }
     if (combo) break
   }
   if (!combo) return null
