@@ -400,9 +400,9 @@ async function getAssistantComboListAnswer() {
   return { answer: `Các Combo đang mở bán:\n${lines.join('\n')}`, source: 'mongodb-combos' }
 }
 
-async function getAssistantProductAnswer(question, normalizedQuestion) {
-  const ignoredWords = new Set(["ben", "minh", "co", "khong", "ban", "gia", "bao", "nhieu", "la", "gi", "nao", "shop", "green", "nova", "cho", "toi", "hoi", "nhe", "xin", "muon", "mua", "hang", "san", "pham", "nong", "rau", "cu", "qua", "hien", "tai", "con", "het", "loai", "giup", "ve", "voi"])
-  const tokens = normalizedQuestion.split(/\s+/).filter((word) => word.length > 1 && !ignoredWords.has(word))
+async function getAssistantProductAnswer(normalizedQuestion, contextualQuestion = normalizedQuestion) {
+  const ignoredWords = new Set(['ben', 'minh', 'co', 'khong', 'ban', 'gia', 'bao', 'nhieu', 'la', 'gi', 'nao', 'shop', 'green', 'nova', 'cho', 'toi', 'hoi', 'nhe', 'xin', 'muon', 'mua', 'hang', 'san', 'pham', 'nong', 'rau', 'cu', 'qua', 'hien', 'tai', 'con', 'het', 'loai', 'giup', 've', 'voi', 'nay', 'cua', 'thu', 'hoach', 'hom', 'ngay', 'nong', 'trai', 'vao'])
+  const tokens = String(contextualQuestion || normalizedQuestion).split(/\s+/).filter((word) => word.length > 1 && !ignoredWords.has(word))
   if (!tokens.length) return null
 
   const products = await database.collection('products').find({ isArchived: { $ne: true } }, {
@@ -424,11 +424,22 @@ async function getAssistantProductAnswer(question, normalizedQuestion) {
   const farmIds = [...new Map(scored.map(({ product }) => product.farmId).filter(Boolean).map((id) => [id.toString(), id])).values()]
   const farms = farmIds.length ? await database.collection('farms').find({ _id: { $in: farmIds } }, { projection: { name: 1 } }).toArray() : []
   const farmById = new Map(farms.map((farm) => [farm._id.toString(), farm.name]))
+  const asksFarm = /nong trai|farm/.test(normalizedQuestion)
+  const asksHarvestDate = /thu hoach|ngay thu hoach/.test(normalizedQuestion)
   const lines = scored.map(({ product }) => {
     const stock = stockById.get(product._id.toString()) || 0
     const state = product.status !== 'Đang bán' ? product.status || 'Ngừng bán' : stock > 0 ? 'Đang bán' : 'Hết hàng'
     const farm = farmById.get(product.farmId?.toString())
-    return `• ${product.name} — ${new Intl.NumberFormat('vi-VN').format(asNumber(product.price))}đ/${product.unit || 'đơn vị'}; ${state}${farm ? `; ${farm}` : ''}`
+    const details = [`${new Intl.NumberFormat('vi-VN').format(asNumber(product.price))}đ/${product.unit || 'đơn vị'}`, state]
+    if (farm || asksFarm) details.push(`Nông trại: ${farm || 'chưa cập nhật'}`)
+    if (asksHarvestDate) {
+      const harvestDate = product.harvestDate ? new Date(product.harvestDate) : null
+      const formattedHarvestDate = harvestDate && !Number.isNaN(harvestDate.getTime())
+        ? new Intl.DateTimeFormat('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh', day: '2-digit', month: '2-digit', year: 'numeric' }).format(harvestDate)
+        : 'chưa cập nhật'
+      details.push(`Ngày thu hoạch: ${formattedHarvestDate}`)
+    }
+    return `• ${product.name} — ${details.join('; ')}`
   })
   return { answer: lines.length === 1 ? lines[0].replace(/^• /, '') : `Thông tin nông sản tìm được:\n${lines.join('\n')}`, source: 'mongodb-products' }
 }
@@ -643,17 +654,12 @@ app.post('/api/assistant/chat', async (request, response, next) => {
 
     const previousUserMessages = history.filter((entry) => entry.role === 'user').slice(-4)
     const isConversationalFollowUp = Boolean(previousUserMessages.length && (
-      /^(con|con nua|con gi|the con|the nao|vay|vay con|loai|size|gia|bao nhieu|thoi han|han su dung|doi tra|giao hang|cai do|loai do|san pham do)\b/.test(normalizedQuestion)
-      || /\b(con|vay|the nao|cai do|loai do|san pham do|hop do|combo do)\b/.test(normalizedQuestion)
+      /^(con|con nua|con gi|the con|the nao|vay|vay con|loai|size|gia|bao nhieu|thoi han|han su dung|doi tra|giao hang|cai do|loai do|san pham do|rau nay|qua nay|san pham nay)\b/.test(normalizedQuestion)
+      || /\b(con|vay|the nao|cai do|loai do|san pham do|hop do|combo do|rau nay|qua nay|san pham nay|nong trai nao|thu hoach)\b/.test(normalizedQuestion)
     ))
     const contextualQuestion = isConversationalFollowUp
       ? normalizeAssistantText(`${previousUserMessages.map((entry) => entry.content).join(' ')} ${question}`)
       : normalizedQuestion
-      ? request.body.history.slice(-10).map((entry) => ({
-      role: entry?.role === 'assistant' ? 'assistant' : 'user',
-      content: String(entry?.content || '').trim().slice(0, 500),
-    })).filter((entry) => entry.content)
-    : []
 
     const hasFarmBoxContext = history.some((entry) =>
       /farm box|farmbox|hop nong trai|hop nong san/.test(normalizeAssistantText(entry.content))
@@ -699,7 +705,7 @@ app.post('/api/assistant/chat', async (request, response, next) => {
       const data = await getAssistantSeasonalProductAnswer()
       return response.json({ data })
     }
-    const productAnswer = await getAssistantProductAnswer(question, normalizedQuestion)
+    const productAnswer = await getAssistantProductAnswer(normalizedQuestion, contextualQuestion)
     if (productAnswer) return response.json({ data: productAnswer })
     const stopWords = new Set(['cho', 'toi', 'gia', 'bao', 'nhieu', 'co', 'khong', 'nao', 'la', 'the', 'gi', 'cua', 've', 'voi', 'mot', 'cac', 'hay', 'giup', 'minh', 'nhe', 'xin', 'hoi'])
     const words = String(contextualQuestion || normalizedQuestion).split(/\s+/).filter((word) => word.length > 1 && !stopWords.has(word))
