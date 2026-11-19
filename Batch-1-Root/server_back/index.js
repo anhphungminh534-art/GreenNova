@@ -437,7 +437,7 @@ async function getAssistantProductAnswer(normalizedQuestion, history = [], allow
   const farmById = new Map(farms.map((farm) => [farm._id.toString(), farm.name]))
   const asksFarm = /nong trai|farm/.test(normalizedQuestion)
   const asksHarvestDate = /thu hoach|ngay thu hoach/.test(normalizedQuestion)
-  const asksRestockDate = /khi nao co lai|bao gio co lai|nhap lai|hang ve|co hang lai/.test(normalizedQuestion)
+  const asksRestockDate = /khi nao co lai|bao gio co lai|chung nao co(?: lai)?|nhap lai|hang ve|co hang lai/.test(normalizedQuestion)
   const lines = scored.map(({ product }) => {
     const stock = stockById.get(product._id.toString()) || 0
     const state = product.status !== 'Đang bán' ? product.status || 'Ngừng bán' : stock > 0 ? 'Đang bán' : 'Hết hàng'
@@ -670,12 +670,12 @@ app.post('/api/assistant/chat', async (request, response, next) => {
     const previousUserMessages = history.filter((entry) => entry.role === 'user').slice(-4)
     const isConversationalFollowUp = Boolean(previousUserMessages.length && (
       /^(con|con nua|con gi|the con|the nao|vay|vay con|loai|size|gia|bao nhieu|thoi han|han su dung|doi tra|giao hang|cai do|loai do|san pham do|rau nay|qua nay|san pham nay)\b/.test(normalizedQuestion)
-      || /\b(con|vay|the nao|cai do|loai do|san pham do|hop do|combo do|rau nay|qua nay|san pham nay|nong trai nao|thu hoach|khi nao co lai|bao gio co lai|nhap lai|hang ve|co hang lai)\b/.test(normalizedQuestion)
+      || /\b(con|vay|the nao|cai do|loai do|san pham do|hop do|combo do|rau nay|qua nay|san pham nay|nong trai nao|thu hoach|khi nao co lai|bao gio co lai|chung nao co( lai)?|nhap lai|hang ve|co hang lai)\b/.test(normalizedQuestion)
     ))
     const contextualQuestion = isConversationalFollowUp
       ? normalizeAssistantText(`${previousUserMessages.map((entry) => entry.content).join(' ')} ${question}`)
       : normalizedQuestion
-    const referencesPreviousProduct = /\b(san pham nay|nong san nay|rau nay|qua nay|cai nay|loai nay|san pham do|nong san do|rau do|qua do|khi nao co lai|bao gio co lai|nhap lai|hang ve|co hang lai)\b/.test(normalizedQuestion)
+    const referencesPreviousProduct = /\b(san pham nay|nong san nay|rau nay|qua nay|cai nay|loai nay|san pham do|nong san do|rau do|qua do|khi nao co lai|bao gio co lai|chung nao co( lai)?|nhap lai|hang ve|co hang lai)\b/.test(normalizedQuestion)
 
     const hasFarmBoxContext = history.some((entry) =>
       /farm box|farmbox|hop nong trai|hop nong san/.test(normalizeAssistantText(entry.content))
