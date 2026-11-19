@@ -376,13 +376,6 @@ export function createAuthRouter(database, jwtSecret, requireAuth) {
 
   router.post('/forgot-password', async (request, response, next) => {
     try {
-      // Chưa tích hợp dịch vụ email, nên không cho bật luồng reset giả khi deploy.
-      if (process.env.NODE_ENV === 'production') {
-        return response.status(503).json({
-          error: 'Chức năng đặt lại mật khẩu chưa được cấu hình gửi email.',
-        })
-      }
-
       const email = String(request.body.email || '').trim().toLowerCase()
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
         return response.status(400).json({ error: 'Email chưa đúng định dạng.' })
@@ -406,9 +399,8 @@ export function createAuthRouter(database, jwtSecret, requireAuth) {
         })
 
         resetUrl = `/reset-password?token=${rawToken}`
-        console.info(`[DEV ONLY] Link đặt lại mật khẩu cho ${email}: http://localhost:5173${resetUrl}`)
       } else {
-        console.info(`[DEV ONLY] Không tìm thấy tài khoản trong users với email: ${email}`)
+        console.info(`Không tìm thấy tài khoản trong users với email: ${email}`)
       }
 
       return response.json({
