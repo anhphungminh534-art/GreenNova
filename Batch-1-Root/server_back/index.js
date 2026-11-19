@@ -400,23 +400,32 @@ async function getAssistantComboListAnswer() {
   return { answer: `Các Combo đang mở bán:\n${lines.join('\n')}`, source: 'mongodb-combos' }
 }
 
-async function getAssistantProductAnswer(normalizedQuestion, contextualQuestion = normalizedQuestion, conversationContext = '') {
+async function getAssistantProductAnswer(normalizedQuestion, history = [], allowHistoryContext = false) {
   const ignoredWords = new Set(['ben', 'minh', 'co', 'khong', 'ban', 'gia', 'bao', 'nhieu', 'la', 'gi', 'nao', 'shop', 'green', 'nova', 'cho', 'toi', 'hoi', 'nhe', 'xin', 'muon', 'mua', 'hang', 'san', 'pham', 'nong', 'rau', 'cu', 'qua', 'hien', 'tai', 'con', 'het', 'loai', 'giup', 've', 'voi', 'nay', 'cua', 'thu', 'hoach', 'hom', 'ngay', 'nong', 'trai', 'vao'])
-  const tokens = String(contextualQuestion || normalizedQuestion).split(/\s+/).filter((word) => word.length > 1 && !ignoredWords.has(word))
-  if (!tokens.length && !conversationContext) return null
-
   const products = await database.collection('products').find({ isArchived: { $ne: true } }, {
     projection: { name: 1, price: 1, unit: 1, status: 1, farmId: 1, categoryId: 1, productLine: 1, harvestDate: 1 },
   }).limit(1000).toArray()
-  const normalizedConversation = normalizeAssistantText(conversationContext)
-  const scored = products.map((product) => {
-    const name = normalizeAssistantText(product.name)
-    const matched = tokens.filter((token) => name.includes(token))
-    const namedInConversation = Boolean(normalizedConversation && name.length > 2 && normalizedConversation.includes(name))
-    return { product, score: namedInConversation ? 1 : matched.length / tokens.length, namedInConversation }
-  }).filter(({ score }) => score >= 0.6)
-    .sort((a, b) => b.score - a.score || String(a.product.name).localeCompare(String(b.product.name), 'vi'))
-    .slice(0, 5)
+  const findMatches = (text) => {
+    const tokens = normalizeAssistantText(text).split(/\s+/).filter((word) => word.length > 1 && !ignoredWords.has(word))
+    if (!tokens.length) return []
+    return products.map((product) => {
+      const name = normalizeAssistantText(product.name)
+      const matched = tokens.filter((token) => name.includes(token))
+      return { product, score: matched.length / tokens.length }
+    }).filter(({ score }) => score >= 0.6)
+      .sort((a, b) => b.score - a.score || String(a.product.name).localeCompare(String(b.product.name), 'vi'))
+  }
+
+  // A product named in the current message takes precedence over older chat context.
+  let scored = findMatches(normalizedQuestion)
+  if (!scored.length && allowHistoryContext) {
+    const recentProductMessage = [...history].reverse()
+      .filter((entry) => entry.role === 'user')
+      .map((entry) => findMatches(entry.content))
+      .find((matches) => matches.length)
+    scored = recentProductMessage || []
+  }
+  scored = scored.slice(0, 1)
   if (!scored.length) return null
 
   const inventory = await database.collection('inventory').find({
@@ -428,10 +437,14 @@ async function getAssistantProductAnswer(normalizedQuestion, contextualQuestion 
   const farmById = new Map(farms.map((farm) => [farm._id.toString(), farm.name]))
   const asksFarm = /nong trai|farm/.test(normalizedQuestion)
   const asksHarvestDate = /thu hoach|ngay thu hoach/.test(normalizedQuestion)
+  const asksRestockDate = /khi nao co lai|bao gio co lai|nhap lai|hang ve|co hang lai/.test(normalizedQuestion)
   const lines = scored.map(({ product }) => {
     const stock = stockById.get(product._id.toString()) || 0
     const state = product.status !== 'Đang bán' ? product.status || 'Ngừng bán' : stock > 0 ? 'Đang bán' : 'Hết hàng'
     const farm = farmById.get(product.farmId?.toString())
+    if (asksRestockDate && stock <= 0) {
+      return `${product.name} hiện đã hết hàng. GreenNova chưa có lịch nhập lại được cập nhật.`
+    }
     const details = [`${new Intl.NumberFormat('vi-VN').format(asNumber(product.price))}đ/${product.unit || 'đơn vị'}`, state]
     if (farm || asksFarm) details.push(`Nông trại: ${farm || 'chưa cập nhật'}`)
     if (asksHarvestDate) {
@@ -657,12 +670,11 @@ app.post('/api/assistant/chat', async (request, response, next) => {
     const previousUserMessages = history.filter((entry) => entry.role === 'user').slice(-4)
     const isConversationalFollowUp = Boolean(previousUserMessages.length && (
       /^(con|con nua|con gi|the con|the nao|vay|vay con|loai|size|gia|bao nhieu|thoi han|han su dung|doi tra|giao hang|cai do|loai do|san pham do|rau nay|qua nay|san pham nay)\b/.test(normalizedQuestion)
-      || /\b(con|vay|the nao|cai do|loai do|san pham do|hop do|combo do|rau nay|qua nay|san pham nay|nong trai nao|thu hoach)\b/.test(normalizedQuestion)
+      || /\b(con|vay|the nao|cai do|loai do|san pham do|hop do|combo do|rau nay|qua nay|san pham nay|nong trai nao|thu hoach|khi nao co lai|bao gio co lai|nhap lai|hang ve|co hang lai)\b/.test(normalizedQuestion)
     ))
     const contextualQuestion = isConversationalFollowUp
       ? normalizeAssistantText(`${previousUserMessages.map((entry) => entry.content).join(' ')} ${question}`)
       : normalizedQuestion
-    const conversationContext = history.map((entry) => entry.content).join(' ')
 
     const hasFarmBoxContext = history.some((entry) =>
       /farm box|farmbox|hop nong trai|hop nong san/.test(normalizeAssistantText(entry.content))
@@ -708,7 +720,7 @@ app.post('/api/assistant/chat', async (request, response, next) => {
       const data = await getAssistantSeasonalProductAnswer()
       return response.json({ data })
     }
-    const productAnswer = await getAssistantProductAnswer(normalizedQuestion, contextualQuestion, conversationContext)
+    const productAnswer = await getAssistantProductAnswer(normalizedQuestion, history, isConversationalFollowUp)
     if (productAnswer) return response.json({ data: productAnswer })
     const asksProductOriginOrHarvest = /nong trai nao|thu hoach|rau nay|qua nay|san pham nay|nong san nay/.test(normalizedQuestion)
     if (asksProductOriginOrHarvest) {
