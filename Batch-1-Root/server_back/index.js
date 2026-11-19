@@ -337,6 +337,7 @@ app.get('/api/products', async (request, response, next) => {
     response.json({
       data: products.map((product) => {
         const available = Math.max(0, asNumber(product.quantity) - asNumber(product.reservedQty))
+        const quantityStep = productQuantityStep(product, product.categoryName || product.category)
         return {
           id: product._id.toString(),
           name: product.name,
@@ -346,9 +347,9 @@ app.get('/api/products', async (request, response, next) => {
           region: product.region,
           price: asNumber(product.price),
           unit: product.unit,
-          priceUnitQuantity: asNumber(product.stepQty),
+          priceUnitQuantity: quantityStep,
           certification: product.certification || product.certifications || product.qualityStandard || product.standard || '',
-          step: productQuantityStep(product, product.categoryName || product.category),
+          step: quantityStep,
           seasonMonths: Array.isArray(product.seasonMonths) ? product.seasonMonths : [],
           harvestDate: product.harvestDate || null,
           createdAt: product.createdAt || null,
