@@ -1235,52 +1235,40 @@ app.post('/api/assistant/chat', async (request, response, next) => {
           database.collection('combos').find({ isActive: true, isPublished: true }, { projection: { name: 1, price: 1 } }).limit(10).toArray(),
           database.collection('farmBoxes').find({}, { projection: { name: 1, price: 1 } }).limit(10).toArray(),
         ])
-        const candidateModels = [...new Set([process.env.GEMINI_MODEL || 'gemini-3.8-flash', 'gemini-2.5-flash', 'gemini-2.5-flash-lite'])]
-        let lastAiError = null
-        for (const modelName of candidateModels) {
+        const storeContext = {
+          products: liveProducts.map((p) => `${p.name} (${asNumber(p.price)}đ/${p.unit || 'kg'})`),
+          combos: liveCombos.map((c) => `${c.name} (${asNumber(c.price)}đ)`),
+          farmBoxes: liveBoxes.map((b) => `${b.name} (${asNumber(b.price)}đ)`),
+          faq: candidates.map(({ question: q, answer: a }) => ({ q: q.slice(0, 300), a: a.slice(0, 600) })),
+        }
+        const systemPrompt = [
+          'Bạn là trợ lý tư vấn thân thiện của cửa hàng nông sản sạch GreenNova, trả lời ngắn gọn, tự nhiên bằng tiếng Việt.',
+          'Phí giao hàng đồng giá 30.000đ, miễn phí từ 300.000đ. Thanh toán chuyển khoản VietQR.',
+          'Chỉ dùng đúng tên sản phẩm, giá bán từ dữ liệu cửa hàng được cung cấp, không tự bịa giá khác.',
+          `Dữ liệu cửa hàng: ${JSON.stringify(storeContext)}`,
+        ].join(' ')
+        const contents = [
+          ...history.map((h) => ({ role: h.role === 'assistant' ? 'model' : 'user', parts: [{ text: h.content }] })),
+          { role: 'user', parts: [{ text: question }] },
+        ]
+
+        const models = ['gemini-2.5-flash', 'gemini-2.5-flash-lite']
+        let lastErr = null
+        for (const modelName of models) {
           try {
-            const aiResponse = await fetch('https://generativelanguage.googleapis.com/v1beta/interactions', {
+            const aiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(apiKey)}`, {
               method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'x-goog-api-key': apiKey,
-              },
+              headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
-                model: modelName,
-                store: false,
-                system_instruction: [
-                  'Bạn là trợ lý tư vấn thân thiện của cửa hàng nông sản sạch GreenNova, trả lời ngắn gọn, tự nhiên bằng tiếng Việt.',
-                  'Phí giao hàng đồng giá 30.000đ, miễn phí từ 300.000đ. Thanh toán chuyển khoản VietQR.',
-                  'Hãy dùng dữ liệu sản phẩm, combo, Farm Box và FAQ được cung cấp để tư vấn thông minh, gợi ý món phù hợp nhu cầu khách; không tự bịa giá khác.',
-                ].join(' '),
-                input: JSON.stringify({
-                  conversationHistory: history,
-                  contextualQuestion: isConversationalFollowUp ? contextualQuestion : '',
-                  question,
-                  storeCatalog: {
-                    products: liveProducts.map((p) => `${p.name} (${asNumber(p.price)}đ/${p.unit || 'kg'})`),
-                    combos: liveCombos.map((c) => `${c.name} (${asNumber(c.price)}đ)`),
-                    farmBoxes: liveBoxes.map((b) => `${b.name} (${asNumber(b.price)}đ)`),
-                  },
-                  faqCandidates: candidates.map(({ question: faqQuestion, answer }) => ({
-                    question: faqQuestion.slice(0, 500),
-                    answer: answer.slice(0, 1200),
-                  })),
-                }),
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                contents,
+                generationConfig: { temperature: 0.4, maxOutputTokens: 500 },
               }),
               signal: AbortSignal.timeout(15000),
             })
-
             const aiPayload = await aiResponse.json().catch(() => ({}))
-            if (!aiResponse.ok) throw new Error(aiPayload.error?.message || `Gemini API trả về HTTP ${aiResponse.status}.`)
-            const aiAnswer = (aiPayload.steps || [])
-              .filter((step) => step.type === 'model_output')
-              .flatMap((step) => step.content || [])
-              .filter((part) => part.type === 'text')
-              .map((part) => part.text || '')
-              .join('\n')
-              .trim()
-
+            if (!aiResponse.ok) throw new Error(aiPayload.error?.message || `HTTP ${aiResponse.status}`)
+            const aiAnswer = (aiPayload.candidates?.[0]?.content?.parts || []).map((p) => p.text || '').join('\n').trim()
             if (aiAnswer) {
               return response.json({ data: {
                 answer: aiAnswer,
@@ -1289,79 +1277,13 @@ app.post('/api/assistant/chat', async (request, response, next) => {
                 actions: getAssistantActionsForAnswer(question, aiAnswer),
               } })
             }
-          } catch (modelErr) {
-            lastAiError = modelErr
+          } catch (e) {
+            lastErr = e
           }
         }
-        throw lastAiError || new Error('Gemini API không trả về nội dung văn bản.')
+        throw lastErr || new Error('Gemini không trả về nội dung.')
       } catch (error) {
         console.warn('Gemini chatbot chưa trả lời được, dùng FAQ MongoDB dự phòng:', error.message)
-        const groqApiKey = process.env.GROQ_API_KEY
-        if (groqApiKey) {
-          try {
-            const [fallbackProducts, fallbackCombos, fallbackBoxes] = await Promise.all([
-              database.collection('products').find({ productLine: 'Standard', status: 'Đang bán' }, { projection: { name: 1, price: 1, unit: 1 } }).limit(30).toArray(),
-              database.collection('combos').find({ isActive: true, isPublished: true }, { projection: { name: 1, price: 1 } }).limit(10).toArray(),
-              database.collection('farmBoxes').find({}, { projection: { name: 1, price: 1 } }).limit(10).toArray(),
-            ])
-            const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${groqApiKey}`,
-              },
-              body: JSON.stringify({
-                model: process.env.GROQ_MODEL || 'openai/gpt-oss-20b',
-                messages: [
-                  {
-                    role: 'system',
-                    content: [
-                      'Bạn là trợ lý tư vấn thân thiện của cửa hàng nông sản sạch GreenNova, trả lời ngắn gọn, tự nhiên bằng tiếng Việt.',
-                      'Phí giao hàng đồng giá 30.000đ, miễn phí từ 300.000đ. Thanh toán chuyển khoản VietQR.',
-                      'Chỉ dùng thông tin trong dữ liệu được cung cấp; không tự bịa sản phẩm, giá hoặc tình trạng còn hàng.',
-                    ].join(' '),
-                  },
-                  ...history.map(({ role, content }) => ({ role, content })),
-                  {
-                    role: 'user',
-                    content: JSON.stringify({
-                      contextualQuestion: isConversationalFollowUp ? contextualQuestion : '',
-                      question,
-                      storeCatalog: {
-                        products: fallbackProducts.map((product) => `${product.name} (${asNumber(product.price)}đ/${product.unit || 'kg'})`),
-                        combos: fallbackCombos.map((combo) => `${combo.name} (${asNumber(combo.price)}đ)`),
-                        farmBoxes: fallbackBoxes.map((box) => `${box.name} (${asNumber(box.price)}đ)`),
-                      },
-                      faqCandidates: candidates.map(({ question: faqQuestion, answer }) => ({
-                        question: faqQuestion.slice(0, 500),
-                        answer: answer.slice(0, 1200),
-                      })),
-                    }),
-                  },
-                ],
-                temperature: 0.4,
-                max_tokens: 700,
-              }),
-              signal: AbortSignal.timeout(20000),
-            })
-            const groqPayload = await groqResponse.json().catch(() => ({}))
-            if (!groqResponse.ok) {
-              throw new Error(groqPayload.error?.message || `Groq API trả về HTTP ${groqResponse.status}.`)
-            }
-            const groqAnswer = String(groqPayload.choices?.[0]?.message?.content || '').trim()
-            if (groqAnswer) {
-              return response.json({ data: {
-                answer: groqAnswer,
-                matchedQuestion: match?.question || '',
-                source: 'groq-mongodb-faq',
-                actions: getAssistantActionsForAnswer(question, groqAnswer),
-              } })
-            }
-            throw new Error('Groq API không trả về nội dung văn bản.')
-          } catch (groqError) {
-            console.warn('Groq chatbot dự phòng chưa trả lời được, dùng FAQ MongoDB:', groqError.message)
-          }
-        }
       }
     }
 
