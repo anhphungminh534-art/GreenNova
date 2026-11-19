@@ -39,6 +39,18 @@ const assistantActions = {
   ],
 }
 
+function getAssistantActionsForAnswer(question, answer) {
+  const text = normalizeAssistantText(`${question || ''} ${answer || ''}`)
+  const actions = []
+  if (/farm box|farmbox|hop nong trai/.test(text)) actions.push(...assistantActions.farmBox)
+  if (/combo|imperfect/.test(text)) actions.push(...assistantActions.combos)
+  if (/nong san|rau cu|rau tuoi/.test(text)) actions.push(...assistantActions.products)
+  if (/don hang cua toi|trang thai don/.test(text)) {
+    actions.push({ label: 'Xem đơn hàng của tôi', href: '/orders' })
+  }
+  return [...new Map(actions.map((action) => [action.href, action])).values()]
+}
+
 const asImageList = (value) => {
   if (Array.isArray(value)) return value.filter((url) => typeof url === 'string').map((url) => url.trim()).filter(Boolean)
   if (typeof value === 'string') return value.split(/\r?\n/).map((url) => url.trim()).filter(Boolean)
@@ -1124,7 +1136,12 @@ app.post('/api/assistant/chat', async (request, response, next) => {
 
     const match = ranked[0]
     if (!isConversationalFollowUp && match?.relevant && match.score >= 0.85) {
-      return response.json({ data: { answer: match.answer, matchedQuestion: match.question, source: 'mongodb' } })
+      return response.json({ data: {
+        answer: match.answer,
+        matchedQuestion: match.question,
+        source: 'mongodb',
+        actions: getAssistantActionsForAnswer(question, match.answer),
+      } })
     }
 
     const candidates = ranked.filter((entry) => entry.relevant).slice(0, 5)
@@ -1179,6 +1196,7 @@ app.post('/api/assistant/chat', async (request, response, next) => {
             answer: aiAnswer,
             matchedQuestion: match?.question || '',
             source: 'gemini-mongodb-faq',
+            actions: getAssistantActionsForAnswer(question, aiAnswer),
           } })
         }
         throw new Error('Gemini API không trả về nội dung văn bản.')
@@ -1188,7 +1206,12 @@ app.post('/api/assistant/chat', async (request, response, next) => {
     }
 
     if (!isConversationalFollowUp && match?.relevant && match.score >= 0.6) {
-      return response.json({ data: { answer: match.answer, matchedQuestion: match.question, source: 'mongodb' } })
+      return response.json({ data: {
+        answer: match.answer,
+        matchedQuestion: match.question,
+        source: 'mongodb',
+        actions: getAssistantActionsForAnswer(question, match.answer),
+      } })
     }
 
     return response.json({ data: {
