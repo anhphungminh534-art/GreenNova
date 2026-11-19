@@ -585,6 +585,47 @@ async function getAssistantSeasonalProductAnswer() {
   return { answer: `Theo dữ liệu mùa vụ GreenNova, ${monthName} có các loại nông sản:\n${lines.join('\n')}`, source: 'mongodb-products-season' }
 }
 
+async function getAssistantSeasonalVegetableRecommendation() {
+  const month = Number(new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Asia/Ho_Chi_Minh', month: 'numeric',
+  }).format(new Date()))
+  const products = await database.collection('products').find({
+    isArchived: { $ne: true },
+    seasonMonths: { $in: [month, String(month)] },
+  }, { projection: { name: 1, price: 1, unit: 1, status: 1 } }).toArray()
+  const fruitTerms = ['bo sap', 'cam sanh', 'chuoi', 'nho', 'tao', 'du du', 'oi le']
+  const vegetables = products.filter((product) => {
+    const name = normalizeAssistantText(product.name)
+    const unit = normalizeAssistantText(product.unit)
+    const status = normalizeAssistantText(product.status)
+    return unit.includes('kg')
+      && !fruitTerms.some((term) => name.includes(term))
+      && !['khong ban', 'ngung ban', 'het hang'].includes(status)
+  }).sort((left, right) => asNumber(left.price) - asNumber(right.price))
+
+  if (!vegetables.length) {
+    return { answer: 'Hiện chưa có đủ dữ liệu nông sản rau củ theo mùa đang bán để gợi ý giỏ tiết kiệm.', source: 'mongodb-products-season' }
+  }
+
+  const formatMoney = (value) => `${new Intl.NumberFormat('vi-VN').format(value)}đ`
+  const portions = vegetables.slice(0, 3).map((product) => ({
+    name: product.name,
+    unitPrice: asNumber(product.price),
+    quantity: 0.5,
+  }))
+  const total = portions.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0)
+  const monthName = new Intl.DateTimeFormat('vi-VN', {
+    timeZone: 'Asia/Ho_Chi_Minh', month: 'long',
+  }).format(new Date())
+  const lines = portions.map((item) => (
+    `• ${item.name}: 0,5 kg — khoảng ${formatMoney(item.unitPrice * item.quantity)}`
+  ))
+  return {
+    answer: `Với 2 người, bạn có thể thử giỏ rau củ theo mùa tháng ${monthName} gồm 3 loại, mỗi loại khoảng 0,5 kg:\n${lines.join('\n')}\nTổng tiền rau củ dự kiến: ${formatMoney(total)}, chưa gồm phí giao hàng. Đây là gợi ý khẩu phần; bạn có thể tăng giảm theo nhu cầu.`,
+    source: 'mongodb-products-season-budget',
+  }
+}
+
 function getSaigonDateKey(value) {
   const parts = new Intl.DateTimeFormat('en-CA', {
     timeZone: 'Asia/Ho_Chi_Minh', year: 'numeric', month: '2-digit', day: '2-digit',
@@ -987,6 +1028,14 @@ app.post('/api/assistant/chat', async (request, response, next) => {
       || /co (nong san|rau cu qua|san pham) gi|danh sach (nong san|san pham)|cac (nong san|san pham)|nhung (nong san|san pham)/.test(normalizedQuestion)
     if (asksForProductList) {
       const data = await getAssistantProductListAnswer()
+      return response.json({ data })
+    }
+    const asksSeasonalBudgetRecommendation = /rau cu|rau|nong san/.test(normalizedQuestion)
+      && /(2 nguoi|hai nguoi|cho .* nguoi)/.test(normalizedQuestion)
+      && /(theo mua|mua vu|uu tien theo mua)/.test(normalizedQuestion)
+      && /(tiet kiem|ngan sach|re)/.test(normalizedQuestion)
+    if (asksSeasonalBudgetRecommendation) {
+      const data = await getAssistantSeasonalVegetableRecommendation()
       return response.json({ data })
     }
     const asksForSeasonalProducts = /mua vu|vao mua|theo mua|dang vao mua|thang nay.*mua|mua.*thang nay/.test(normalizedQuestion)
