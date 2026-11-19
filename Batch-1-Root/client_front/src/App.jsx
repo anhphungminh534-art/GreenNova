@@ -5378,8 +5378,8 @@ function App() {
     const loadSuggestedQuestions = () => {
       const suggestions = [
         { label: 'Hôm nay có rau củ tươi nào đang vào mùa?', href: '/nong-san' },
-        { label: 'Có combo nào ngon, giá tốt không?', href: '/imperfect' },
-        { label: 'Tuần này có Farm Box nào phù hợp?', href: '/farm-box' },
+        { label: 'Giới thiệu các Combo đang bán, có combo nào giá tốt?', href: '/imperfect' },
+        { label: 'Giới thiệu các mẫu Farm Box đang mở bán', href: '/farm-box' },
       ]
       prompts.replaceChildren(...suggestions.map(({ label, href }) => {
         const link = document.createElement('a')
