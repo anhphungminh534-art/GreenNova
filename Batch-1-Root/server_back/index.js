@@ -603,10 +603,6 @@ async function getAssistantSeasonalVegetableRecommendation() {
       && !['khong ban', 'ngung ban', 'het hang'].includes(status)
   }).sort((left, right) => asNumber(left.price) - asNumber(right.price))
 
-  if (!vegetables.length) {
-    return { answer: 'Hiện chưa có đủ dữ liệu nông sản rau củ theo mùa đang bán để gợi ý giỏ tiết kiệm.', source: 'mongodb-products-season' }
-  }
-
   const formatMoney = (value) => `${new Intl.NumberFormat('vi-VN').format(value)}đ`
   const portions = vegetables.slice(0, 3).map((product) => ({
     name: product.name,
@@ -620,8 +616,52 @@ async function getAssistantSeasonalVegetableRecommendation() {
   const lines = portions.map((item) => (
     `• ${item.name}: 0,5 kg — khoảng ${formatMoney(item.unitPrice * item.quantity)}`
   ))
+  const now = new Date()
+  const todayKey = getSaigonDateKey(now)
+  const weekStart = addDateKeyDays(todayKey, -((new Date(`${todayKey}T00:00:00.000Z`).getUTCDay() + 6) % 7))
+  const boxes = await database.collection('farmBoxes').find({}, { projection: { name: 1, price: 1 } }).toArray()
+  const boxById = new Map(boxes.map((box) => [box._id.toString(), box]))
+  let weeks = boxes.length ? await database.collection('farmBoxWeeks').find({
+    farmBoxId: { $in: boxes.map((box) => box._id) },
+    selectedForWeek: { $ne: false },
+    status: { $in: ['Đang mở', 'Sắp mở'] },
+    endDate: { $gte: now },
+  }).sort({ startDate: 1 }).toArray() : []
+  weeks = weeks.filter((week) => Boolean(boxById.get(week.farmBoxId?.toString())?.name))
+  const currentWeeks = weeks.filter((week) => getSaigonDateKey(week.startDate) <= todayKey && getSaigonDateKey(week.endDate) >= todayKey)
+  if (currentWeeks.length) {
+    weeks = currentWeeks
+  } else {
+    const nextStart = weeks.map((week) => getSaigonDateKey(week.startDate)).filter((date) => date >= todayKey).sort()[0]
+    weeks = nextStart ? weeks.filter((week) => getSaigonDateKey(week.startDate) === nextStart) : []
+  }
+  const affordableFarmBoxes = [...new Map(weeks.map((week) => {
+    const box = boxById.get(week.farmBoxId.toString())
+    const price = asNumber(week.price ?? box.price)
+    return [box.name, { name: box.name, price, size: price < 199000 ? 'nhỏ' : price < 300000 ? 'vừa' : 'lớn' }]
+  }).filter(([, option]) => option.price > 0)
+    .sort((left, right) => left[1].price - right[1].price)).values()].slice(0, 2)
+
+  const comboRecords = await database.collection('combos').find({ isActive: true, isPublished: true }).sort({ price: 1 }).limit(20).toArray()
+  const affordableCombos = []
+  for (const record of comboRecords) {
+    const combo = await ensureComboStock(database, record)
+    const stock = availableComboStock(combo)
+    if (stock > 0) affordableCombos.push({ name: combo.name, price: asNumber(combo.price), stock })
+    if (affordableCombos.length === 2) break
+  }
+
+  const vegetableSection = lines.length
+    ? `Rau củ theo mùa tháng ${monthName}, gợi ý cho 2 người (mỗi loại khoảng 0,5 kg):\n${lines.join('\n')}\nTổng rau củ dự kiến: ${formatMoney(total)}.`
+    : 'Hiện chưa có đủ rau củ theo mùa đang bán để tính giỏ rau riêng.'
+  const farmBoxSection = affordableFarmBoxes.length
+    ? `Farm Box đang mở có giá thấp:\n${affordableFarmBoxes.map((option) => `• ${option.name} (loại ${option.size}) — ${formatMoney(option.price)}`).join('\n')}`
+    : 'Hiện chưa có Farm Box nào đang mở để gợi ý.'
+  const comboSection = affordableCombos.length
+    ? `Combo còn hàng giá thấp:\n${affordableCombos.map((option) => `• ${option.name} — ${formatMoney(option.price)} (còn ${option.stock})`).join('\n')}`
+    : 'Hiện chưa có combo còn hàng để gợi ý.'
   return {
-    answer: `Với 2 người, bạn có thể thử giỏ rau củ theo mùa tháng ${monthName} gồm 3 loại, mỗi loại khoảng 0,5 kg:\n${lines.join('\n')}\nTổng tiền rau củ dự kiến: ${formatMoney(total)}, chưa gồm phí giao hàng. Đây là gợi ý khẩu phần; bạn có thể tăng giảm theo nhu cầu.`,
+    answer: `${vegetableSection}\n\n${farmBoxSection}\n\n${comboSection}\n\nGiá và khẩu phần là thông tin tham khảo; xem chi tiết gói trước khi đặt.`,
     source: 'mongodb-products-season-budget',
   }
 }
