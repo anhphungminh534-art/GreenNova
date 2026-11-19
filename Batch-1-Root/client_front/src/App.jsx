@@ -844,9 +844,14 @@ function applyCustomerProfileNavigation(documentFromStitch, route) {
     anchor.innerHTML = `<div class="flex items-center gap-3"><span class="material-symbols-outlined text-[20px] ${item.active ? 'text-primary' : ''}">${item.icon}</span><span>${item.label}</span></div>${item.active ? '<span class="material-symbols-outlined text-[16px]">chevron_right</span>' : ''}`
     return anchor
   })
-  nav.replaceChildren(...selected)
+ const aside = nav.closest('aside')
+  aside?.querySelectorAll('a, button').forEach((el) => {
+    if (!nav.contains(el) && normalizeLabel(el.textContent).includes('dang xuat')) {
+      el.remove()
+    }
+  })
   const sidebarCard = nav.parentElement
-  if (sidebarCard && !sidebarCard.querySelector('[data-action="logout"]') && !normalizeLabel(sidebarCard.textContent).includes('dang xuat')) {
+  if (sidebarCard && !sidebarCard.querySelector('[data-action="logout"]')) {
     const divider = documentFromStitch.createElement('div')
     divider.className = 'mt-3 border-t border-[#e6eee5] pt-3'
     const logoutBtn = documentFromStitch.createElement('button')
@@ -857,7 +862,6 @@ function applyCustomerProfileNavigation(documentFromStitch, route) {
     divider.append(logoutBtn)
     nav.after(divider)
   }
-}
 
 function applyStoreProducts(documentFromStitch, route, products, productPage = 1, productSearch = '', catalogFilters = {}, selectedProductId = '') {
   const harvestDateLabel = formatSaigonToday()
