@@ -5375,22 +5375,20 @@ function App() {
     if (!launcher || !panel || !form || !input || !messages || !prompts) return undefined
     const conversationHistory = []
 
-    const loadSuggestedQuestions = async () => {
-      try {
-        const response = await fetch('/api/assistant/questions')
-        const payload = await response.json()
-        if (!response.ok) throw new Error(payload.error || 'Không thể tải câu hỏi gợi ý.')
-        prompts.replaceChildren(...(payload.data?.questions || []).map((question) => {
-          const button = document.createElement('button')
-          button.type = 'button'
-          button.dataset.assistantPrompt = question
-          button.className = 'rounded-full border border-[#cfe1d0] bg-white px-3 py-1.5 text-xs text-[#176b36] hover:bg-[#eaf5e9]'
-          button.textContent = question
-          return button
-        }))
-      } catch (error) {
-        console.warn('Không thể tải câu hỏi gợi ý từ MongoDB:', error.message)
-      }
+    const loadSuggestedQuestions = () => {
+      const suggestions = [
+        { label: 'Hôm nay có rau củ tươi nào đang vào mùa?', href: '/nong-san' },
+        { label: 'Có combo nào ngon, giá tốt không?', href: '/imperfect' },
+        { label: 'Tuần này có Farm Box nào phù hợp?', href: '/farm-box' },
+      ]
+      prompts.replaceChildren(...suggestions.map(({ label, href }) => {
+        const link = document.createElement('a')
+        link.href = href
+        link.dataset.route = href
+        link.className = 'rounded-full border border-[#cfe1d0] bg-white px-3 py-1.5 text-center text-xs text-[#176b36] no-underline hover:bg-[#eaf5e9]'
+        link.textContent = label
+        return link
+      }))
     }
     loadSuggestedQuestions()
 
@@ -5485,20 +5483,13 @@ function App() {
       event.preventDefault()
       sendMessage(input.value)
     }
-    const handlePrompt = (event) => {
-      const prompt = event.target.closest?.('[data-assistant-prompt]')
-      if (!prompt) return
-      sendMessage(prompt.dataset.assistantPrompt)
-    }
     launcher.addEventListener('click', handleLauncher)
     panel.querySelector('[data-assistant-close]')?.addEventListener('click', handleClose)
     form.addEventListener('submit', handleSubmit)
-    messages.addEventListener('click', handlePrompt)
     return () => {
       launcher.removeEventListener('click', handleLauncher)
       panel.querySelector('[data-assistant-close]')?.removeEventListener('click', handleClose)
       form.removeEventListener('submit', handleSubmit)
-      messages.removeEventListener('click', handlePrompt)
     }
   }, [route.path, screen.bodyHtml])
 
