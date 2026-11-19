@@ -828,6 +828,28 @@ async function getAssistantCustomerFarmBoxStatus(userId) {
   return { answer: lines.join('\n'), source: 'mongodb-customer-orders' }
 }
 
+async function getAssistantCustomerOrderStatus(userId) {
+  const order = await database.collection('orders').findOne(
+    { userId: new ObjectId(userId) },
+    { sort: { createdAt: -1 } },
+  )
+  if (!order) {
+    return { answer: 'Mình chưa tìm thấy đơn hàng nào trong tài khoản của bạn.', source: 'mongodb-customer-orders' }
+  }
+  const status = order.status === 'Đã nhận' || order.deliveredAt
+    ? `đã giao thành công${order.deliveredAt ? ` ngày ${new Intl.DateTimeFormat('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh', day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(order.deliveredAt))}` : ''}`
+    : order.status === 'Đang giao'
+      ? `đang giao${order.deliveryDueAt ? `, dự kiến giao ${new Intl.DateTimeFormat('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh', day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(order.deliveryDueAt))}` : ''}`
+      : order.status === 'Chờ thanh toán' ? 'đang chờ thanh toán'
+        : order.status === 'Đã hủy' ? 'đã hủy'
+          : order.status || 'chưa cập nhật'
+  const items = (order.items || []).map((item) => `${item.itemName || 'Sản phẩm'} × ${asNumber(item.quantity)}`).slice(0, 4)
+  return {
+    answer: `Đơn gần nhất của bạn (${order.orderCode || 'chưa có mã'}) hiện ${status}.${items.length ? ` Mặt hàng: ${items.join(', ')}.` : ''}`,
+    source: 'mongodb-customer-orders',
+  }
+}
+
 async function getAssistantChatUserId(request) {
   const [scheme, token] = String(request.get('authorization') || '').split(' ')
   if (scheme !== 'Bearer' || !token || !process.env.JWT_SECRET) return null
@@ -910,6 +932,18 @@ app.post('/api/assistant/chat', async (request, response, next) => {
         } })
       }
       const data = await getAssistantCustomerFarmBoxStatus(userId)
+      return response.json({ data })
+    }
+    const asksOwnOrderStatus = /don hang cua toi|don hang toi|trang thai don hang|don hang.*trang thai/.test(normalizedQuestion)
+    if (asksOwnOrderStatus) {
+      const userId = await getAssistantChatUserId(request)
+      if (!userId) {
+        return response.json({ data: {
+          answer: 'Bạn đăng nhập để mình kiểm tra trạng thái đơn hàng của bạn nhé.',
+          source: 'mongodb-customer-orders-auth-required',
+        } })
+      }
+      const data = await getAssistantCustomerOrderStatus(userId)
       return response.json({ data })
     }
 
