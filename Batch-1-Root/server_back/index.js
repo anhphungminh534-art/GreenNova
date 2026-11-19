@@ -523,8 +523,10 @@ async function getAssistantProductAnswer(normalizedQuestion, history = [], allow
     const tokens = normalizeAssistantText(text).split(/\s+/).filter((word) => word.length > 1 && !ignoredWords.has(word))
     if (!tokens.length) return []
     return products.map((product) => {
-      const name = normalizeAssistantText(product.name)
-      const matched = tokens.filter((token) => name.includes(token))
+      const nameTokens = new Set(normalizeAssistantText(product.name).split(/\s+/).filter(Boolean))
+      // Match whole normalized name words. Substring matching makes short names
+      // such as "bo" (bơ) incorrectly match "bong" (bông cải).
+      const matched = tokens.filter((token) => nameTokens.has(token))
       return { product, score: matched.length / tokens.length }
     }).filter(({ score }) => score >= 0.6)
       .sort((a, b) => b.score - a.score || String(a.product.name).localeCompare(String(b.product.name), 'vi'))
