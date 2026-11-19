@@ -1233,60 +1233,65 @@ app.post('/api/assistant/chat', async (request, response, next) => {
           database.collection('combos').find({ isActive: true, isPublished: true }, { projection: { name: 1, price: 1 } }).limit(10).toArray(),
           database.collection('farmBoxes').find({}, { projection: { name: 1, price: 1 } }).limit(10).toArray(),
         ])
-        const aiResponse = await fetch('https://generativelanguage.googleapis.com/v1beta/interactions', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-goog-api-key': apiKey,
-          },
-          body: JSON.stringify({
-            model: process.env.GEMINI_MODEL || 'gemini-3.8-flash',
-            store: false,
-            system_instruction: [
-              'Bạn là trợ lý tư vấn thân thiện của cửa hàng nông sản sạch GreenNova, trả lời ngắn gọn, tự nhiên bằng tiếng Việt.',
-              'Phí giao hàng đồng giá 30.000đ, miễn phí từ 300.000đ. Thanh toán chuyển khoản VietQR.',
-              'Hãy dùng dữ liệu sản phẩm, combo, Farm Box và FAQ được cung cấp để tư vấn thông minh, gợi ý món phù hợp nhu cầu khách; không tự bịa giá khác.',
-            ].join(' '),
-            input: JSON.stringify({
-              conversationHistory: history,
-              contextualQuestion: isConversationalFollowUp ? contextualQuestion : '',
-              question,
-              storeCatalog: {
-                products: liveProducts.map((p) => `${p.name} (${asNumber(p.price)}đ/${p.unit || 'kg'})`),
-                combos: liveCombos.map((c) => `${c.name} (${asNumber(c.price)}đ)`),
-                farmBoxes: liveBoxes.map((b) => `${b.name} (${asNumber(b.price)}đ)`),
+        const candidateModels = [...new Set([process.env.GEMINI_MODEL || 'gemini-3.8-flash', 'gemini-2.5-flash', 'gemini-2.5-flash-lite'])]
+        let lastAiError = null
+        for (const modelName of candidateModels) {
+          try {
+            const aiResponse = await fetch('https://generativelanguage.googleapis.com/v1beta/interactions', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'x-goog-api-key': apiKey,
               },
-              faqCandidates: candidates.map(({ question: faqQuestion, answer }) => ({
-                question: faqQuestion.slice(0, 500),
-                answer: answer.slice(0, 1200),
-              })),
-            }),
-          }),
-          signal: AbortSignal.timeout(20000),
-        })
+              body: JSON.stringify({
+                model: modelName,
+                store: false,
+                system_instruction: [
+                  'Bạn là trợ lý tư vấn thân thiện của cửa hàng nông sản sạch GreenNova, trả lời ngắn gọn, tự nhiên bằng tiếng Việt.',
+                  'Phí giao hàng đồng giá 30.000đ, miễn phí từ 300.000đ. Thanh toán chuyển khoản VietQR.',
+                  'Hãy dùng dữ liệu sản phẩm, combo, Farm Box và FAQ được cung cấp để tư vấn thông minh, gợi ý món phù hợp nhu cầu khách; không tự bịa giá khác.',
+                ].join(' '),
+                input: JSON.stringify({
+                  conversationHistory: history,
+                  contextualQuestion: isConversationalFollowUp ? contextualQuestion : '',
+                  question,
+                  storeCatalog: {
+                    products: liveProducts.map((p) => `${p.name} (${asNumber(p.price)}đ/${p.unit || 'kg'})`),
+                    combos: liveCombos.map((c) => `${c.name} (${asNumber(c.price)}đ)`),
+                    farmBoxes: liveBoxes.map((b) => `${b.name} (${asNumber(b.price)}đ)`),
+                  },
+                  faqCandidates: candidates.map(({ question: faqQuestion, answer }) => ({
+                    question: faqQuestion.slice(0, 500),
+                    answer: answer.slice(0, 1200),
+                  })),
+                }),
+              }),
+              signal: AbortSignal.timeout(15000),
+            })
 
-        const aiPayload = await aiResponse.json().catch(() => ({}))
-        if (!aiResponse.ok) {
-          throw new Error(aiPayload.error?.message || `Gemini API trả về HTTP ${aiResponse.status}.`)
+            const aiPayload = await aiResponse.json().catch(() => ({}))
+            if (!aiResponse.ok) throw new Error(aiPayload.error?.message || `Gemini API trả về HTTP ${aiResponse.status}.`)
+            const aiAnswer = (aiPayload.steps || [])
+              .filter((step) => step.type === 'model_output')
+              .flatMap((step) => step.content || [])
+              .filter((part) => part.type === 'text')
+              .map((part) => part.text || '')
+              .join('\n')
+              .trim()
+
+            if (aiAnswer) {
+              return response.json({ data: {
+                answer: aiAnswer,
+                matchedQuestion: match?.question || '',
+                source: `gemini-${modelName}`,
+                actions: getAssistantActionsForAnswer(question, aiAnswer),
+              } })
+            }
+          } catch (modelErr) {
+            lastAiError = modelErr
+          }
         }
-
-        const aiAnswer = (aiPayload.steps || [])
-          .filter((step) => step.type === 'model_output')
-          .flatMap((step) => step.content || [])
-          .filter((part) => part.type === 'text')
-          .map((part) => part.text || '')
-          .join('\n')
-          .trim()
-
-        if (aiAnswer) {
-          return response.json({ data: {
-            answer: aiAnswer,
-            matchedQuestion: match?.question || '',
-            source: 'gemini-mongodb-faq',
-            actions: getAssistantActionsForAnswer(question, aiAnswer),
-          } })
-        }
-        throw new Error('Gemini API không trả về nội dung văn bản.')
+        throw lastAiError || new Error('Gemini API không trả về nội dung văn bản.')
       } catch (error) {
         console.warn('Gemini chatbot chưa trả lời được, dùng FAQ MongoDB dự phòng:', error.message)
       }
