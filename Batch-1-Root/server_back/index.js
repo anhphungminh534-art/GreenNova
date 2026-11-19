@@ -900,6 +900,77 @@ async function getAssistantFarmBoxBudgetAnswer(question) {
   }
 }
 
+async function getAssistantFarmBoxHouseholdRecommendation(question) {
+  const normalized = normalizeAssistantText(question)
+  const numberMatch = normalized.match(/(\d+)\s*nguoi/)
+  const wordCounts = { mot: 1, hai: 2, ba: 3, bon: 4, tu: 4, nam: 5, sau: 6, bay: 7, tam: 8 }
+  const wordMatch = normalized.match(/\b(mot|hai|ba|bon|tu|nam|sau|bay|tam) nguoi\b/)
+  const people = numberMatch ? Number(numberMatch[1]) : wordCounts[wordMatch?.[1]] || 0
+  if (!people) return null
+
+  const preferredSize = people <= 2 ? 'small' : people <= 4 ? 'medium' : 'large'
+  const sizeLabels = { small: 'nhỏ', medium: 'vừa', large: 'lớn' }
+  const now = new Date()
+  const todayKey = getSaigonDateKey(now)
+  const boxes = await database.collection('farmBoxes').find({}, { projection: { name: 1, price: 1 } }).toArray()
+  if (!boxes.length) {
+    return { answer: 'Hiện chưa có Farm Box nào được mở đăng ký.', source: 'mongodb-farm-boxes' }
+  }
+  const boxById = new Map(boxes.map((box) => [box._id.toString(), box]))
+  let weeks = await database.collection('farmBoxWeeks').find({
+    farmBoxId: { $in: boxes.map((box) => box._id) },
+    selectedForWeek: { $ne: false },
+    status: { $in: ['Đang mở', 'Sắp mở'] },
+    endDate: { $gte: now },
+  }).sort({ startDate: 1 }).toArray()
+  weeks = weeks.filter((week) => Boolean(boxById.get(week.farmBoxId?.toString())?.name))
+  const currentWeeks = weeks.filter((week) => getSaigonDateKey(week.startDate) <= todayKey && getSaigonDateKey(week.endDate) >= todayKey)
+  if (currentWeeks.length) {
+    weeks = currentWeeks
+  } else {
+    const nextStart = weeks.map((week) => getSaigonDateKey(week.startDate)).filter((date) => date >= todayKey).sort()[0]
+    weeks = nextStart ? weeks.filter((week) => getSaigonDateKey(week.startDate) === nextStart) : []
+  }
+
+  const options = weeks.map((week) => {
+    const box = boxById.get(week.farmBoxId.toString())
+    const price = asNumber(week.price ?? box.price)
+    const size = price < 199000 ? 'small' : price < 300000 ? 'medium' : 'large'
+    const params = new URLSearchParams({
+      farmBoxId: box._id.toString(),
+      weekId: week._id.toString(),
+      size: size === 'small' ? 'nho' : size === 'medium' ? 'vua' : 'lon',
+      weekStart: new Date(week.startDate).toISOString(),
+    })
+    return {
+      name: box.name,
+      price,
+      size,
+      href: `/farm-box/thuc-don?${params.toString()}`,
+    }
+  }).filter((option) => option.price > 0)
+  const preferred = options.filter((option) => option.size === preferredSize).sort((a, b) => a.price - b.price)
+  const formatMoney = (value) => `${new Intl.NumberFormat('vi-VN').format(value)}đ`
+  const selected = preferred.slice(0, 2)
+  if (!selected.length) {
+    const alternatives = options.sort((a, b) => a.price - b.price).slice(0, 3)
+    if (!alternatives.length) {
+      return { answer: 'Hiện chưa có Farm Box nào mở bán trong tuần này.', source: 'mongodb-farm-boxes' }
+    }
+    return {
+      answer: `Với nhà ${people} người, thường nên xem Farm Box loại ${sizeLabels[preferredSize]}. Hiện tuần này chưa có loại này; các gói đang mở là ${alternatives.map((option) => `${option.name} (loại ${sizeLabels[option.size]}, ${formatMoney(option.price)})`).join(', ')}.`,
+      source: 'mongodb-farm-boxes-household',
+      actions: alternatives.map((option) => ({ label: `Xem ${option.name}`, href: option.href })),
+    }
+  }
+
+  return {
+    answer: `Với nhà ${people} người, mình gợi ý Farm Box loại ${sizeLabels[preferredSize]}: ${selected.map((option) => `${option.name} — ${formatMoney(option.price)}`).join('; ')}. Chọn gói để xem thực đơn và đặt cho tuần đang mở.`,
+    source: 'mongodb-farm-boxes-household',
+    actions: selected.map((option) => ({ label: `Xem ${option.name}`, href: option.href })),
+  }
+}
+
 async function getAssistantCustomerFarmBoxStatus(userId) {
   const todayKey = getSaigonDateKey(new Date())
   const daysSinceMonday = (new Date(`${todayKey}T00:00:00.000Z`).getUTCDay() + 6) % 7
@@ -1054,6 +1125,14 @@ app.post('/api/assistant/chat', async (request, response, next) => {
       }
       const data = await getAssistantCustomerOrderStatus(userId)
       return response.json({ data })
+    }
+
+    const asksFarmBoxByHousehold = /farm box|farmbox|hop nong trai|hop nong san/.test(normalizedQuestion)
+      && /nguoi/.test(normalizedQuestion)
+      && /nen mua|nen chon|goi y|phu hop/.test(normalizedQuestion)
+    if (asksFarmBoxByHousehold) {
+      const data = await getAssistantFarmBoxHouseholdRecommendation(question)
+      if (data) return response.json({ data })
     }
 
     const asksFarmBoxBudget = /farm box|farmbox|hop nong trai|hop nong san/.test(normalizedQuestion)
