@@ -733,6 +733,63 @@ async function getAssistantFarmBoxScheduleAnswer(normalizedQuestion) {
   }
 }
 
+async function getAssistantFarmBoxBudgetAnswer(question) {
+  const normalized = normalizeAssistantText(question)
+  const compact = normalized.replace(/\s+/g, '')
+  const suffixedAmount = compact.match(/(\d+(?:[.,]\d+)?)(k|nghin|ngan|trieu)/)
+  const plainAmount = normalized.match(/\b(\d{5,})\b/)
+  const budget = suffixedAmount
+    ? Number(suffixedAmount[1].replace(',', '.')) * (/trieu/.test(suffixedAmount[2]) ? 1000000 : 1000)
+    : plainAmount ? Number(plainAmount[1]) : 0
+  if (!budget) return null
+
+  const now = new Date()
+  const todayKey = getSaigonDateKey(now)
+  const boxes = await database.collection('farmBoxes').find({}, { projection: { name: 1, price: 1 } }).toArray()
+  if (!boxes.length) return { answer: 'Hiện chưa có Farm Box nào được mở đăng ký.', source: 'mongodb-farm-boxes' }
+  const boxById = new Map(boxes.map((box) => [box._id.toString(), box]))
+  let weeks = await database.collection('farmBoxWeeks').find({
+    farmBoxId: { $in: boxes.map((box) => box._id) },
+    selectedForWeek: { $ne: false },
+    status: { $in: ['Đang mở', 'Sắp mở'] },
+    endDate: { $gte: now },
+  }).sort({ startDate: 1, endDate: 1 }).toArray()
+  weeks = weeks.filter((week) => Boolean(boxById.get(week.farmBoxId?.toString())?.name))
+  const currentWeeks = weeks.filter((week) => getSaigonDateKey(week.startDate) <= todayKey && getSaigonDateKey(week.endDate) >= todayKey)
+  if (currentWeeks.length) {
+    weeks = currentWeeks
+  } else {
+    const nextStart = weeks.map((week) => getSaigonDateKey(week.startDate)).filter((date) => date >= todayKey).sort()[0]
+    weeks = nextStart ? weeks.filter((week) => getSaigonDateKey(week.startDate) === nextStart) : []
+  }
+
+  const options = weeks.map((week) => {
+    const box = boxById.get(week.farmBoxId.toString())
+    return { name: box.name, price: asNumber(week.price ?? box.price) }
+  }).filter((option) => option.price > 0)
+  if (!options.length) {
+    return { answer: 'Hiện chưa có Farm Box nào có giá và lịch mở bán để mình so với ngân sách này.', source: 'mongodb-farm-boxes' }
+  }
+  const formatMoney = (value) => `${new Intl.NumberFormat('vi-VN').format(value)}đ`
+  const affordable = [...new Map(options.filter((option) => option.price <= budget)
+    .sort((a, b) => b.price - a.price)
+    .map((option) => [option.name, option])).values()]
+  if (!affordable.length) {
+    const cheapest = options.sort((a, b) => a.price - b.price)[0]
+    return {
+      answer: `Ngân sách ${formatMoney(budget)} hiện chưa đủ cho Farm Box đang mở bán. Gói thấp nhất là ${cheapest.name}, giá ${formatMoney(cheapest.price)}.`,
+      source: 'mongodb-farm-boxes-budget',
+    }
+  }
+  const recommendation = affordable[0]
+  const alternatives = affordable.slice(1, 4).map((option) => `${option.name} (${formatMoney(option.price)})`)
+  return {
+    answer: `Với ngân sách ${formatMoney(budget)}, mình gợi ý ${recommendation.name} (${formatMoney(recommendation.price)}).`
+      + (alternatives.length ? ` Các lựa chọn khác trong ngân sách: ${alternatives.join(', ')}.` : ''),
+    source: 'mongodb-farm-boxes-budget',
+  }
+}
+
 app.get('/api/assistant/questions', async (_request, response, next) => {
   try {
     const entries = await getAssistantFaqEntries()
@@ -787,6 +844,13 @@ app.post('/api/assistant/chat', async (request, response, next) => {
 
     const asksFarmBoxSchedule = /farm box|farmbox|hop nong trai|hop nong san/.test(effectiveQuestion)
       && /tuan|lich|dang ky|thuc don|gom|san pham|mo ban|dang mo|ten|loai nao|hop nao|goi nao|loai nho|loai vua|loai lon|size nho|size vua|size lon|hop nho|hop vua|hop lon|cac loai|nhung loai|co gi|loai farm box/.test(effectiveQuestion)
+
+    const asksFarmBoxBudget = /farm box|farmbox|hop nong trai|hop nong san/.test(normalizedQuestion)
+      && /ngan sach|nen dat|phu hop|voi .* (k|nghin|ngan|trieu)/.test(normalizedQuestion)
+    if (asksFarmBoxBudget) {
+      const data = await getAssistantFarmBoxBudgetAnswer(question)
+      if (data) return response.json({ data })
+    }
 
     if (asksFarmBoxSchedule) {
       const data = await getAssistantFarmBoxScheduleAnswer(effectiveQuestion)
