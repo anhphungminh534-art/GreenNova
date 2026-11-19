@@ -5413,9 +5413,13 @@ function App() {
       const typing = appendMessage('Đang tìm câu trả lời…', true)
       try {
         const history = conversationHistory.slice(-10)
+        const token = sessionStorage.getItem('greennovaToken')
         const response = await fetch('/api/assistant/chat', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
           body: JSON.stringify({ message, history }),
         })
         const payload = await response.json()
