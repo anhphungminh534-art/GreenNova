@@ -587,7 +587,7 @@ app.post('/api/assistant/chat', async (request, response, next) => {
       return response.json({ data })
     }
     const stopWords = new Set(['cho', 'toi', 'gia', 'bao', 'nhieu', 'co', 'khong', 'nao', 'la', 'the', 'gi', 'cua', 've', 'voi', 'mot', 'cac', 'hay', 'giup', 'minh', 'nhe', 'xin', 'hoi'])
-    const words = contextualQuestion.split(/\s+/).filter((word) => word.length > 1 && !stopWords.has(word))
+    const words = String(contextualQuestion || normalizedQuestion).split(/\s+/).filter((word) => word.length > 1 && !stopWords.has(word))
     const entries = await getAssistantFaqEntries()
     const ranked = entries.map((entry) => {
       const normalizedFaq = normalizeAssistantText(entry.question)
