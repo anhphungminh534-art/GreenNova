@@ -863,6 +863,7 @@ function applyCustomerProfileNavigation(documentFromStitch, route) {
     divider.append(logoutBtn)
     nav.after(divider)
   }
+}
 
 function applyStoreProducts(documentFromStitch, route, products, productPage = 1, productSearch = '', catalogFilters = {}, selectedProductId = '') {
   const harvestDateLabel = formatSaigonToday()
