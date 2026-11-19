@@ -669,8 +669,8 @@ app.post('/api/assistant/chat', async (request, response, next) => {
 
     const previousUserMessages = history.filter((entry) => entry.role === 'user').slice(-4)
     const isConversationalFollowUp = Boolean(previousUserMessages.length && (
-      /^(con|con nua|con gi|the con|the nao|vay|vay con|loai|size|gia|bao nhieu|thoi han|han su dung|doi tra|giao hang|cai do|loai do|san pham do|rau nay|qua nay|san pham nay)\b/.test(normalizedQuestion)
-      || /\b(con|vay|the nao|cai do|loai do|san pham do|hop do|combo do|rau nay|qua nay|san pham nay|nong trai nao|thu hoach|khi nao co lai|bao gio co lai|chung nao co( lai)?|nhap lai|hang ve|co hang lai)\b/.test(normalizedQuestion)
+      /^(con(?: nua| gi)?|the con|vay con|loai|size|gia|bao nhieu|thoi han|han su dung|doi tra|giao hang|cai do|loai do|san pham do|rau nay|qua nay|san pham nay)\b/.test(normalizedQuestion)
+      || /\b(con nua|con gi|the con|vay con|the nao|cai do|loai do|san pham do|hop do|combo do|rau nay|qua nay|san pham nay|nong trai nao|thu hoach|khi nao co lai|bao gio co lai|chung nao co( lai)?|nhap lai|hang ve|co hang lai)\b/.test(normalizedQuestion)
     ))
     const contextualQuestion = isConversationalFollowUp
       ? normalizeAssistantText(`${previousUserMessages.map((entry) => entry.content).join(' ')} ${question}`)
@@ -730,7 +730,7 @@ app.post('/api/assistant/chat', async (request, response, next) => {
         source: 'mongodb-product-context-needed',
       } })
     }
-    const stopWords = new Set(['cho', 'toi', 'gia', 'bao', 'nhieu', 'co', 'khong', 'nao', 'la', 'the', 'gi', 'cua', 've', 'voi', 'mot', 'cac', 'hay', 'giup', 'minh', 'nhe', 'xin', 'hoi'])
+    const stopWords = new Set(['cho', 'toi', 'gia', 'bao', 'nhieu', 'co', 'khong', 'nao', 'la', 'the', 'gi', 'vay', 'cua', 've', 'voi', 'mot', 'cac', 'hay', 'giup', 'minh', 'nhe', 'xin', 'hoi', 'nong', 'san', 'rau', 'cu', 'qua'])
     const words = String(contextualQuestion || normalizedQuestion).split(/\s+/).filter((word) => word.length > 1 && !stopWords.has(word))
     const entries = (await getAssistantFaqEntries()).filter(({ answer }) => !/\[[^\]]{2,}\]/.test(String(answer || '')))
     const ranked = entries.map((entry) => {
@@ -738,7 +738,9 @@ app.post('/api/assistant/chat', async (request, response, next) => {
       const matchedWords = words.filter((word) => normalizedFaq.includes(word))
       const exactMatch = normalizedQuestion === normalizedFaq
       const score = exactMatch ? 1 : matchedWords.length / Math.max(1, words.length)
-      const relevant = exactMatch || (words.length >= 2 && matchedWords.length >= 2 && score >= 0.6)
+      const relevant = exactMatch
+        || (words.length >= 2 && matchedWords.length >= 2 && score >= 0.6)
+        || (words.length === 1 && words[0].length >= 5 && matchedWords.length === 1)
       return { ...entry, score, matchedWords, relevant }
     }).sort((first, second) => second.score - first.score)
 
