@@ -541,6 +541,7 @@ function applyImperfectComboScreen(documentFromStitch, route, availableCombos = 
       list.replaceChildren(...availableCombos.map((combo) => {
         const card = template.cloneNode(true)
         const detailRoute = `/imperfect/chi-tiet?comboId=${encodeURIComponent(combo.id)}`
+        card.dataset.comboCard = 'true'
         card.dataset.comboPrice = String(Number(combo.price) || 0)
         card.dataset.comboName = normalizeLabel(combo.name)
         card.dataset.comboStock = String(Number(combo.stock) || 0)
@@ -9737,6 +9738,15 @@ function App() {
   }, [route.path, screen])
 
   useEffect(() => {
+    const handleComboCardClick = (event) => {
+      if (route.path !== '/imperfect') return
+      const card = event.target.closest?.('article[data-combo-card="true"]')
+      if (!card?.dataset.route) return
+      event.preventDefault()
+      event.stopPropagation()
+      event.stopImmediatePropagation()
+      navigateTo(card.dataset.route)
+    }
     const handleStitchNavigation = (event) => {
       // These are in-place state filters. Their visible wording (for example
       // "Đã thanh toán") must never be interpreted as a route command.
@@ -9961,8 +9971,12 @@ function App() {
       navigateTo(nextPath)
     }
 
+    document.addEventListener('click', handleComboCardClick, true)
     document.addEventListener('click', handleStitchNavigation)
-    return () => document.removeEventListener('click', handleStitchNavigation)
+    return () => {
+      document.removeEventListener('click', handleComboCardClick, true)
+      document.removeEventListener('click', handleStitchNavigation)
+    }
   }, [authUser, route.path, productSearch])
 
   useEffect(() => {
