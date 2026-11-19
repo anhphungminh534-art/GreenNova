@@ -5377,17 +5377,17 @@ function App() {
 
     const loadSuggestedQuestions = () => {
       const suggestions = [
-        { label: 'Hôm nay có rau củ tươi nào đang vào mùa?', href: '/nong-san' },
-        { label: 'Giới thiệu các Combo đang bán, có combo nào giá tốt?', href: '/imperfect' },
-        { label: 'Giới thiệu các mẫu Farm Box đang mở bán', href: '/farm-box' },
+        { label: 'Hôm nay có rau củ tươi nào đang vào mùa?' },
+        { label: 'Giới thiệu các Combo đang bán, có combo nào giá tốt?' },
+        { label: 'Giới thiệu các mẫu Farm Box đang mở bán' },
       ]
-      prompts.replaceChildren(...suggestions.map(({ label, href }) => {
-        const link = document.createElement('a')
-        link.href = href
-        link.dataset.route = href
-        link.className = 'rounded-full border border-[#cfe1d0] bg-white px-3 py-1.5 text-center text-xs text-[#176b36] no-underline hover:bg-[#eaf5e9]'
-        link.textContent = label
-        return link
+      prompts.replaceChildren(...suggestions.map(({ label }) => {
+        const button = document.createElement('button')
+        button.type = 'button'
+        button.dataset.assistantPrompt = label
+        button.className = 'rounded-full border border-[#cfe1d0] bg-white px-3 py-1.5 text-center text-xs text-[#176b36] hover:bg-[#eaf5e9]'
+        button.textContent = label
+        return button
       }))
     }
     loadSuggestedQuestions()
@@ -5483,13 +5483,22 @@ function App() {
       event.preventDefault()
       sendMessage(input.value)
     }
+    const handleSuggestedPrompt = (event) => {
+      const button = event.target.closest('[data-assistant-prompt]')
+      if (!button || !prompts.contains(button)) return
+      const question = button.dataset.assistantPrompt
+      prompts.replaceChildren()
+      sendMessage(question)
+    }
     launcher.addEventListener('click', handleLauncher)
     panel.querySelector('[data-assistant-close]')?.addEventListener('click', handleClose)
     form.addEventListener('submit', handleSubmit)
+    prompts.addEventListener('click', handleSuggestedPrompt)
     return () => {
       launcher.removeEventListener('click', handleLauncher)
       panel.querySelector('[data-assistant-close]')?.removeEventListener('click', handleClose)
       form.removeEventListener('submit', handleSubmit)
+      prompts.removeEventListener('click', handleSuggestedPrompt)
     }
   }, [route.path, screen.bodyHtml])
 
