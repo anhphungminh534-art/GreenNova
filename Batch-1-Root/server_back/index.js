@@ -2,6 +2,7 @@ import 'dotenv/config'
 import express from 'express'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import jwt from 'jsonwebtoken'
 import { Decimal128, MongoClient, ObjectId } from 'mongodb'
 import { createAuthMiddleware, createAuthRouter } from './auth.js'
 import { createCartRouter } from './cart.js'
@@ -790,6 +791,59 @@ async function getAssistantFarmBoxBudgetAnswer(question) {
   }
 }
 
+async function getAssistantCustomerFarmBoxStatus(userId) {
+  const todayKey = getSaigonDateKey(new Date())
+  const daysSinceMonday = (new Date(`${todayKey}T00:00:00.000Z`).getUTCDay() + 6) % 7
+  const weekStart = addDateKeyDays(todayKey, -daysSinceMonday)
+  const weekEnd = addDateKeyDays(weekStart, 6)
+  const weeks = await database.collection('farmBoxWeeks').find({}).toArray()
+  const currentWeekIds = new Set(weeks.filter((week) => (
+    getSaigonDateKey(week.startDate) <= weekEnd && getSaigonDateKey(week.endDate) >= weekStart
+  )).map((week) => week._id.toString()))
+  const orders = await database.collection('orders').find({
+    userId: new ObjectId(userId),
+    'items.itemType': 'FarmBox',
+  }).sort({ createdAt: -1 }).limit(50).toArray()
+  const matchingOrders = orders.map((order) => ({
+    order,
+    boxes: (order.items || []).filter((item) => item.itemType === 'FarmBox' && currentWeekIds.has(item.weekId?.toString())),
+  })).filter(({ boxes }) => boxes.length)
+
+  if (!matchingOrders.length) {
+    return { answer: 'Mình chưa tìm thấy đơn Farm Box nào của bạn có lịch giao trong tuần này.', source: 'mongodb-customer-orders' }
+  }
+  const dateLabel = (value) => value
+    ? new Intl.DateTimeFormat('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh', day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(value))
+    : ''
+  const lines = matchingOrders.flatMap(({ order, boxes }) => boxes.map((box) => {
+    const status = order.status === 'Đã nhận' || order.deliveredAt
+      ? `đã giao${order.deliveredAt ? ` ngày ${dateLabel(order.deliveredAt)}` : ' thành công'}`
+      : order.status === 'Đang giao'
+        ? `đang giao${order.deliveryDueAt ? `, dự kiến ${dateLabel(order.deliveryDueAt)}` : ''}`
+        : order.status === 'Đã hủy' ? 'đã hủy'
+          : order.status === 'Chờ thanh toán' ? 'chưa giao vì đơn đang chờ thanh toán'
+            : `chưa giao, đơn đang ở trạng thái ${order.status || 'chờ xử lý'}`
+    return `• Đơn ${order.orderCode}: ${box.itemName || 'Farm Box'} × ${asNumber(box.quantity)} — ${status}.`
+  }))
+  return { answer: lines.join('\n'), source: 'mongodb-customer-orders' }
+}
+
+async function getAssistantChatUserId(request) {
+  const [scheme, token] = String(request.get('authorization') || '').split(' ')
+  if (scheme !== 'Bearer' || !token || !process.env.JWT_SECRET) return null
+  try {
+    const payload = jwt.verify(token, process.env.JWT_SECRET)
+    if (!ObjectId.isValid(payload.sub)) return null
+    const user = await database.collection('users').findOne(
+      { _id: new ObjectId(payload.sub), status: 'Active' },
+      { projection: { _id: 1 } },
+    )
+    return user?._id.toString() || null
+  } catch {
+    return null
+  }
+}
+
 app.get('/api/assistant/questions', async (_request, response, next) => {
   try {
     const entries = await getAssistantFaqEntries()
@@ -844,6 +898,20 @@ app.post('/api/assistant/chat', async (request, response, next) => {
 
     const asksFarmBoxSchedule = /farm box|farmbox|hop nong trai|hop nong san/.test(effectiveQuestion)
       && /tuan|lich|dang ky|thuc don|gom|san pham|mo ban|dang mo|ten|loai nao|hop nao|goi nao|loai nho|loai vua|loai lon|size nho|size vua|size lon|hop nho|hop vua|hop lon|cac loai|nhung loai|co gi|loai farm box/.test(effectiveQuestion)
+
+    const asksOwnFarmBoxDeliveryStatus = /farm box|farmbox|hop nong trai|hop nong san/.test(normalizedQuestion)
+      && /(cua toi|don hang|giao chua|da giao|duoc giao|dang giao|nhan chua|tinh trang don)/.test(normalizedQuestion)
+    if (asksOwnFarmBoxDeliveryStatus) {
+      const userId = await getAssistantChatUserId(request)
+      if (!userId) {
+        return response.json({ data: {
+          answer: 'Bạn đăng nhập để mình kiểm tra trạng thái đơn Farm Box của bạn nhé.',
+          source: 'mongodb-customer-orders-auth-required',
+        } })
+      }
+      const data = await getAssistantCustomerFarmBoxStatus(userId)
+      return response.json({ data })
+    }
 
     const asksFarmBoxBudget = /farm box|farmbox|hop nong trai|hop nong san/.test(normalizedQuestion)
       && /ngan sach|nen dat|phu hop|voi .* (k|nghin|ngan|trieu)/.test(normalizedQuestion)
