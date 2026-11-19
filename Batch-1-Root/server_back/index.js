@@ -433,6 +433,22 @@ async function getAssistantProductAnswer(question, normalizedQuestion) {
   return { answer: lines.length === 1 ? lines[0].replace(/^• /, '') : `Thông tin nông sản tìm được:\n${lines.join('\n')}`, source: 'mongodb-products' }
 }
 
+async function getAssistantProductListAnswer() {
+  const products = await database.collection('products').find({
+    productLine: 'Standard',
+    isArchived: { $ne: true },
+    status: 'Đang bán',
+  }, { projection: { name: 1, price: 1, unit: 1 } }).sort({ name: 1 }).limit(30).toArray()
+  if (!products.length) {
+    return { answer: 'Hiện chưa có nông sản nào đang mở bán.', source: 'mongodb-products' }
+  }
+
+  const lines = products.map((product) => (
+    `• ${product.name} — ${new Intl.NumberFormat('vi-VN').format(asNumber(product.price))}đ/${product.unit || 'đơn vị'}`
+  ))
+  return { answer: `Các nông sản đang bán:\n${lines.join('\n')}`, source: 'mongodb-products' }
+}
+
 function getSaigonDateKey(value) {
   const parts = new Intl.DateTimeFormat('en-CA', {
     timeZone: 'Asia/Ho_Chi_Minh', year: 'numeric', month: '2-digit', day: '2-digit',
@@ -650,6 +666,12 @@ app.post('/api/assistant/chat', async (request, response, next) => {
         || /co .*combo|combo .*nao|combo gi|cac combo|nhung combo|danh sach combo|loai combo/.test(normalizedQuestion))
     if (asksForComboList) {
       const data = await getAssistantComboListAnswer()
+      return response.json({ data })
+    }
+    const asksForProductList = /^(nong san|rau cu qua|san pham|nong san green nova)$/.test(normalizedQuestion)
+      || /co (nong san|rau cu qua|san pham) gi|danh sach (nong san|san pham)|cac (nong san|san pham)|nhung (nong san|san pham)/.test(normalizedQuestion)
+    if (asksForProductList) {
+      const data = await getAssistantProductListAnswer()
       return response.json({ data })
     }
     const productAnswer = await getAssistantProductAnswer(question, normalizedQuestion)
