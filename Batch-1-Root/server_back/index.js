@@ -374,6 +374,32 @@ async function getAssistantFaqEntries() {
   return entries
 }
 
+async function getAssistantComboListAnswer() {
+  const combos = await database.collection('combos')
+    .find({ isActive: true, isPublished: true })
+    .sort({ name: 1 })
+    .toArray()
+  if (!combos.length) {
+    return { answer: 'Hiện chưa có Combo nào đang mở bán.', source: 'mongodb-combos' }
+  }
+
+  const componentIds = [...new Map(combos.flatMap((combo) => combo.items || [])
+    .filter((item) => item.productId)
+    .map((item) => [item.productId.toString(), item.productId])).values()]
+  const products = componentIds.length
+    ? await database.collection('products').find({ _id: { $in: componentIds } }, { projection: { name: 1 } }).toArray()
+    : []
+  const productsById = new Map(products.map((product) => [product._id.toString(), product]))
+  const lines = combos.map((combo) => {
+    const components = (combo.items || []).map((item) => (
+      productsById.get(item.productId?.toString())?.name || item.name || ''
+    )).filter(Boolean)
+    const price = `${new Intl.NumberFormat('vi-VN').format(asNumber(combo.price))}đ`
+    return `• ${combo.name} — ${price}${components.length ? `. Gồm: ${components.join(', ')}` : ''}`
+  })
+  return { answer: `Các Combo đang mở bán:\n${lines.join('\n')}`, source: 'mongodb-combos' }
+}
+
 function getSaigonDateKey(value) {
   const parts = new Intl.DateTimeFormat('en-CA', {
     timeZone: 'Asia/Ho_Chi_Minh', year: 'numeric', month: '2-digit', day: '2-digit',
@@ -584,6 +610,13 @@ app.post('/api/assistant/chat', async (request, response, next) => {
 
     if (asksFarmBoxSchedule) {
       const data = await getAssistantFarmBoxScheduleAnswer(effectiveQuestion)
+      return response.json({ data })
+    }
+    const asksForComboList = /\bcombo\b/.test(normalizedQuestion)
+      && (/^(combo|combo imperfect|imperfect combo)$/.test(normalizedQuestion)
+        || /co .*combo|combo .*nao|combo gi|cac combo|nhung combo|danh sach combo|loai combo/.test(normalizedQuestion))
+    if (asksForComboList) {
+      const data = await getAssistantComboListAnswer()
       return response.json({ data })
     }
     const stopWords = new Set(['cho', 'toi', 'gia', 'bao', 'nhieu', 'co', 'khong', 'nao', 'la', 'the', 'gi', 'cua', 've', 'voi', 'mot', 'cac', 'hay', 'giup', 'minh', 'nhe', 'xin', 'hoi'])
