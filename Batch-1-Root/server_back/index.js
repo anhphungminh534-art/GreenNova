@@ -591,6 +591,46 @@ async function getAssistantProductListAnswer() {
   return { answer: `Các nông sản đang bán:\n${lines.join('\n')}`, source: 'mongodb-products', actions: assistantActions.products }
 }
 
+async function getAssistantFruitListAnswer() {
+  const [categories, products] = await Promise.all([
+    database.collection('categories').find({}, { projection: { name: 1 } }).toArray(),
+    database.collection('products').find({
+      productLine: 'Standard',
+      isArchived: { $ne: true },
+      status: 'Đang bán',
+    }, { projection: { name: 1, price: 1, unit: 1, categoryId: 1, categoryName: 1, category: 1 } }).limit(1000).toArray(),
+  ])
+  const fruitCategoryIds = new Set(categories
+    .filter((category) => /trai cay|hoa qua/.test(normalizeAssistantText(category.name)))
+    .map((category) => category._id.toString()))
+  const categoryNameById = new Map(categories.map((category) => [category._id.toString(), category.name || '']))
+  const fruitNamePrefixes = ['bo sap', 'cam ', 'chuoi', 'nho ', 'tao ', 'du du', 'oi ', 'mit ', 'xoai', 'dua hau', 'chanh day', 'sau rieng']
+  const fruits = products.filter((product) => {
+    const categoryName = normalizeAssistantText(product.categoryName || product.category || '')
+      || normalizeAssistantText(categoryNameById.get(product.categoryId?.toString()) || '')
+    const name = normalizeAssistantText(product.name)
+    return /trai cay|hoa qua/.test(categoryName)
+      || fruitCategoryIds.has(product.categoryId?.toString())
+      || fruitNamePrefixes.some((term) => name === term || name.startsWith(term))
+  }).sort((left, right) => String(left.name).localeCompare(String(right.name), 'vi'))
+
+  if (!fruits.length) {
+    return {
+      answer: 'Hiện chưa có loại trái cây nào đang bán được cập nhật trong danh mục.',
+      source: 'mongodb-fruit-products',
+      actions: assistantActions.products,
+    }
+  }
+  const lines = fruits.map((fruit) => (
+    `• ${fruit.name} — ${new Intl.NumberFormat('vi-VN').format(asNumber(fruit.price))}đ/${fruit.unit || 'đơn vị'}`
+  ))
+  return {
+    answer: `Các loại trái cây đang bán tại GreenNova:\n${lines.join('\n')}`,
+    source: 'mongodb-fruit-products',
+    actions: assistantActions.products,
+  }
+}
+
 async function getAssistantSeasonalProductAnswer() {
   const month = Number(new Intl.DateTimeFormat('en-US', {
     timeZone: 'Asia/Ho_Chi_Minh', month: 'numeric',
@@ -1175,6 +1215,12 @@ app.post('/api/assistant/chat', async (request, response, next) => {
     }
     const asksForProductList = /^(nong san|rau cu qua|san pham|nong san green nova)$/.test(normalizedQuestion)
       || /co (nong san|rau cu qua|san pham) gi|danh sach (nong san|san pham)|cac (nong san|san pham)|nhung (nong san|san pham)/.test(normalizedQuestion)
+    const asksForFruitList = /(trai cay|hoa qua)/.test(normalizedQuestion)
+      && /(loai|nhung|cac|danh sach|nao|gi|ban gi)/.test(normalizedQuestion)
+    if (asksForFruitList) {
+      const data = await getAssistantFruitListAnswer()
+      return response.json({ data })
+    }
     if (asksForProductList) {
       const data = await getAssistantProductListAnswer()
       return response.json({ data })
