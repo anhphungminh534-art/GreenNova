@@ -454,6 +454,30 @@ async function getAssistantComboDetailsAnswer(question, history = []) {
   }
 }
 
+async function getAssistantComboAvailabilityAnswer(question, history = []) {
+  const combos = await database.collection('combos').find({ isActive: true, isPublished: true }).toArray()
+  if (!combos.length) return null
+  const texts = [normalizeAssistantText(question), ...[...history].reverse().map((entry) => normalizeAssistantText(entry.content))]
+  let combo = null
+  for (const text of texts) {
+    combo = combos.find((entry) => {
+      const name = normalizeAssistantText(entry.name)
+      return name.length > 3 && text.includes(name)
+    })
+    if (combo) break
+  }
+  if (!combo) return null
+
+  const stockedCombo = await ensureComboStock(database, combo)
+  const stock = availableComboStock(stockedCombo)
+  return {
+    answer: stock > 0
+      ? `${stockedCombo.name} hiện còn hàng, còn ${stock} combo có thể đặt.`
+      : `${stockedCombo.name} hiện đã hết hàng, chưa thể đặt lúc này.`,
+    source: 'mongodb-combo-stock',
+  }
+}
+
 async function getAssistantProductAnswer(normalizedQuestion, history = [], allowHistoryContext = false) {
   const ignoredWords = new Set(['ben', 'minh', 'co', 'khong', 'ban', 'gia', 'bao', 'nhieu', 'la', 'gi', 'nao', 'shop', 'green', 'nova', 'cho', 'toi', 'hoi', 'nhe', 'xin', 'muon', 'mua', 'hang', 'san', 'pham', 'nong', 'rau', 'cu', 'qua', 'hien', 'tai', 'con', 'het', 'loai', 'giup', 've', 'voi', 'nay', 'cua', 'thu', 'hoach', 'hom', 'ngay', 'nong', 'trai', 'vao'])
   const products = await database.collection('products').find({ isArchived: { $ne: true } }, {
@@ -763,6 +787,15 @@ app.post('/api/assistant/chat', async (request, response, next) => {
     if (asksForComboList) {
       const data = await getAssistantComboListAnswer()
       return response.json({ data })
+    }
+    const asksComboAvailability = /\bcombo\b/.test(normalizedQuestion)
+      && /con hang|het hang|co hang|ton kho|mua duoc/.test(normalizedQuestion)
+    if (asksComboAvailability) {
+      const data = await getAssistantComboAvailabilityAnswer(question, history)
+      return response.json({ data: data || {
+        answer: 'Mình chưa xác định được combo bạn đang hỏi. Bạn gửi tên combo để mình kiểm tra tồn kho nhé.',
+        source: 'mongodb-combo-context-needed',
+      } })
     }
     const asksComboDetails = /\bcombo\b/.test(normalizedQuestion)
       && /gom nhung gi|gom gi|thanh phan|bao nhieu kg|co nhung gi|combo nay|combo do/.test(normalizedQuestion)
