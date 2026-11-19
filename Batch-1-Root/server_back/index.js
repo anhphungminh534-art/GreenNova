@@ -29,6 +29,16 @@ const asNumber = (value) => {
   return Number.isFinite(parsed) ? parsed : 0
 }
 
+const assistantActions = {
+  farmBox: [{ label: 'Xem Farm Box đang mở', href: '/farm-box' }],
+  combos: [{ label: 'Khám phá các Combo', href: '/imperfect' }],
+  products: [{ label: 'Xem danh sách nông sản', href: '/nong-san' }],
+  farmBoxAndCombos: [
+    { label: 'Xem Farm Box', href: '/farm-box' },
+    { label: 'Xem Combo', href: '/imperfect' },
+  ],
+}
+
 const asImageList = (value) => {
   if (Array.isArray(value)) return value.filter((url) => typeof url === 'string').map((url) => url.trim()).filter(Boolean)
   if (typeof value === 'string') return value.split(/\r?\n/).map((url) => url.trim()).filter(Boolean)
@@ -398,7 +408,7 @@ async function getAssistantComboListAnswer() {
     const price = `${new Intl.NumberFormat('vi-VN').format(asNumber(combo.price))}đ`
     return `• ${combo.name} — ${price}${components.length ? `. Gồm: ${components.join(', ')}` : ''}`
   })
-  return { answer: `Các Combo đang mở bán:\n${lines.join('\n')}`, source: 'mongodb-combos' }
+  return { answer: `Các Combo đang mở bán:\n${lines.join('\n')}`, source: 'mongodb-combos', actions: assistantActions.combos }
 }
 
 async function getAssistantComboDetailsAnswer(question, history = []) {
@@ -441,7 +451,7 @@ async function getAssistantComboDetailsAnswer(question, history = []) {
     }
   })
   if (!items.length) {
-    return { answer: `Mình chưa có thông tin thành phần cho ${combo.name}.`, source: 'mongodb-combos' }
+    return { answer: `Mình chưa có thông tin thành phần cho ${combo.name}.`, source: 'mongodb-combos', actions: assistantActions.combos }
   }
   const formatQuantity = (quantity) => new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 2 }).format(quantity)
   const totalKg = items.reduce((total, item) => (
@@ -452,6 +462,7 @@ async function getAssistantComboDetailsAnswer(question, history = []) {
   return {
     answer: `${combo.name} gồm: ${itemList}.${weightText}`,
     source: 'mongodb-combos',
+    actions: assistantActions.combos,
   }
 }
 
@@ -487,6 +498,7 @@ async function getAssistantComboAvailabilityAnswer(question, history = []) {
       ? `${stockedCombo.name} hiện còn hàng, còn ${stock} combo có thể đặt.`
       : `${stockedCombo.name} hiện đã hết hàng, chưa thể đặt lúc này.`,
     source: 'mongodb-combo-stock',
+    actions: assistantActions.combos,
   }
 }
 
@@ -546,7 +558,7 @@ async function getAssistantProductAnswer(normalizedQuestion, history = [], allow
     }
     return `• ${product.name} — ${details.join('; ')}`
   })
-  return { answer: lines.length === 1 ? lines[0].replace(/^• /, '') : `Thông tin nông sản tìm được:\n${lines.join('\n')}`, source: 'mongodb-products' }
+  return { answer: lines.length === 1 ? lines[0].replace(/^• /, '') : `Thông tin nông sản tìm được:\n${lines.join('\n')}`, source: 'mongodb-products', actions: assistantActions.products }
 }
 
 async function getAssistantProductListAnswer() {
@@ -562,7 +574,7 @@ async function getAssistantProductListAnswer() {
   const lines = products.map((product) => (
     `• ${product.name} — ${new Intl.NumberFormat('vi-VN').format(asNumber(product.price))}đ/${product.unit || 'đơn vị'}`
   ))
-  return { answer: `Các nông sản đang bán:\n${lines.join('\n')}`, source: 'mongodb-products' }
+  return { answer: `Các nông sản đang bán:\n${lines.join('\n')}`, source: 'mongodb-products', actions: assistantActions.products }
 }
 
 async function getAssistantSeasonalProductAnswer() {
@@ -582,7 +594,7 @@ async function getAssistantSeasonalProductAnswer() {
   const lines = products.map((product) => (
     `• ${product.name} — ${new Intl.NumberFormat('vi-VN').format(asNumber(product.price))}đ/${product.unit || 'đơn vị'}${product.status && product.status !== 'Đang bán' ? ` (${product.status})` : ''}`
   ))
-  return { answer: `Theo dữ liệu mùa vụ GreenNova, ${monthName} có các loại nông sản:\n${lines.join('\n')}`, source: 'mongodb-products-season' }
+  return { answer: `Theo dữ liệu mùa vụ GreenNova, ${monthName} có các loại nông sản:\n${lines.join('\n')}`, source: 'mongodb-products-season', actions: assistantActions.products }
 }
 
 async function getAssistantSeasonalVegetableRecommendation() {
@@ -663,6 +675,7 @@ async function getAssistantSeasonalVegetableRecommendation() {
   return {
     answer: `${vegetableSection}\n\n${farmBoxSection}\n\n${comboSection}\n\nGiá và khẩu phần là thông tin tham khảo; xem chi tiết gói trước khi đặt.`,
     source: 'mongodb-products-season-budget',
+    actions: assistantActions.farmBoxAndCombos,
   }
 }
 
@@ -812,6 +825,7 @@ async function getAssistantFarmBoxScheduleAnswer(normalizedQuestion) {
   return {
     answer: `Farm Box theo lịch admin đã cập nhật:\n${lines.join('\n')}`,
     source: 'mongodb-farm-boxes',
+    actions: assistantActions.farmBox,
   }
 }
 
@@ -861,6 +875,7 @@ async function getAssistantFarmBoxBudgetAnswer(question) {
     return {
       answer: `Ngân sách ${formatMoney(budget)} hiện chưa đủ cho Farm Box đang mở bán. Gói thấp nhất là ${cheapest.name}, giá ${formatMoney(cheapest.price)}.`,
       source: 'mongodb-farm-boxes-budget',
+      actions: assistantActions.farmBox,
     }
   }
   const recommendation = affordable[0]
@@ -869,6 +884,7 @@ async function getAssistantFarmBoxBudgetAnswer(question) {
     answer: `Với ngân sách ${formatMoney(budget)}, mình gợi ý ${recommendation.name} (${formatMoney(recommendation.price)}).`
       + (alternatives.length ? ` Các lựa chọn khác trong ngân sách: ${alternatives.join(', ')}.` : ''),
     source: 'mongodb-farm-boxes-budget',
+    actions: assistantActions.farmBox,
   }
 }
 
