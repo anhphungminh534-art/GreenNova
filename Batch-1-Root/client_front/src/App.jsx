@@ -844,6 +844,7 @@ function applyCustomerProfileNavigation(documentFromStitch, route) {
     anchor.innerHTML = `<div class="flex items-center gap-3"><span class="material-symbols-outlined text-[20px] ${item.active ? 'text-primary' : ''}">${item.icon}</span><span>${item.label}</span></div>${item.active ? '<span class="material-symbols-outlined text-[16px]">chevron_right</span>' : ''}`
     return anchor
   })
+  nav.replaceChildren(...selected)
  const aside = nav.closest('aside')
   aside?.querySelectorAll('a, button').forEach((el) => {
     if (!nav.contains(el) && normalizeLabel(el.textContent).includes('dang xuat')) {
