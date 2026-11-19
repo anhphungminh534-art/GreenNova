@@ -4638,9 +4638,12 @@ const normalizeLabel = (value) => value
 
 function getProductQuantityStep(product) {
   const category = normalizeLabel(`${product?.categoryName || ''} ${product?.category || ''}`)
+  const name = normalizeLabel(product?.name || '')
   const unit = normalizeLabel(product?.unit || '')
   if (unit !== 'kg') return 1
-  return category.includes('rau an la') || category.includes('rau la') ? 0.25 : 0.5
+  const leafyVegetable = category.includes('rau an la') || category.includes('rau la')
+  const excluded = name.includes('ca chua') || name.includes('cai thao') || name.includes('bap cai')
+  return leafyVegetable && !excluded ? 0.25 : 0.5
 }
 
 function getFarmBoxWeekOpenThisWeek(box, now = new Date()) {
