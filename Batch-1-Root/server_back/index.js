@@ -463,7 +463,11 @@ async function getAssistantComboDetailsAnswer(question, history = []) {
     }
   })
   if (!items.length) {
-    return { answer: `Mình chưa có thông tin thành phần cho ${combo.name}.`, source: 'mongodb-combos', actions: assistantActions.combos }
+    return {
+      answer: `Mình chưa có thông tin thành phần cho ${combo.name}.`,
+      source: 'mongodb-combos',
+      actions: [{ label: `Xem chi tiết ${combo.name}`, href: `/imperfect/chi-tiet?comboId=${encodeURIComponent(combo._id.toString())}` }],
+    }
   }
   const formatQuantity = (quantity) => new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 2 }).format(quantity)
   const totalKg = items.reduce((total, item) => (
@@ -474,7 +478,7 @@ async function getAssistantComboDetailsAnswer(question, history = []) {
   return {
     answer: `${combo.name} gồm: ${itemList}.${weightText}`,
     source: 'mongodb-combos',
-    actions: assistantActions.combos,
+    actions: [{ label: `Xem chi tiết ${combo.name}`, href: `/imperfect/chi-tiet?comboId=${encodeURIComponent(combo._id.toString())}` }],
   }
 }
 
@@ -510,7 +514,7 @@ async function getAssistantComboAvailabilityAnswer(question, history = []) {
       ? `${stockedCombo.name} hiện còn hàng, còn ${stock} combo có thể đặt.`
       : `${stockedCombo.name} hiện đã hết hàng, chưa thể đặt lúc này.`,
     source: 'mongodb-combo-stock',
-    actions: assistantActions.combos,
+    actions: [{ label: `Xem chi tiết ${stockedCombo.name}`, href: `/imperfect/chi-tiet?comboId=${encodeURIComponent(stockedCombo._id.toString())}` }],
   }
 }
 
@@ -572,7 +576,15 @@ async function getAssistantProductAnswer(normalizedQuestion, history = [], allow
     }
     return `• ${product.name} — ${details.join('; ')}`
   })
-  return { answer: lines.length === 1 ? lines[0].replace(/^• /, '') : `Thông tin nông sản tìm được:\n${lines.join('\n')}`, source: 'mongodb-products', actions: assistantActions.products }
+  const matchedProduct = scored[0].product
+  return {
+    answer: lines.length === 1 ? lines[0].replace(/^• /, '') : `Thông tin nông sản tìm được:\n${lines.join('\n')}`,
+    source: 'mongodb-products',
+    actions: [{
+      label: `Xem chi tiết ${matchedProduct.name}`,
+      href: `/nong-san/chi-tiet?productId=${encodeURIComponent(matchedProduct._id.toString())}`,
+    }],
+  }
 }
 
 async function getAssistantProductListAnswer() {
@@ -904,7 +916,13 @@ async function getAssistantFarmBoxScheduleAnswer(normalizedQuestion) {
   return {
     answer: `Farm Box theo lịch admin đã cập nhật:\n${lines.join('\n')}`,
     source: 'mongodb-farm-boxes',
-    actions: assistantActions.farmBox,
+    actions: scheduledWeeks.slice(0, 3).map((week) => {
+      const box = boxById.get(week.farmBoxId.toString())
+      return {
+        label: `Xem ${box.name}`,
+        href: `/farm-box/thuc-don?farmBoxId=${encodeURIComponent(box._id.toString())}&weekId=${encodeURIComponent(week._id.toString())}`,
+      }
+    }),
   }
 }
 
