@@ -563,12 +563,6 @@
         farmMenu.classList.toggle('flex');
       });
 
-      document.addEventListener('click', (e) => {
-        if (!farmMenu.contains(e.target) && !farmBtn.contains(e.target)) {
-          farmMenu.classList.add('hidden');
-          farmMenu.classList.remove('flex');
-        }
-      });
     }
 
     if (searchInput && clearBtn) {
