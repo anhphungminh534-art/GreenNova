@@ -723,16 +723,18 @@ app.post('/api/assistant/chat', async (request, response, next) => {
     const ranked = entries.map((entry) => {
       const normalizedFaq = normalizeAssistantText(entry.question)
       const matchedWords = words.filter((word) => normalizedFaq.includes(word))
-      const score = normalizedQuestion === normalizedFaq ? 1 : matchedWords.length / Math.max(1, words.length)
-      return { ...entry, score }
+      const exactMatch = normalizedQuestion === normalizedFaq
+      const score = exactMatch ? 1 : matchedWords.length / Math.max(1, words.length)
+      const relevant = exactMatch || (words.length >= 2 && matchedWords.length >= 2 && score >= 0.6)
+      return { ...entry, score, matchedWords, relevant }
     }).sort((first, second) => second.score - first.score)
 
     const match = ranked[0]
-    if (!isConversationalFollowUp && match && match.score >= 0.85) {
+    if (!isConversationalFollowUp && match?.relevant && match.score >= 0.85) {
       return response.json({ data: { answer: match.answer, matchedQuestion: match.question, source: 'mongodb' } })
     }
 
-    const candidates = ranked.filter((entry) => entry.score > 0).slice(0, 5)
+    const candidates = ranked.filter((entry) => entry.relevant).slice(0, 5)
     const apiKey = process.env.GEMINI_API_KEY
 
     if (apiKey && candidates.length) {
@@ -792,7 +794,7 @@ app.post('/api/assistant/chat', async (request, response, next) => {
       }
     }
 
-    if (match && match.score >= 0.5) {
+    if (!isConversationalFollowUp && match?.relevant && match.score >= 0.6) {
       return response.json({ data: { answer: match.answer, matchedQuestion: match.question, source: 'mongodb' } })
     }
 
