@@ -675,6 +675,7 @@ app.post('/api/assistant/chat', async (request, response, next) => {
     const contextualQuestion = isConversationalFollowUp
       ? normalizeAssistantText(`${previousUserMessages.map((entry) => entry.content).join(' ')} ${question}`)
       : normalizedQuestion
+    const referencesPreviousProduct = /\b(san pham nay|nong san nay|rau nay|qua nay|cai nay|loai nay|san pham do|nong san do|rau do|qua do|khi nao co lai|bao gio co lai|nhap lai|hang ve|co hang lai)\b/.test(normalizedQuestion)
 
     const hasFarmBoxContext = history.some((entry) =>
       /farm box|farmbox|hop nong trai|hop nong san/.test(normalizeAssistantText(entry.content))
@@ -720,7 +721,7 @@ app.post('/api/assistant/chat', async (request, response, next) => {
       const data = await getAssistantSeasonalProductAnswer()
       return response.json({ data })
     }
-    const productAnswer = await getAssistantProductAnswer(normalizedQuestion, history, isConversationalFollowUp)
+    const productAnswer = await getAssistantProductAnswer(normalizedQuestion, history, referencesPreviousProduct)
     if (productAnswer) return response.json({ data: productAnswer })
     const asksProductOriginOrHarvest = /nong trai nao|thu hoach|rau nay|qua nay|san pham nay|nong san nay/.test(normalizedQuestion)
     if (asksProductOriginOrHarvest) {
