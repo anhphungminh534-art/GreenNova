@@ -5404,6 +5404,41 @@ function App() {
       messages.scrollTop = messages.scrollHeight
       return bubble
     }
+    const appendActionCard = (actions) => {
+      const safeActions = (Array.isArray(actions) ? actions : []).filter((action) => (
+        typeof action?.label === 'string'
+        && typeof action?.href === 'string'
+        && action.href.startsWith('/')
+        && !action.href.startsWith('//')
+      )).slice(0, 3)
+      if (!safeActions.length) return
+
+      const card = document.createElement('div')
+      card.className = 'flex max-w-[90%] flex-col gap-2 self-start rounded-xl border border-[#cfe1d0] bg-[#eef8ed] p-3 shadow-sm'
+      if (safeActions.length > 1) {
+        const heading = document.createElement('p')
+        heading.className = 'm-0 text-xs font-semibold text-[#385641]'
+        heading.textContent = 'Xem nhanh'
+        card.append(heading)
+      }
+      const links = document.createElement('div')
+      links.className = 'flex flex-wrap gap-2'
+      safeActions.forEach((action) => {
+        const link = document.createElement('a')
+        link.href = action.href
+        link.dataset.route = action.href
+        link.className = 'inline-flex min-h-9 items-center justify-center gap-1 rounded-lg bg-[#176b36] px-3 py-2 text-xs font-semibold text-white no-underline hover:bg-[#12582d]'
+        link.textContent = action.label
+        const arrow = document.createElement('span')
+        arrow.className = 'material-symbols-outlined text-sm'
+        arrow.textContent = 'arrow_forward'
+        link.append(arrow)
+        links.append(link)
+      })
+      card.append(links)
+      messages.append(card)
+      messages.scrollTop = messages.scrollHeight
+    }
     const sendMessage = async (rawMessage) => {
       const message = String(rawMessage || '').trim()
       if (!message) return
@@ -5426,6 +5461,7 @@ function App() {
         if (!response.ok) throw new Error(payload.error || 'Trợ lý chưa thể xử lý câu hỏi lúc này.')
         const answer = payload.data?.answer || 'Mình chưa tìm được câu trả lời phù hợp. Bạn thử hỏi cụ thể hơn nhé.'
         typing.textContent = answer
+        appendActionCard(payload.data?.actions)
         conversationHistory.push({ role: 'user', content: message }, { role: 'assistant', content: answer })
         if (conversationHistory.length > 10) conversationHistory.splice(0, conversationHistory.length - 10)
       } catch (error) {
