@@ -4943,13 +4943,14 @@ function wireStitchNavigation(documentFromStitch, route) {
       .map((icon) => normalizeLabel(icon.textContent))
     const existingRoute = control.dataset.route
     const articleRoute = control.closest('article')?.dataset.route
-    const nextPath = iconNames.some((name) => ['shopping bag', 'shopping cart', 'shopping basket'].includes(name))
-      ? '/cart'
-      : existingRoute
-        || (route.path === '/imperfect' ? articleRoute : null)
-        || resolveFarmBoxRoute(label, route)
-        || resolveVariantRoute(label, route)
-        || resolveStitchRoute(label, route)
+    const nextPath = (route.path === '/imperfect' ? articleRoute : null)
+      || existingRoute
+      || (iconNames.some((name) => ['shopping bag', 'shopping cart', 'shopping basket'].includes(name))
+        ? '/cart'
+        : null)
+      || resolveFarmBoxRoute(label, route)
+      || resolveVariantRoute(label, route)
+      || resolveStitchRoute(label, route)
     if (nextPath && nextPath !== route.path) {
       control.dataset.route = nextPath
       control.setAttribute('role', 'link')
